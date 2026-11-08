@@ -7,8 +7,8 @@
     "level": "basic",
     "salary": 80000,
     "reactionMinutes": 12,
-    "facing": "down",
-    "post": { "x": 1, "y": 7 },
+    "facing": "left",
+    "post": { "x": 2, "y": 8 },
     "blurb": "Khách toan chuồn thì ông giữ lại, không cần bạn chạy ra."
   },
   "cleaner": {

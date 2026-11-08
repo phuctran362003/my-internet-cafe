@@ -44,7 +44,7 @@ describe('rooms and furniture', () => {
   it('places, moves, and stashes furniture without blocking the door', () => {
     const ctx = bareContext();
     expect(placeFurniture(ctx, 'lamp', 0, 0).reason).toBe('tile');
-    expect(placeFurniture(ctx, 'lamp', 7, 3).reason).toBe('tile');
+    expect(placeFurniture(ctx, 'lamp', 10, 3).reason).toBe('tile');
     const before = ctx.state.player.money;
     const placed = placeFurniture(ctx, 'lamp', 10, 8);
     expect(placed.ok).toBe(true);

@@ -93,6 +93,57 @@ describe('guide', () => {
     expect(wage?.description).toContain('Thu ngân');
   });
 
+  it('splits opening machines, cleaning, and food service across roles', () => {
+    const waitingCafe = (role) => {
+      const ctx = bareContext(() => 0.1);
+      const pc = ctx.state.cafe.computers[0];
+      const customer = sampleCustomer({
+        state: 'waiting',
+        waitLeft: 40,
+        targetComputerId: pc.id,
+        sessionMinutes: 0
+      });
+      pc.occupantId = customer.id;
+      pc.status = 'occupied';
+      pc.cleanliness = 80;
+      ctx.state.cafe.customers = [customer];
+      hireStaff(ctx, role);
+      return { ctx, customer, pc };
+    };
+
+    const cleaner = waitingCafe('cleaner');
+    tickStaff(cleaner.ctx, 10);
+    expect(cleaner.customer.state).toBe('waiting');
+    expect(cleaner.pc.cleanliness).toBeGreaterThan(80);
+
+    const server = waitingCafe('server');
+    tickStaff(server.ctx, 10);
+    expect(server.customer.state).toBe('waiting');
+    expect(server.pc.cleanliness).toBeLessThan(80);
+
+    const ctx = bareContext(() => 0.1);
+    ctx.state.cafe.inventory.drink = 5;
+    const pc = ctx.state.cafe.computers[0];
+    pc.occupantId = 'c1';
+    pc.status = 'occupied';
+    const customer = sampleCustomer({
+      state: 'playing',
+      sessionMinutes: 4,
+      plannedMinutes: 80,
+      money: 100000,
+      foodChance: 0,
+      ordered: false,
+      cravingId: 'drink',
+      targetComputerId: pc.id
+    });
+    ctx.state.cafe.customers = [customer];
+    tickCustomers(ctx, 1);
+    expect(customer.money).toBe(100000);
+    hireStaff(ctx, 'server');
+    tickCustomers(ctx, 1);
+    expect(customer.money).toBe(88000);
+  });
+
   it('fills facilities onto an older save', () => {
     const session = testSession(1);
     session.newGame(1);

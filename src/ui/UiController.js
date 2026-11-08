@@ -646,7 +646,7 @@ function customerPanel(view, session) {
     box.append(request);
     box.append(row('Tiền giờ khoảng', customer.quoteLabel));
     if (view.staffAssist) {
-      box.append(el('p', 'muted', 'Nhân viên sẽ tự mở máy, không cần bấm chấm than.'));
+      box.append(el('p', 'muted', 'Thu ngân sẽ tự mở máy, không cần bấm chấm than.'));
     } else {
       const start = button('Mở máy', () => session.startMachine(customer.id));
       start.classList.add('btn-go');
@@ -679,7 +679,7 @@ function shopPanel(view, session) {
 function staffPanel(view, session) {
   const box = el('div');
   box.append(el('h2', '', 'Nhân viên'));
-  box.append(el('p', 'muted', 'Lương theo ngày, trừ cuối ngày. Có nhân viên thì tự mở máy cho khách, không cần bấm chấm than.'));
+  box.append(el('p', 'muted', 'Lương theo ngày, trừ cuối ngày. Mỗi người một việc — chỉ thu ngân tự mở máy.'));
   for (const member of view.staff) {
     const line = el('div', 'block');
     line.append(row(member.name, member.wageLabel || formatMoney(member.salary)));

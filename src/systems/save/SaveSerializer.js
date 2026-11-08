@@ -1,4 +1,5 @@
 import cafeMap from '../../data/maps/cafe.json';
+import staff from '../../data/employees/staff.json';
 import furnitureCatalog from '../../data/furniture/catalog.json';
 import tiers from '../../data/computers/tiers.json';
 import items from '../../data/items/items.json';
@@ -46,6 +47,12 @@ export function migrateSave(data) {
     if (copy.cafe.inventory[item.id] == null) copy.cafe.inventory[item.id] = 0;
   }
   copy.cafe.employees = copy.cafe.employees ?? [];
+  const guardPost = staff.guard?.post;
+  if (guardPost) {
+    for (const employee of copy.cafe.employees) {
+      if (employee.role === 'guard') employee.post = { ...guardPost };
+    }
+  }
   ensureRooms(copy, cafeMap);
   ensureComputers(copy, cafeMap);
   ensureFurniture(copy, { map: cafeMap, furniture: furnitureCatalog });

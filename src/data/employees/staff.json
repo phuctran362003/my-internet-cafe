@@ -7,7 +7,8 @@
     "level": "basic",
     "salary": 80000,
     "reactionMinutes": 12,
-    "post": { "x": 2, "y": 10 },
+    "facing": "down",
+    "post": { "x": 1, "y": 7 },
     "blurb": "Khách toan chuồn thì ông giữ lại, không cần bạn chạy ra."
   },
   "cleaner": {
@@ -17,7 +18,7 @@
     "look": "office",
     "salary": 150000,
     "post": { "x": 8, "y": 8 },
-    "blurb": "150.000đ/ngày. Tự mở máy cho khách (không cần bấm chấm than), cuối ngày còn lau máy."
+    "blurb": "Lau máy suốt ca. Khách ngồi là bàn bẩn dần — không có lao công thì độ sạch tụt, khách khó chịu. Không mở máy."
   },
   "cashier": {
     "id": "cashier-basic",
@@ -26,7 +27,7 @@
     "look": "regular",
     "salary": 150000,
     "post": { "x": 3, "y": 10 },
-    "blurb": "150.000đ/ngày. Tự bấm giờ mở máy cho khách, khách khó chuồn hơn."
+    "blurb": "Người duy nhất tự mở máy cho khách đang chờ, khỏi bấm chấm than. Cuối giờ thu tiền, khách khó chuồn."
   },
   "server": {
     "id": "server-basic",
@@ -35,6 +36,6 @@
     "look": "student",
     "salary": 150000,
     "post": { "x": 5, "y": 10 },
-    "blurb": "150.000đ/ngày. Tự mở máy giúp bạn, mang nước với mì khi khách đang chơi."
+    "blurb": "Đi gọi món. Khách gọi sớm hơn và gọi lại nhiều hơn trong phiên. Không mở máy."
   }
 }

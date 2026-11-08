@@ -3,9 +3,12 @@ import { isOutOfService } from '../business/computerStatus.js';
 
 export const FLOOR_ROLES = ['cleaner', 'cashier', 'server'];
 const STAFF_START_DELAY = 2;
+const SOIL_PER_MINUTE = 0.16;
+const SOIL_FLOOR = 46;
+const SCRUB_PER_MINUTE = 0.6;
 
-export function hasFloorStaff(state) {
-  return state.cafe.employees.some((employee) => FLOOR_ROLES.includes(employee.role));
+export function hasCashier(state) {
+  return state.cafe.employees.some((employee) => employee.role === 'cashier');
 }
 
 export function hireStaff(ctx, role) {
@@ -34,7 +37,9 @@ export function fireStaff(ctx, role) {
 
 export function tickStaff(ctx, minutes) {
   if (minutes <= 0) return;
-  assistWaitingCustomers(ctx, minutes);
+  soilComputers(ctx, minutes);
+  if (ctx.state.cafe.employees.some((employee) => employee.role === 'cleaner')) scrubComputers(ctx, minutes);
+  if (hasCashier(ctx.state)) assistWaitingCustomers(ctx, minutes);
 }
 
 export function applyCleaner(state) {
@@ -53,8 +58,23 @@ export function staffDailySalary(ctx, spec = null) {
     ?? 150000;
 }
 
+function soilComputers(ctx, minutes) {
+  const loss = minutes * SOIL_PER_MINUTE;
+  for (const pc of ctx.state.cafe.computers) {
+    if (pc.status !== 'occupied' || isOutOfService(pc) || pc.cleanliness <= SOIL_FLOOR) continue;
+    pc.cleanliness = Math.max(SOIL_FLOOR, pc.cleanliness - loss);
+  }
+}
+
+function scrubComputers(ctx, minutes) {
+  const gain = minutes * SCRUB_PER_MINUTE;
+  for (const pc of ctx.state.cafe.computers) {
+    if (isOutOfService(pc)) continue;
+    pc.cleanliness = Math.min(100, pc.cleanliness + gain);
+  }
+}
+
 function assistWaitingCustomers(ctx, minutes) {
-  if (!hasFloorStaff(ctx.state)) return;
   for (const customer of ctx.state.cafe.customers) {
     if (customer.state !== 'waiting') continue;
     customer.staffAssistIn = (customer.staffAssistIn ?? STAFF_START_DELAY) - minutes;

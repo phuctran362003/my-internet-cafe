@@ -1,19 +1,23 @@
-import { CHARACTER_VARIANTS, COMPUTER_STATES, COMPUTER_TIERS } from '../assets/layout.js';
+import { CHAR_COLUMNS, CHARACTER_VARIANTS, COMPUTER_STATES, COMPUTER_TIERS } from '../assets/layout.js';
 
 const DIR_COL = { down: 0, left: 2, right: 4, up: 6 };
+const SIT_COL = CHAR_COLUMNS.indexOf('sit');
+const SIT_FRONT_COL = CHAR_COLUMNS.indexOf('sitFront');
 
 export function characterFrame(customer, now) {
   const lookId = customer.look || customer.archetype;
   const row = Math.max(0, CHARACTER_VARIANTS.findIndex((variant) => variant.id === lookId));
   let col = DIR_COL[customer.facing] ?? 0;
   const moving = customer.state === 'moving' || customer.state === 'leaving';
-  if (customer.state === 'playing' || customer.state === 'payment' || customer.state === 'waiting') col = 8;
-  else if (moving && Math.floor(now / 160) % 2 === 1) col += 1;
-  return row * 9 + col;
+  if (customer.state === 'playing' || customer.state === 'payment' || customer.state === 'waiting') {
+    col = customer.facing === 'down' ? SIT_FRONT_COL : SIT_COL;
+  } else if (moving && Math.floor(now / 160) % 2 === 1) col += 1;
+  return row * CHAR_COLUMNS.length + col;
 }
 
 export function computerFrame(pc) {
-  const row = Math.max(0, COMPUTER_TIERS.indexOf(pc.tier));
+  const tier = Math.max(0, COMPUTER_TIERS.indexOf(pc.tier));
+  const row = pc.facing === 'down' ? COMPUTER_TIERS.length + tier : tier;
   const col = pc.status === 'occupied'
     ? COMPUTER_STATES.indexOf('occupied')
     : pc.status === 'broken'

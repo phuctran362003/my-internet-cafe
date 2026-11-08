@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { GameEvents } from '../core/EventBus.js';
-import { DOOR_FRAMES, EFFECT_FRAMES, TILE_SIZE } from '../assets/layout.js';
+import { DOOR_FRAMES, EFFECT_FRAMES, FURNITURE_FRAMES, TILE_SIZE } from '../assets/layout.js';
 import { analyzeRoom, doorFrameName } from '../assets/roomLayout.js';
 import { isRoomUnlocked } from '../systems/business/RoomSystem.js';
-import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
+import { hasCashier } from '../systems/staff/StaffSystem.js';
 import { tileNameGrid } from '../systems/movement/Pathfinding.js';
 import { characterFrame, computerFrame } from '../render/frames.js';
 
@@ -69,19 +69,22 @@ export class CafeScene extends Phaser.Scene {
     this.mapHeight = map.rows.length * TILE_SIZE;
     this.computerSprites = new Map();
     this.chairSprites = new Map();
-    const chairFrames = [0, 3, 4, 5];
+    const chairFrames = ['chair', 'chairWhite', 'chairNavy', 'chairGray'];
     this.session.state.cafe.computers.forEach((pc, index) => {
-      const sprite = this.add.sprite(pc.x * TILE_SIZE + TILE_SIZE / 2, pc.y * TILE_SIZE + TILE_SIZE / 2, 'computers', 0);
+      const sprite = this.add.sprite(pc.x * TILE_SIZE + TILE_SIZE / 2, pc.y * TILE_SIZE + TILE_SIZE / 2, 'computers', computerFrame(pc));
       sprite.setDepth(10 + pc.y);
       this.computerSprites.set(pc.id, sprite);
+      const front = pc.facing === 'down';
+      const chairName = chairFrames[index % chairFrames.length] + (front ? 'Front' : '');
       const chair = this.add.sprite(
         pc.seatX * TILE_SIZE + TILE_SIZE / 2,
         pc.seatY * TILE_SIZE + TILE_SIZE / 2,
         'furniture',
-        chairFrames[index % chairFrames.length]
+        FURNITURE_FRAMES.indexOf(chairName)
       );
-      // The backrest hides a seated customer's body, so it sorts just above them.
-      chair.setDepth(41 + pc.seatY * TILE_SIZE + TILE_SIZE / 2);
+      // A backrest seen from behind hides the seated customer, so it sorts above them;
+      // a front-facing chair stays behind them.
+      chair.setDepth((front ? 39 : 41) + pc.seatY * TILE_SIZE + TILE_SIZE / 2);
       this.chairSprites.set(pc.id, chair);
       const owned = pc.status !== 'disabled';
       sprite.setVisible(owned);
@@ -143,10 +146,17 @@ export class CafeScene extends Phaser.Scene {
     this.drawSessionRings();
     const guard = state.cafe.employees.find((employee) => employee.role === 'guard');
     if (guard) {
+      const spec = this.session.data.staff.guard;
+      const post = spec?.post ?? guard.post;
       this.guardSprite.setVisible(true);
-      this.guardSprite.setFrame(characterFrame({ archetype: 'guard', facing: 'down', state: 'searching' }, 0));
-      this.guardSprite.x = guard.post.x * TILE_SIZE + TILE_SIZE / 2;
-      this.guardSprite.y = guard.post.y * TILE_SIZE + TILE_SIZE / 2;
+      this.guardSprite.setFrame(characterFrame({
+        archetype: 'guard',
+        facing: spec?.facing || 'down',
+        state: 'searching'
+      }, 0));
+      this.guardSprite.x = post.x * TILE_SIZE + TILE_SIZE / 2;
+      this.guardSprite.y = post.y * TILE_SIZE + TILE_SIZE / 2;
+      this.guardSprite.setDepth(40 + this.guardSprite.y);
     } else {
       this.guardSprite.setVisible(false);
     }
@@ -242,7 +252,7 @@ export class CafeScene extends Phaser.Scene {
       if (!sprite) continue;
       const x = sprite.x;
       const y = sprite.y - 34 + (customer.state === 'playing' ? 0 : bob);
-      const staffHandlesWaiting = customer.state === 'waiting' && hasFloorStaff(this.session.state);
+      const staffHandlesWaiting = customer.state === 'waiting' && hasCashier(this.session.state);
       if ((customer.state === 'waiting' && !staffHandlesWaiting) || customer.state === 'incident') {
         rings.fillStyle(0xffe14a, 1);
         rings.fillCircle(x, y, 16);

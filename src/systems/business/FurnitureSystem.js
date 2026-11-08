@@ -23,6 +23,14 @@ export function ensureFurniture(state, data) {
   for (const item of data.furniture ?? []) {
     if (typeof state.cafe.furnitureBag[item.id] !== 'number') state.cafe.furnitureBag[item.id] = 0;
   }
+  const computers = state.cafe.computers ?? [];
+  state.cafe.furniture = state.cafe.furniture.filter((piece) => {
+    const blocking = computers.some((pc) => (
+      (pc.x === piece.x && pc.y === piece.y) || (pc.seatX === piece.x && pc.seatY === piece.y)
+    ));
+    if (blocking) state.cafe.furnitureBag[piece.type] = (state.cafe.furnitureBag[piece.type] ?? 0) + 1;
+    return !blocking;
+  });
   return state.cafe.furniture;
 }
 

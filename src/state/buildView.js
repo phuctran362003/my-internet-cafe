@@ -1,5 +1,5 @@
 import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
-import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
+import { hasCashier } from '../systems/staff/StaffSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
 import { itemPrice, nextTier, slotBuyCost, tierById, usageBill } from '../systems/business/PricingSystem.js';
 import { stockLimit } from '../systems/inventory/InventorySystem.js';
@@ -115,7 +115,7 @@ export function buildView(session) {
       }))
     },
     guard: state.cafe.employees.find((employee) => employee.role === 'guard') ?? null,
-    staffAssist: hasFloorStaff(state),
+    staffAssist: hasCashier(state),
     staff: ['cleaner', 'cashier', 'server'].map((role) => {
       const spec = data.staff[role];
       const hired = state.cafe.employees.find((employee) => employee.role === role) ?? null;

@@ -3,10 +3,10 @@
     "id": "staff",
     "icon": "🧹",
     "title": "Làm một mình mệt quá",
-    "body": "Thuê lao công, thu ngân hay phục vụ (150.000đ/ngày). Họ tự mở máy cho khách, bạn không cần bấm chấm than.",
+    "body": "Ba việc khác nhau, mỗi người 150.000đ/ngày. Thu ngân tự mở máy và thu tiền. Phục vụ gọi đồ ăn. Lao công lau máy kẻo bẩn.",
     "action": "Thuê người",
     "panel": "staff",
-    "toast": "Quán đông mà chỉ có một mình. Thuê thêm người để họ tự mở máy."
+    "toast": "Quán đông một mình. Thu ngân mở máy, phục vụ gọi món, lao công lau dọn."
   },
   {
     "id": "price",

@@ -8,7 +8,6 @@ const FLOOR = 0;
 const FACE = 1;
 const TOP = 2;
 
-const OAK = RAMPS.oak;
 const TEAK = RAMPS.teak;
 const SAGE = RAMPS.sage;
 const BARN = RAMPS.barn;
@@ -20,8 +19,8 @@ const NAVY = RAMPS.navy;
 const STEEL = RAMPS.steel;
 const SKY = RAMPS.sky;
 
+const CREAM = RAMPS.cream;
 const TRIM = [null, TEAK[5], TEAK[2], TEAK[3], TEAK[4]];
-const PLANK_TONES = [2, 2, 2, 2, 3, 2, 2, 1, 2, 3];
 
 /**
  * Paints the whole café as one picture at design scale: floors, wall
@@ -39,7 +38,6 @@ export function paintRoom(map) {
     height,
     buffer,
     zone,
-    planks: new Map(),
     rooms: roomRects(map, info)
   };
 
@@ -78,7 +76,7 @@ function paintCell(ctx, cx, cy, cell) {
     for (let y = y0; y < y0 + CELL; y += 1) {
       for (let x = x0; x < x0 + CELL; x += 1) {
         ctx.zone[y * ctx.width + x] = FLOOR;
-        setPixel(ctx.buffer, x, y, floorColor(ctx, cell.material, x, y, room));
+        setPixel(ctx.buffer, x, y, floorColor(cell.material, x, y, room));
       }
     }
     const above = ctx.info.cell(cx, cy - 1);
@@ -112,59 +110,40 @@ function paintCell(ctx, cx, cy, cell) {
   }
 }
 
-function floorColor(ctx, material, x, y, room) {
+function floorColor(material, x, y, room) {
   if (material === 'storage') return concrete(x, y);
   if (material === 'toilet') return ceramic(x, y, room);
   if (material === 'vip') return carpet(x, y, room);
-  return planks(ctx, x, y);
+  return glazed(x, y);
 }
 
-function plankRow(ctx, row) {
-  let entry = ctx.planks.get(row);
-  if (entry) return entry;
-  const list = [];
-  let x = -Math.floor(hash(row, 0, 11) * 40);
-  for (let i = 0; x < ctx.width; i += 1) {
-    const len = 22 + Math.floor(hash(row, i, 12) * 5) * 8;
-    const seed = row * 977 + i;
-    list.push({ start: x, len, seed, tone: PLANK_TONES[Math.floor(hash(seed, 0, 3) * PLANK_TONES.length)] });
-    x += len;
-  }
-  const index = new Int16Array(ctx.width);
-  let p = 0;
-  for (let px = 0; px < ctx.width; px += 1) {
-    while (list[p].start + list[p].len <= px) p += 1;
-    index[px] = p;
-  }
-  entry = { list, index };
-  ctx.planks.set(row, entry);
-  return entry;
-}
+/** Cream porcelain tiles, 16px square: gray grout, a lit bevel, and a glaze streak. */
+function glazed(x, y) {
+  const size = 16;
+  const lx = x % size;
+  const ly = y % size;
+  const tx = Math.floor(x / size);
+  const ty = Math.floor(y / size);
+  const tone = hash(tx, ty, 41) < 0.7 ? 1 : 2;
 
-function planks(ctx, x, y) {
-  const row = Math.floor(y / 8);
-  const ly = y % 8;
-  const { list, index } = plankRow(ctx, row);
-  const plank = list[index[x]];
-  const lx = x - plank.start;
-  const tone = plank.tone;
-  if (ly === 7 || lx === 0) return OAK[5];
-  if (ly === 0 || lx === 1) return OAK[tone - 1];
-  if (ly === 6) return OAK[tone + 1];
-  for (let g = 0; g < 2; g += 1) {
-    const gy = 1 + Math.floor(hash(plank.seed, g * 3 + 1, 5) * 5);
-    const gx = 3 + Math.floor(hash(plank.seed, g * 3 + 2, 5) * Math.max(1, plank.len - 12));
-    const gl = 3 + Math.floor(hash(plank.seed, g * 3 + 3, 5) * 9);
-    if (ly === gy && lx >= gx && lx < gx + gl) return OAK[tone + 1];
+  if (lx === 0 || ly === 0) return STEEL[3];
+  if (lx === size - 1 || ly === size - 1) return CREAM[tone + 2];
+  if (lx === 1 || ly === 1) return CREAM[0];
+
+  const band = lx - ly + (hash(tx, ty, 43) < 0.5 ? 0 : 1);
+  if (ly >= 3 && ly <= 8 && band >= 2 && band <= 4) return CREAM[0];
+  if (ly >= 4 && ly <= 9 && band === 5 && (lx & 1) === 0) return CREAM[0];
+
+  if (hash(tx, ty, 44) < 0.4) {
+    const vx = 4 + Math.floor(hash(tx, ty, 45) * 6);
+    const vy = 4 + Math.floor(hash(tx, ty, 46) * 4);
+    if ((lx === vx && ly >= vy && ly < vy + 4) || (lx === vx + 1 && ly >= vy + 1 && ly < vy + 5)) return CREAM[tone + 1];
   }
-  if (hash(plank.seed, 9, 5) < 0.18) {
-    const kx = 4 + Math.floor(hash(plank.seed, 10, 5) * Math.max(1, plank.len - 8));
-    const ky = 2 + Math.floor(hash(plank.seed, 11, 5) * 3);
-    if (ly === ky && (lx === kx || lx === kx + 1)) return OAK[tone + 2];
-    if ((ly === ky - 1 || ly === ky + 1) && lx === kx) return OAK[tone + 1];
-  }
-  if (hash(x, y, 9) < 0.02) return OAK[tone + 1];
-  return OAK[tone];
+
+  const n = hash(x, y, 42);
+  if (n < 0.03) return CREAM[tone + 1];
+  if (n > 0.985) return CREAM[tone - 1];
+  return CREAM[tone];
 }
 
 function concrete(x, y) {

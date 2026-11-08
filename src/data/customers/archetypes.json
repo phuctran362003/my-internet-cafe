@@ -10,7 +10,7 @@
       "patience": 25,
       "session": [40, 90],
       "wallet": [15000, 60000],
-      "foodChance": 0.48,
+      "foodChance": 0.7,
       "skipChance": 0,
       "spawn": { "morning": 5, "midday": 2, "afternoon": 4, "evening": 2, "night": 1 }
     },
@@ -23,7 +23,7 @@
       "patience": 18,
       "session": [50, 120],
       "wallet": [40000, 180000],
-      "foodChance": 0.75,
+      "foodChance": 0.92,
       "skipChance": 0,
       "spawn": { "morning": 1, "midday": 2, "afternoon": 4, "evening": 6, "night": 5 }
     },
@@ -36,7 +36,7 @@
       "patience": 16,
       "session": [50, 140],
       "wallet": [30000, 120000],
-      "foodChance": 0.58,
+      "foodChance": 0.78,
       "skipChance": 0,
       "spawn": { "morning": 4, "midday": 5, "afternoon": 4, "evening": 2, "night": 1 }
     },
@@ -49,7 +49,7 @@
       "patience": 30,
       "session": [40, 80],
       "wallet": [30000, 100000],
-      "foodChance": 0.62,
+      "foodChance": 0.82,
       "skipChance": 0,
       "spawn": { "morning": 2, "midday": 2, "afternoon": 3, "evening": 4, "night": 2 }
     },
@@ -62,7 +62,7 @@
       "patience": 10,
       "session": [30, 70],
       "wallet": [10000, 40000],
-      "foodChance": 0.28,
+      "foodChance": 0.5,
       "skipChance": 0.82,
       "spawn": { "morning": 1, "midday": 2, "afternoon": 3, "evening": 4, "night": 4 }
     },
@@ -75,7 +75,7 @@
       "patience": 14,
       "session": [30, 70],
       "wallet": [80000, 250000],
-      "foodChance": 0.88,
+      "foodChance": 0.95,
       "skipChance": 0,
       "spawn": { "morning": 0, "midday": 1, "afternoon": 1, "evening": 2, "night": 1 }
     },
@@ -88,7 +88,7 @@
       "patience": 22,
       "session": [90, 180],
       "wallet": [100000, 300000],
-      "foodChance": 0.72,
+      "foodChance": 0.9,
       "skipChance": 0,
       "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 4, "night": 3 }
     },
@@ -101,7 +101,7 @@
       "patience": 35,
       "session": [60, 120],
       "wallet": [40000, 120000],
-      "foodChance": 0.85,
+      "foodChance": 0.95,
       "skipChance": 0,
       "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 3, "night": 2 }
     },
@@ -114,7 +114,7 @@
       "patience": 28,
       "session": [60, 150],
       "wallet": [35000, 140000],
-      "foodChance": 0.65,
+      "foodChance": 0.84,
       "skipChance": 0.05,
       "spawn": { "morning": 3, "midday": 4, "afternoon": 3, "evening": 2, "night": 1 }
     },
@@ -127,7 +127,7 @@
       "patience": 20,
       "session": [30, 60],
       "wallet": [20000, 80000],
-      "foodChance": 0.55,
+      "foodChance": 0.76,
       "skipChance": 0.1,
       "spawn": { "morning": 2, "midday": 3, "afternoon": 3, "evening": 2, "night": 1 }
     },
@@ -140,7 +140,7 @@
       "patience": 24,
       "session": [45, 100],
       "wallet": [50000, 200000],
-      "foodChance": 0.7,
+      "foodChance": 0.88,
       "skipChance": 0.02,
       "spawn": { "morning": 2, "midday": 3, "afternoon": 3, "evening": 2, "night": 1 }
     },
@@ -153,7 +153,7 @@
       "patience": 32,
       "session": [20, 50],
       "wallet": [15000, 60000],
-      "foodChance": 0.4,
+      "foodChance": 0.62,
       "skipChance": 0.15,
       "spawn": { "morning": 4, "midday": 3, "afternoon": 4, "evening": 3, "night": 2 }
     },
@@ -166,7 +166,7 @@
       "patience": 20,
       "session": [80, 150],
       "wallet": [70000, 250000],
-      "foodChance": 0.68,
+      "foodChance": 0.86,
       "skipChance": 0,
       "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 5, "night": 4 }
     },
@@ -179,7 +179,7 @@
       "patience": 20,
       "session": [50, 100],
       "wallet": [30000, 100000],
-      "foodChance": 0.55,
+      "foodChance": 0.76,
       "skipChance": 0.05,
       "spawn": { "morning": 2, "midday": 1, "afternoon": 5, "evening": 3, "night": 1 }
     },
@@ -192,7 +192,7 @@
       "patience": 15,
       "session": [100, 200],
       "wallet": [30000, 120000],
-      "foodChance": 0.5,
+      "foodChance": 0.72,
       "skipChance": 0.3,
       "spawn": { "morning": 0, "midday": 0, "afternoon": 1, "evening": 1, "night": 6 }
     },
@@ -205,7 +205,7 @@
       "patience": 25,
       "session": [70, 140],
       "wallet": [80000, 280000],
-      "foodChance": 0.75,
+      "foodChance": 0.92,
       "skipChance": 0,
       "spawn": { "morning": 1, "midday": 2, "afternoon": 3, "evening": 4, "night": 3 }
     },
@@ -218,7 +218,7 @@
       "patience": 28,
       "session": [45, 120],
       "wallet": [20000, 80000],
-      "foodChance": 0.45,
+      "foodChance": 0.68,
       "skipChance": 0.08,
       "spawn": { "morning": 1, "midday": 2, "afternoon": 4, "evening": 5, "night": 2 }
     }

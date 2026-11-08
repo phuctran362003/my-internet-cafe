@@ -93,7 +93,7 @@ describe('economy', () => {
     const before = buildView(session);
     expect(before.activeComputers).toBe(5);
     expect(before.freeComputers).toBe(5);
-    expect(before.buyableSlots).toBe(12);
+    expect(before.buyableSlots).toBe(13);
     expect(before.nextSlot).toEqual({ id: 'pc6', cost: expect.any(String), console: false });
 
     const bought = [];
@@ -107,7 +107,7 @@ describe('economy', () => {
     const after = buildView(session);
     expect(after.activeComputers).toBe(6);
     expect(after.freeComputers).toBe(6);
-    expect(after.buyableSlots).toBe(11);
+    expect(after.buyableSlots).toBe(12);
     expect(after.nextSlot.id).toBe('pc6');
 
     ctx.state.player.money = Math.max(ctx.state.player.money, ctx.data.economy.newConsoleCost);

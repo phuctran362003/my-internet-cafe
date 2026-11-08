@@ -8,6 +8,7 @@ export function computerFromMap(pc, rooms) {
     tier: pc.tier,
     status: sealed ? 'locked' : (pc.status === 'locked' ? 'available' : pc.status),
     room: pc.room ?? null,
+    facing: pc.facing ?? 'up',
     condition: 100,
     cleanliness: 100,
     occupantId: null,
@@ -25,7 +26,21 @@ export function ensureComputers(state, map) {
   const specs = new Map((map.computers ?? []).map((pc) => [pc.id, pc]));
   state.cafe.computers = state.cafe.computers ?? [];
   for (const pc of state.cafe.computers) {
-    if (pc.room == null) pc.room = specs.get(pc.id)?.room ?? null;
+    const spec = specs.get(pc.id);
+    if (pc.room == null) pc.room = spec?.room ?? null;
+    if (!spec) continue;
+    for (const customer of state.cafe.customers ?? []) {
+      if (customer.targetComputerId === pc.id && customer.x === pc.seatX && customer.y === pc.seatY) {
+        customer.x = spec.seatX;
+        customer.y = spec.seatY;
+        customer.facing = spec.facing ?? 'up';
+      }
+    }
+    pc.facing = spec.facing ?? 'up';
+    pc.x = spec.x;
+    pc.y = spec.y;
+    pc.seatX = spec.seatX;
+    pc.seatY = spec.seatY;
   }
   const have = new Set(state.cafe.computers.map((pc) => pc.id));
   for (const spec of map.computers ?? []) {

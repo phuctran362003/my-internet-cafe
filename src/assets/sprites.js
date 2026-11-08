@@ -46,10 +46,115 @@ const DESKS = {
   console: { top: [STEEL[5], STEEL[4], STEEL[3]], grain: STEEL[6], front: [STEEL[7], STEEL[5], STEEL[6]] }
 };
 
-/** Frames in COMPUTER_TIERS x COMPUTER_STATES order. */
+/** Frames in COMPUTER_ROWS x COMPUTER_STATES order: seat-side views, then back views. */
 export function paintComputerFrames() {
-  return COMPUTER_TIERS.flatMap((tier) => COMPUTER_STATES.map((state) => computer(tier, state)));
+  return [
+    ...COMPUTER_TIERS.flatMap((tier) => COMPUTER_STATES.map((state) => computer(tier, state))),
+    ...COMPUTER_TIERS.flatMap((tier) => COMPUTER_STATES.map((state) => computerBack(tier, state)))
+  ];
 }
+
+const BACK_GLOW = {
+  basic: SKY[1],
+  standard: SKY[2],
+  gaming: VIOLET[1],
+  highend: CYAN[1],
+  premium: GOLD[1],
+  console: VIOLET[1]
+};
+
+/** Desk seen from the monitor's back, for a guest sitting on the far side and facing the viewer. */
+function computerBack(tier, state) {
+  const b = frame();
+  if (state === 'occupied') glow(b, 16, 4, 12, 4, BACK_GLOW[tier], 72);
+  desk(b, DESKS[tier]);
+  BACK_RIGS[tier](b, state);
+  if (state === 'maintenance') hazardTape(b);
+  if (state === 'broken') smoke(b);
+  return outline(b);
+}
+
+function hazardTape(b) {
+  for (let x = 5; x < 27; x += 1) {
+    for (let y = 24; y < 26; y += 1) px(b, x, y, (x + y) % 4 < 2 ? GOLD[1] : C.ink);
+  }
+}
+
+const BACK_RIGS = {
+  basic(b, state) {
+    rect(b, 8, 4, 16, 10, BEIGE[1]);
+    hline(b, 8, 4, 16, BEIGE[0]);
+    vline(b, 23, 5, 9, BEIGE[2]);
+    rect(b, 11, 8, 10, 9, BEIGE[2]);
+    hline(b, 11, 8, 10, BEIGE[1]);
+    for (const y of [10, 12, 14]) hline(b, 12, y, 8, BEIGE[3]);
+    rect(b, 13, 17, 6, 1, BEIGE[3]);
+    rect(b, 2, 7, 5, 13, BEIGE[1]);
+    hline(b, 2, 7, 5, BEIGE[0]);
+    vline(b, 2, 8, 12, BEIGE[2]);
+    hline(b, 3, 10, 3, BEIGE[3]);
+    hline(b, 3, 12, 3, BEIGE[3]);
+    led(b, 4, 16, state);
+  },
+  standard(b, state) {
+    rect(b, 7, 4, 18, 11, STEEL[6]);
+    hline(b, 7, 4, 18, STEEL[5]);
+    rect(b, 12, 7, 8, 5, STEEL[7]);
+    for (const [x, y] of [[13, 8], [18, 8], [13, 10], [18, 10]]) px(b, x, y, STEEL[4]);
+    led(b, 23, 13, state);
+    rect(b, 15, 15, 2, 3, STEEL[5]);
+    rect(b, 12, 18, 8, 1, STEEL[6]);
+    rect(b, 2, 8, 4, 12, STEEL[6]);
+    vline(b, 5, 8, 12, STEEL[5]);
+    px(b, 3, 10, SKY[2]);
+    hline(b, 3, 13, 2, STEEL[7]);
+  },
+  gaming(b, state) {
+    rect(b, 6, 3, 21, 12, STEEL[7]);
+    hline(b, 6, 3, 21, STEEL[6]);
+    for (let x = 7; x < 26; x += 1) px(b, x, 14, RGB_CYCLE[Math.floor(x / 3) % RGB_CYCLE.length]);
+    rect(b, 14, 6, 5, 5, STEEL[6]);
+    px(b, 16, 8, PINK[1]);
+    led(b, 25, 12, state);
+    rect(b, 15, 15, 2, 2, STEEL[6]);
+    line(b, 11, 19, 15, 17, RED[3]);
+    line(b, 20, 19, 16, 17, RED[3]);
+    rect(b, 1, 5, 5, 15, STEEL[7]);
+    rect(b, 2, 6, 3, 13, STEEL[6]);
+    for (const [cy, color] of [[8, CYAN[1]], [12, PINK[1]], [16, VIOLET[1]]]) px(b, 3, cy, color);
+  },
+  highend(b, state) {
+    for (const x of [2, 17]) {
+      rect(b, x, 4, 13, 10, STEEL[6]);
+      hline(b, x, 4, 13, STEEL[5]);
+      rect(b, x + 4, 7, 5, 4, STEEL[7]);
+    }
+    led(b, 15, 6, state);
+    rect(b, 15, 14, 2, 4, STEEL[3]);
+    rect(b, 12, 18, 8, 1, STEEL[4]);
+  },
+  premium(b, state) {
+    hline(b, 3, 3, 26, STEEL[7]);
+    rect(b, 2, 4, 28, 10, STEEL[7]);
+    hline(b, 3, 4, 26, STEEL[6]);
+    hline(b, 3, 13, 26, GOLD[3]);
+    rect(b, 14, 7, 4, 3, GOLD[2]);
+    px(b, 15, 7, GOLD[1]);
+    led(b, 27, 11, state);
+    rect(b, 15, 14, 2, 4, GOLD[3]);
+    rect(b, 11, 18, 10, 1, GOLD[2]);
+  },
+  console(b, state) {
+    rect(b, 5, 2, 22, 13, STEEL[7]);
+    hline(b, 5, 2, 22, STEEL[6]);
+    rect(b, 10, 5, 12, 8, STEEL[6]);
+    for (const y of [7, 9, 11]) hline(b, 12, y, 8, STEEL[7]);
+    rect(b, 13, 15, 6, 2, STEEL[6]);
+    rect(b, 11, 17, 10, 3, STEEL[7]);
+    hline(b, 12, 18, 8, STEEL[5]);
+    led(b, 19, 18, state);
+  }
+};
 
 function computer(tier, state) {
   const b = frame();
@@ -368,8 +473,42 @@ export function paintFurnitureFrames() {
     chair(CHAIR_STYLES.white),
     chair(CHAIR_STYLES.navy),
     chair(CHAIR_STYLES.gray),
-    floorLamp()
+    floorLamp(),
+    chairFront(CHAIR_STYLES.red),
+    chairFront(CHAIR_STYLES.white),
+    chairFront(CHAIR_STYLES.navy),
+    chairFront(CHAIR_STYLES.gray)
   ];
+}
+
+/** Gaming chair seen from the front, for a guest facing the viewer; the guest is drawn over it. */
+function chairFront({ ramp, accent, base = 1 }) {
+  const b = frame();
+  const [hi, main, side, deep] = [ramp[base - 1] ?? ramp[0], ramp[base], ramp[base + 1], ramp[base + 2]];
+  shadowEllipse(b, 16, 30, 8, 1.8);
+  hline(b, 9, 29, 14, STEEL[5]);
+  for (const x of [9, 15, 21]) {
+    px(b, x, 30, STEEL[7]);
+    px(b, x + 1, 30, STEEL[7]);
+  }
+  rect(b, 15, 26, 2, 3, STEEL[4]);
+  px(b, 15, 26, STEEL[3]);
+  hline(b, 11, 8, 10, main);
+  hline(b, 10, 9, 12, main);
+  rect(b, 9, 10, 14, 11, main);
+  rect(b, 9, 10, 2, 11, side);
+  rect(b, 21, 10, 2, 11, deep);
+  hline(b, 12, 8, 4, hi);
+  vline(b, 13, 10, 10, accent);
+  vline(b, 18, 10, 10, accent);
+  rect(b, 7, 21, 18, 4, main);
+  hline(b, 7, 21, 18, hi);
+  hline(b, 7, 24, 18, deep);
+  rect(b, 5, 17, 2, 7, side);
+  rect(b, 25, 17, 2, 7, deep);
+  hline(b, 5, 17, 2, main);
+  hline(b, 25, 17, 2, main);
+  return outline(b);
 }
 
 /** Gaming chair seen from behind, so a seated customer shows above the backrest. */

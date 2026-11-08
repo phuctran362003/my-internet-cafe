@@ -23,7 +23,8 @@ const HEAD_SIDE = [[2, 10], [1, 11], [0, 12], [0, 12], [0, 12], [0, 12], [0, 12]
 /**
  * All character frames for one variant, in CHAR_COLUMNS order. Right-facing
  * frames mirror the left profile. The sitting frame is the upper body seen
- * from behind; the chair is drawn over it.
+ * from behind; the chair is drawn over it. `sitFront` faces the viewer and
+ * is drawn over its chair.
  */
 export function paintCharacterFrames(variant) {
   const look = {
@@ -45,8 +46,34 @@ export function paintCharacterFrames(variant) {
     mirror(leftWalk),
     character(look, 'back', 0),
     character(look, 'back', 1),
-    seated(look)
+    seated(look),
+    seatedFront(look)
   ];
+}
+
+/** Guest on the far side of a desk row, facing the viewer with hands on the keyboard. */
+function seatedFront(look) {
+  const b = blank(CELL, CELL);
+  const { shirt, pants } = look;
+  rect(b, 11, 23, 10, 3, pants[1]);
+  hline(b, 11, 25, 10, pants[2]);
+  vline(b, 15, 23, 3, pants[2]);
+  hline(b, 11, 14, 10, shirt[1]);
+  rect(b, 10, 15, 12, 8, shirt[1]);
+  vline(b, 10, 15, 8, shirt[2]);
+  vline(b, 21, 15, 8, shirt[2]);
+  hline(b, 14, 14, 4, shirt[2]);
+  px(b, 15, 14, SKIN[1]);
+  px(b, 16, 14, SKIN[2]);
+  px(b, 11, 15, shirt[0]);
+  px(b, 12, 15, shirt[0]);
+  rect(b, 8, 15, 2, 7, shirt[1]);
+  rect(b, 22, 15, 2, 7, shirt[2]);
+  rect(b, 9, 22, 3, 2, SKIN[1]);
+  rect(b, 20, 22, 3, 2, SKIN[2]);
+  accessoryBody(b, look, 'front', -1);
+  frontHead(b, look, false, 1);
+  return outline(b);
 }
 
 function character(look, view, step) {

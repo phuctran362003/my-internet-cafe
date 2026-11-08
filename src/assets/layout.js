@@ -28,7 +28,8 @@ export const CHAR_COLUMNS = [
   'rightWalk',
   'upIdle',
   'upWalk',
-  'sit'
+  'sit',
+  'sitFront'
 ];
 
 /**
@@ -64,8 +65,13 @@ export function looksForKind(kind) {
 
 export const COMPUTER_TIERS = ['basic', 'standard', 'gaming', 'highend', 'premium', 'console'];
 export const COMPUTER_STATES = ['available', 'occupied', 'broken', 'maintenance'];
+/** Computer sheet rows: every tier seen from the seat side, then every tier seen from behind the monitor. */
+export const COMPUTER_ROWS = [...COMPUTER_TIERS, ...COMPUTER_TIERS.map((tier) => `${tier}Back`)];
 
-export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray', 'lamp'];
+export const FURNITURE_FRAMES = [
+  'chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray', 'lamp',
+  'chairFront', 'chairWhiteFront', 'chairNavyFront', 'chairGrayFront'
+];
 export const ITEM_FRAMES = ['drink', 'noodle', 'medicine', 'foodPack'];
 export const EFFECT_FRAMES = ['alert', 'coin', 'meal', 'lock'];
 export const PORTRAIT_IDS = ['player', 'wife', 'child'];

@@ -1,8 +1,8 @@
 import {
   CHAR_COLUMNS,
   CHARACTER_VARIANTS,
+  COMPUTER_ROWS,
   COMPUTER_STATES,
-  COMPUTER_TIERS,
   DOOR_FRAMES,
   EFFECT_FRAMES,
   FURNITURE_FRAMES,
@@ -56,7 +56,7 @@ export const AssetRegistry = {
       file: 'assets/computers/computers.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
-      rows: COMPUTER_TIERS,
+      rows: COMPUTER_ROWS,
       columns: COMPUTER_STATES
     },
     furniture: {

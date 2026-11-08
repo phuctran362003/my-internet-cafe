@@ -10,6 +10,9 @@ import { readPressure } from '../business/FacilitySystem.js';
 import { isDemanding, isOnline, markMet, observeCafe } from '../guide/GuideSystem.js';
 import { recordVisit } from './CustomerRelationshipSystem.js';
 
+const SNACK_FIRST_MINUTE = 6;
+const SNACK_GAP_MINUTES = 28;
+
 export function shouldSkipPayment(customer, roll) {
   if (customer.forceSkip) return true;
   return customer.archetype === 'troublemaker' && roll < (customer.skipChance || 0);
@@ -92,7 +95,7 @@ function move(ctx, customer, minutes) {
   customer.waitLeft = 48;
   customer.x = pc.seatX;
   customer.y = pc.seatY;
-  customer.facing = 'up';
+  customer.facing = pc.facing ?? 'up';
   ctx.bus.emit(GameEvents.CUSTOMER_SEATED, { id: customer.id, computerId: pc.id });
 }
 
@@ -223,14 +226,15 @@ function openSkipIncident(ctx, customer, bill) {
 }
 
 function maybeSnack(ctx, customer) {
-  if (customer.ordered || customer.sessionMinutes < 6) return;
   const server = ctx.state.cafe.employees.some((employee) => employee.role === 'server');
-  const chance = Math.min(0.95, customer.foodChance + (server ? 0.2 : 0));
-  if (ctx.rng() > chance) {
-    customer.ordered = true;
-    return;
-  }
+  const firstMinute = server ? 3 : SNACK_FIRST_MINUTE;
+  const gap = server ? 14 : SNACK_GAP_MINUTES;
+  if (customer.sessionMinutes < firstMinute) return;
+  if (customer.sessionMinutes < (customer.nextSnackAt ?? firstMinute)) return;
+  const chance = Math.min(0.98, customer.foodChance + (server ? 0.25 : 0));
   customer.ordered = true;
+  customer.nextSnackAt = customer.sessionMinutes + gap;
+  if (ctx.rng() > chance) return;
   const wanted = pickCraving(ctx, customer);
   const price = itemPrice(ctx.state, wanted);
   const pc = computerById(ctx, customer.targetComputerId);
@@ -248,6 +252,7 @@ function maybeSnack(ctx, customer) {
   customer.money -= price;
   ctx.economy.credit(price, 'food', `${customer.name} mua ${wanted.name}`);
   customer.satisfaction = Math.min(100, customer.satisfaction + 5);
+  customer.cravingId = null;
 }
 
 function pickCraving(ctx, customer) {
@@ -329,7 +334,7 @@ function rateSatisfaction(ctx, customer, pc, pressure) {
   const ratio = price / (tier?.basePrice || price);
   let score = 68 + (tier?.comfort ?? 0);
   score -= Math.max(0, ratio - 1) * 40 * customer.priceSensitivity;
-  score += (pc.cleanliness - 60) / 8;
+  score += (pc.cleanliness - 70) / 5;
   if (pc.condition < 50) score -= 12;
   if (pressure?.hot) score -= 16;
   if (pressure?.lag && isOnline(customer)) score -= 18;

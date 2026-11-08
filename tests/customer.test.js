@@ -9,6 +9,7 @@ describe('customers', () => {
     expect(shouldSkipPayment(sampleCustomer({ archetype: 'student', skipChance: 0.9 }), 0)).toBe(false);
     expect(shouldSkipPayment(sampleCustomer({ archetype: 'troublemaker', skipChance: 0.65 }), 0.1)).toBe(true);
     expect(shouldSkipPayment(sampleCustomer({ archetype: 'troublemaker', skipChance: 0.65 }), 0.9)).toBe(false);
+    expect(shouldSkipPayment(sampleCustomer({ archetype: 'student', forceSkip: true }), 0.99)).toBe(true);
   });
 
   it('opens one incident and resolves it once', () => {

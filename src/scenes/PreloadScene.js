@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import { generateAllAssets } from '../assets/generatePlaceholders.js';
 import { PORTRAIT_IDS } from '../assets/layout.js';
-import { fileTextures } from '../assets/AssetRegistry.js';
-import { installGeneratedTextures, portraitDataUrls } from '../render/textureFactory.js';
+import { AssetRegistry, fileTextures } from '../assets/AssetRegistry.js';
+import { generateAllAssets } from '../assets/generatePlaceholders.js';
+import { installGeneratedTextures, portraitDataUrls, portraitUrlsFromTexture } from '../render/textureFactory.js';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -10,8 +10,9 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
+    const base = import.meta.env.BASE_URL;
     for (const asset of fileTextures()) {
-      this.load.spritesheet(asset.key, asset.file, {
+      this.load.spritesheet(asset.key, `${base}${asset.file}`, {
         frameWidth: asset.frameWidth,
         frameHeight: asset.frameHeight
       });
@@ -20,10 +21,23 @@ export class PreloadScene extends Phaser.Scene {
 
   create() {
     const session = this.game.registry.get('session');
-    const generated = generateAllAssets();
-    installGeneratedTextures(this, generated);
+    const missing = fileTextures().filter((asset) => !this.textures.exists(asset.key));
+    let generated = null;
+    if (missing.length) {
+      generated = generateAllAssets();
+      const textures = Object.fromEntries(missing.map((asset) => [asset.key, generated.textures[asset.key]]));
+      installGeneratedTextures(this, { textures });
+    }
+    for (const key of Object.keys(AssetRegistry.textures)) {
+      this.textures.get(key)?.setFilter(1);
+    }
     if (session) {
-      session.ui.portraits = portraitDataUrls(generated.textures.portraits, PORTRAIT_IDS);
+      if (this.textures.exists('portraits') && !missing.some((asset) => asset.key === 'portraits')) {
+        session.ui.portraits = portraitUrlsFromTexture(this.textures.get('portraits'), PORTRAIT_IDS);
+      } else {
+        generated = generated ?? generateAllAssets();
+        session.ui.portraits = portraitDataUrls(generated.textures.portraits, PORTRAIT_IDS);
+      }
       session.ui.assetsReady = true;
     }
     this.scene.start('Cafe');

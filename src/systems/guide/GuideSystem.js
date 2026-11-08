@@ -1,3 +1,4 @@
+import { isOutOfService } from '../business/computerStatus.js';
 import { readPressure } from '../business/FacilitySystem.js';
 
 const HELPERS = ['cleaner', 'cashier', 'server'];
@@ -78,7 +79,7 @@ function problemActive(state, data, id, pressure) {
   if (id === 'power') return pressure.overloaded;
   if (id === 'computers') {
     const stillBasic = state.cafe.computers
-      .filter((pc) => pc.status !== 'disabled')
+      .filter((pc) => !isOutOfService(pc))
       .every((pc) => pc.tier === 'basic');
     return stillBasic || state.cafe.customers.some((customer) => demandingOnWeakPc({ state }, customer));
   }

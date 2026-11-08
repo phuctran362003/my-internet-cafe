@@ -18,7 +18,11 @@ export const GameEvents = {
   MONEY_CHANGED: 'economy:money:changed',
   SAVE_COMPLETED: 'save:completed',
   SESSION_RESET: 'session:reset',
-  NOTICE: 'ui:notice'
+  NOTICE: 'ui:notice',
+  AUDIO_CHANGED: 'audio:changed',
+  ROOM_UNLOCKED: 'room:unlocked',
+  DOOR_TOGGLED: 'door:toggled',
+  FURNITURE_CHANGED: 'furniture:changed'
 };
 
 export function createEventBus() {

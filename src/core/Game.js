@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
+import cafeMap from '../data/maps/cafe.json';
 import { BootScene } from '../scenes/BootScene.js';
 import { PreloadScene } from '../scenes/PreloadScene.js';
 import { CafeScene } from '../scenes/CafeScene.js';
+
+const ROOM_WIDTH = cafeMap.rows[0].length * cafeMap.tileSize;
+const ROOM_HEIGHT = cafeMap.rows.length * cafeMap.tileSize;
 
 export function createGame(parent, session) {
   const game = new Phaser.Game({
@@ -15,8 +19,8 @@ export function createGame(parent, session) {
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
-      width: 1280,
-      height: 720
+      width: ROOM_WIDTH,
+      height: ROOM_HEIGHT
     },
     callbacks: {
       preBoot: (instance) => instance.registry.set('session', session)

@@ -1,4 +1,4 @@
-/** Shared frame layout for placeholders and future final spritesheets. */
+/** Shared frame layout. Gameplay only uses these indexes. */
 
 export const DESIGN_PIXEL = 64;
 export const DISPLAY_SCALE = 1;
@@ -14,7 +14,9 @@ export const TILE_ORDER = [
   'counter',
   'storage',
   'toilet',
-  'rug'
+  'rug',
+  'vip',
+  'gate'
 ];
 
 export const CHAR_COLUMNS = [
@@ -50,9 +52,9 @@ export const SCREEN_BY_TIER = {
   premium: 'screenPremium'
 };
 
-export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray'];
+export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray', 'lamp'];
 export const ITEM_FRAMES = ['drink', 'noodle', 'medicine', 'foodPack'];
-export const EFFECT_FRAMES = ['alert', 'coin', 'meal'];
+export const EFFECT_FRAMES = ['alert', 'coin', 'meal', 'lock'];
 export const PORTRAIT_IDS = ['player', 'wife', 'child'];
 
 export function frameIndex(row, column, columns) {

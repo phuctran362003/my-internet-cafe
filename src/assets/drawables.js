@@ -326,6 +326,36 @@ export function drawCounterProp() {
   return drawCounter();
 }
 
+export function drawLamp() {
+  const buffer = blank(N, N);
+  fillRect(buffer, 22, 50, 20, 8, PALETTE.desk.rgb);
+  fillRect(buffer, 24, 48, 16, 4, PALETTE.deskLight.rgb);
+  fillRect(buffer, 30, 28, 4, 22, PALETTE.bezel.rgb);
+  fillRect(buffer, 16, 14, 32, 16, PALETTE.coin.rgb);
+  fillRect(buffer, 18, 16, 28, 4, PALETTE.paper.rgb);
+  fillRect(buffer, 20, 26, 24, 4, PALETTE.shirtGold.rgb);
+  fillRect(buffer, 26, 30, 12, 4, PALETTE.white.rgb);
+  outline(buffer);
+  return buffer;
+}
+
+export function drawVipFloor() {
+  const buffer = blank(N, N);
+  for (let y = 0; y < N; y += 1) {
+    for (let x = 0; x < N; x += 1) {
+      const edge = x < 3 || y < 3 || x >= N - 3 || y >= N - 3;
+      const seam = x % 16 === 0 || y % 16 === 0;
+      setPixel(buffer, x, y, edge ? PALETTE.coin.rgb : seam ? PALETTE.floor.rgb : PALETTE.floorDark.rgb);
+    }
+  }
+  fillRect(buffer, 28, 28, 8, 8, PALETTE.shirtGold.rgb);
+  return buffer;
+}
+
+export function drawGate() {
+  return drawDoor(true);
+}
+
 export function drawItem(kind) {
   const buffer = blank(N, N);
   if (kind === 'drink') {
@@ -366,6 +396,13 @@ export function drawEffect(kind) {
     ellipse(buffer, 32, 32, 16, 16, PALETTE.coin.rgb);
     ellipse(buffer, 32, 32, 10, 10, PALETTE.paper.rgb);
     fillRect(buffer, 30, 24, 4, 16, PALETTE.coin.rgb);
+  } else if (kind === 'lock') {
+    ellipse(buffer, 32, 22, 12, 10, PALETTE.coin.rgb);
+    ellipse(buffer, 32, 22, 6, 6, PALETTE.panel.rgb);
+    fillRect(buffer, 16, 28, 32, 24, PALETTE.coin.rgb);
+    fillRect(buffer, 20, 32, 24, 16, PALETTE.shirtGold.rgb);
+    fillRect(buffer, 30, 34, 4, 8, PALETTE.ink.rgb);
+    fillRect(buffer, 28, 40, 8, 3, PALETTE.ink.rgb);
   } else {
     ellipse(buffer, 32, 36, 16, 10, PALETTE.noodle.rgb);
     ellipse(buffer, 32, 32, 12, 6, PALETTE.paper.rgb);

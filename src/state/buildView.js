@@ -1,10 +1,11 @@
 import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
 import { itemPrice, tierById } from '../systems/business/PricingSystem.js';
+import { stockLimit } from '../systems/inventory/InventorySystem.js';
 import { visibleChoices } from '../systems/event/EventSystem.js';
 import { dailyReport } from '../systems/economy/EconomySystem.js';
 import { getPeriod } from '../systems/simulation/TimeSystem.js';
-import { formatClock, formatDate, formatMoney } from '../utils/format.js';
+import { formatClock, formatDate, formatDuration, formatMoney } from '../utils/format.js';
 import { isSimulationPaused } from './createInitialState.js';
 
 const STATUS_LABEL = {
@@ -18,6 +19,7 @@ const STATUS_LABEL = {
   occupied: 'Đang dùng',
   broken: 'Hỏng',
   disabled: 'Chưa mua',
+  locked: 'Đang khóa',
   maintenance: 'Bảo trì'
 };
 
@@ -65,25 +67,31 @@ export function buildView(session) {
     reputation: state.cafe.reputation,
     customerCount: customers.length,
     freeComputers: computers.filter((pc) => pc.status === 'available' && !pc.occupantId).length,
-    activeComputers: computers.filter((pc) => pc.status !== 'disabled').length,
+    activeComputers: computers.filter((pc) => pc.status !== 'disabled' && pc.status !== 'locked').length,
     incidents: state.cafe.incidents.filter((incident) => !incident.resolved).length,
     mood: guide.hot ? 'Nóng' : 'Mát',
     networkLabel: String(guide.network),
     networkLag: guide.lag,
     computers,
-    customers: customers.map((customer) => ({
-      id: customer.id,
-      name: customer.name,
-      label: customer.label,
-      state: customer.state,
-      satisfaction: customer.satisfaction,
-      bill: customer.bill,
-      billLabel: formatMoney(customer.bill || 0),
-      money: customer.money,
-      sessionMinutes: Math.floor(customer.sessionMinutes),
-      plannedMinutes: customer.plannedMinutes,
-      visits: state.cafe.relationships[relationshipKey(customer)]?.visits ?? 0
-    })),
+    customers: customers.map((customer) => {
+      const seat = computers.find((pc) => pc.id === customer.targetComputerId);
+      const quote = Math.round(((customer.plannedMinutes || 0) * (seat?.price || 0)) / 60);
+      return {
+        id: customer.id,
+        name: customer.name,
+        label: customer.label,
+        state: customer.state,
+        satisfaction: customer.satisfaction,
+        bill: customer.bill,
+        billLabel: formatMoney(customer.bill || 0),
+        money: customer.money,
+        sessionMinutes: Math.floor(customer.sessionMinutes),
+        plannedMinutes: customer.plannedMinutes,
+        requestLabel: formatDuration(customer.plannedMinutes),
+        quoteLabel: formatMoney(quote),
+        visits: state.cafe.relationships[relationshipKey(customer)]?.visits ?? 0
+      };
+    }),
     family: {
       autoPayFood: state.family.autoPayFood,
       autoPayHeat: state.family.autoPayHeat,
@@ -132,6 +140,26 @@ export function buildView(session) {
       cards: guide.cards
     },
     stock: { ...state.cafe.inventory },
+    stockLimit: stockLimit(state),
+    rooms: (data.map.rooms ?? []).map((room) => ({
+      id: room.id,
+      name: room.name,
+      cost: room.cost,
+      costLabel: formatMoney(room.cost),
+      effect: room.effect,
+      unlocked: Boolean(state.cafe.rooms?.[room.id]),
+      kind: room.kind || ''
+    })),
+    build: Boolean(ui.build),
+    buildType: ui.buildType || 'plant',
+    music: ui.music !== false,
+    bag: { ...(state.cafe.furnitureBag ?? {}) },
+    catalog: (data.furniture ?? []).map((item) => ({
+      ...item,
+      costLabel: formatMoney(item.cost),
+      owned: state.cafe.furnitureBag?.[item.id] ?? 0
+    })),
+    placed: (state.cafe.furniture ?? []).map((piece) => ({ ...piece })),
     items: data.items.map((item) => ({ ...item, salePrice: itemPrice(state, item) })),
     prices: { ...state.cafe.prices },
     tiers: data.tiers.map((tier) => ({ id: tier.id, name: tier.name, basePrice: tier.basePrice, upgradeCost: tier.upgradeCost })),
@@ -139,6 +167,8 @@ export function buildView(session) {
       instanceId: active.instanceId,
       title: active.title,
       description: active.description,
+      tone: active.tone || '',
+      kicker: active.tone === 'beneficial' ? 'Có lợi' : active.tone === 'adverse' ? 'Bất lợi' : '',
       choices: visibleChoices(active, state).map((choice) => ({ id: choice.id, label: choice.label }))
     } : null,
     report: {
@@ -152,6 +182,10 @@ export function buildView(session) {
     dayEnded: state.meta.dayEnded,
     pendingDayEnd: state.meta.pendingDayEnd,
     journal: state.narrative.eventHistory.slice(-8).reverse(),
+    dayEvents: {
+      adverse: state.narrative.eventHistory.filter((event) => event.day === state.meta.currentDay && event.tone === 'adverse').length,
+      beneficial: state.narrative.eventHistory.filter((event) => event.day === state.meta.currentDay && event.tone === 'beneficial').length
+    },
     statusLabel: STATUS_LABEL,
     newComputerCost: formatMoney(data.economy.newComputerCost),
     nextSlot: state.cafe.computers.some((pc) => pc.status === 'disabled')

@@ -14,8 +14,16 @@ export function createEventSystem(ctx) {
       ctx.state.narrative.queue.push(event);
       ctx.state.narrative.queue.sort((a, b) => (RANK[a.priority] ?? 9) - (RANK[b.priority] ?? 9));
       syncPause();
-      if (event.category === 'family') ctx.bus.emit(GameEvents.FAMILY_EVENT_TRIGGERED, { id: event.id });
-      if (event.category === 'security') ctx.bus.emit(GameEvents.INCIDENT_CREATED, { id: event.instanceId });
+      if (event.category === 'family') {
+        ctx.bus.emit(GameEvents.FAMILY_EVENT_TRIGGERED, {
+          id: event.id,
+          title: event.title,
+          tone: event.tone ?? null
+        });
+      }
+      if (event.category === 'security') {
+        ctx.bus.emit(GameEvents.INCIDENT_CREATED, { id: event.instanceId, title: event.title });
+      }
       return event;
     },
     active() {
@@ -50,18 +58,28 @@ export function instantiateEvent(def, { instanceId, context = {}, vars = {} }) {
     instanceId,
     id: def.id,
     category: def.category,
+    tone: def.tone ?? null,
+    source: def.source ?? null,
     priority: def.priority || 'normal',
     pause: def.pause !== false,
     title: fillTemplate(def.dialog.title, vars),
     description: fillTemplate(def.dialog.description, vars),
     choices: def.choices.map((choice) => ({
       ...choice,
-      effects: choice.effects.map((effect) => ({ ...effect }))
+      label: fillTemplate(choice.label, vars),
+      effects: choice.effects.map((effect) => cloneEffect(effect, vars))
     })),
     context,
     resolved: false,
     ageMinutes: 0
   };
+}
+
+function cloneEffect(effect, vars) {
+  const next = { ...effect };
+  if (next.amount === 'rolled') next.amount = vars.amountValue ?? 0;
+  if (typeof next.label === 'string') next.label = fillTemplate(next.label, vars);
+  return next;
 }
 
 export function evaluateFamilyEvents(ctx, before) {

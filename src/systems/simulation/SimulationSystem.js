@@ -7,6 +7,7 @@ import { applyCleaner } from '../staff/StaffSystem.js';
 import { tickCustomers } from '../customer/CustomerAI.js';
 import { tickSpawn } from '../customer/CustomerSpawnSystem.js';
 import { evaluateFamilyEvents } from '../event/EventSystem.js';
+import { tickRandomEvents } from '../event/RandomEventSystem.js';
 import { settleFamilyDay } from '../family/FamilySurvival.js';
 import { tickSecurity } from '../security/SecuritySystem.js';
 import { createTimeSystem } from './TimeSystem.js';
@@ -45,6 +46,7 @@ export function createSimulation(ctx) {
           tickSpawn(ctx, minutes);
           tickCustomers(ctx, minutes);
           tickSecurity(ctx, minutes);
+          tickRandomEvents(ctx, minutes);
         }
         remaining -= slice;
         steps += 1;

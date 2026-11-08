@@ -1,3 +1,4 @@
+import { isOutOfService } from './computerStatus.js';
 import { tierById } from './PricingSystem.js';
 
 const DEFAULT_FACILITIES = { cooling: 1, network: 1, power: 1 };
@@ -20,7 +21,7 @@ export function readPressure(ctx) {
   const occupied = ctx.state.cafe.computers.filter((pc) => pc.status === 'occupied').length;
   let watts = 0;
   for (const pc of ctx.state.cafe.computers) {
-    if (pc.status === 'disabled') continue;
+    if (isOutOfService(pc)) continue;
     watts += tierById(ctx.data, pc.tier)?.watts ?? 0;
   }
   return {

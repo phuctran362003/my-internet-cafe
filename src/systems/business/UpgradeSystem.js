@@ -1,9 +1,10 @@
 import { GameEvents } from '../../core/EventBus.js';
+import { isOutOfService } from './computerStatus.js';
 import { nextTier } from './PricingSystem.js';
 
 export function upgradeComputer(ctx, computerId) {
   const pc = ctx.state.cafe.computers.find((item) => item.id === computerId);
-  if (!pc || pc.status === 'broken' || pc.status === 'disabled') return { ok: false, reason: 'unavailable' };
+  if (!pc || pc.status === 'broken' || isOutOfService(pc)) return { ok: false, reason: 'unavailable' };
   const next = nextTier(ctx.data, pc.tier);
   if (!next) return { ok: false, reason: 'max' };
   const paid = ctx.economy.debit(next.upgradeCost, 'upgrade', `Nâng cấp ${pc.id} lên ${next.name}`);
@@ -16,7 +17,7 @@ export function upgradeComputer(ctx, computerId) {
 
 export function repairComputer(ctx, computerId) {
   const pc = ctx.state.cafe.computers.find((item) => item.id === computerId);
-  if (!pc || pc.status === 'disabled') return { ok: false, reason: 'unavailable' };
+  if (!pc || isOutOfService(pc)) return { ok: false, reason: 'unavailable' };
   const paid = ctx.economy.debit(ctx.data.economy.repairCost, 'repair', `Sửa ${pc.id}`);
   if (!paid) return { ok: false, reason: 'money' };
   pc.condition = 100;
@@ -26,7 +27,7 @@ export function repairComputer(ctx, computerId) {
 
 export function cleanComputer(ctx, computerId) {
   const pc = ctx.state.cafe.computers.find((item) => item.id === computerId);
-  if (!pc || pc.status === 'disabled') return { ok: false, reason: 'unavailable' };
+  if (!pc || isOutOfService(pc)) return { ok: false, reason: 'unavailable' };
   const paid = ctx.economy.debit(ctx.data.economy.cleanCost, 'cleaning', `Vệ sinh ${pc.id}`);
   if (!paid) return { ok: false, reason: 'money' };
   pc.cleanliness = 100;
@@ -48,7 +49,7 @@ export function buyComputerSlot(ctx) {
 
 export function applyComputerWear(state, bus) {
   for (const pc of state.cafe.computers) {
-    if (pc.status === 'disabled') continue;
+    if (isOutOfService(pc)) continue;
     const hours = pc.dailyMinutes / 60;
     pc.condition = Math.max(0, pc.condition - (1 + hours * 0.35));
     pc.cleanliness = Math.max(0, pc.cleanliness - 4);

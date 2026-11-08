@@ -1,3 +1,5 @@
+import { isRoomUnlocked, roomTiles } from '../business/RoomSystem.js';
+
 const BLOCKING = new Set(['wall', 'window', 'counter']);
 
 export const CHAR_TO_TILE = {
@@ -9,7 +11,9 @@ export const CHAR_TO_TILE = {
   C: 'counter',
   S: 'storage',
   T: 'toilet',
-  R: 'rug'
+  R: 'rug',
+  V: 'vip',
+  G: 'gate'
 };
 
 export function tileNameGrid(map) {
@@ -24,6 +28,15 @@ export function buildWalkGrid(map, state) {
   const names = tileNameGrid(map);
   const grid = names.map((row) => row.map((name) => (BLOCKING.has(name) ? 1 : 0)));
   for (const pc of state.cafe.computers) grid[pc.y][pc.x] = 1;
+  for (const room of map.rooms ?? []) {
+    if (isRoomUnlocked(state, room.id)) continue;
+    for (const tile of roomTiles(room)) {
+      if (grid[tile.y]?.[tile.x] != null) grid[tile.y][tile.x] = 1;
+    }
+  }
+  for (const piece of state.cafe.furniture ?? []) {
+    if (grid[piece.y]?.[piece.x] != null) grid[piece.y][piece.x] = 1;
+  }
   return grid;
 }
 

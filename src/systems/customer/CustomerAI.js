@@ -4,12 +4,14 @@ import { instantiateEvent } from '../event/EventSystem.js';
 import { consumeStock } from '../inventory/InventorySystem.js';
 import { advanceAlongPath } from '../movement/Movement.js';
 import { routeTo } from '../movement/Pathfinding.js';
+import { isOutOfService } from '../business/computerStatus.js';
 import { itemPrice, priceOf, tierById } from '../business/PricingSystem.js';
 import { readPressure } from '../business/FacilitySystem.js';
 import { isDemanding, isOnline, observeCafe } from '../guide/GuideSystem.js';
 import { recordVisit } from './CustomerRelationshipSystem.js';
 
 export function shouldSkipPayment(customer, roll) {
+  if (customer.forceSkip) return true;
   return customer.archetype === 'troublemaker' && roll < (customer.skipChance || 0);
 }
 
@@ -30,8 +32,16 @@ function tickOne(ctx, customer, minutes) {
   if (customer.state === 'incident') return;
   if (customer.state === 'searching') return search(ctx, customer, minutes);
   if (customer.state === 'moving' || customer.state === 'leaving') return move(ctx, customer, minutes);
+  if (customer.state === 'waiting') return waitForStart(ctx, customer, minutes);
   if (customer.state === 'playing') return play(ctx, customer, minutes);
   if (customer.state === 'payment') beginPayment(ctx, customer);
+}
+
+export function startMachine(ctx, customerId) {
+  const customer = ctx.state.cafe.customers.find((item) => item.id === customerId);
+  if (!customer || customer.state !== 'waiting') return { ok: false, reason: 'state' };
+  customer.state = 'playing';
+  return { ok: true };
 }
 
 function search(ctx, customer, minutes) {
@@ -69,7 +79,7 @@ function move(ctx, customer, minutes) {
     return;
   }
   const pc = computerById(ctx, customer.targetComputerId);
-  if (!pc || pc.occupantId !== customer.id || pc.status === 'broken' || pc.status === 'disabled') {
+  if (!pc || pc.occupantId !== customer.id || pc.status === 'broken' || isOutOfService(pc)) {
     if (pc?.occupantId === customer.id) {
       pc.occupantId = null;
       if (pc.status === 'occupied') pc.status = 'available';
@@ -78,11 +88,30 @@ function move(ctx, customer, minutes) {
     return;
   }
   pc.status = 'occupied';
-  customer.state = 'playing';
+  customer.state = 'waiting';
+  customer.waitLeft = 48;
   customer.x = pc.seatX;
   customer.y = pc.seatY;
   customer.facing = 'up';
   ctx.bus.emit(GameEvents.CUSTOMER_SEATED, { id: customer.id, computerId: pc.id });
+}
+
+function waitForStart(ctx, customer, minutes) {
+  const pc = computerById(ctx, customer.targetComputerId);
+  if (!pc || pc.occupantId !== customer.id || pc.status === 'broken' || isOutOfService(pc)) {
+    if (pc?.occupantId === customer.id) {
+      pc.occupantId = null;
+      if (pc.status === 'occupied') pc.status = 'available';
+    }
+    beginLeave(ctx, customer, 'lost-seat');
+    return;
+  }
+  customer.waitLeft = (customer.waitLeft ?? 48) - minutes;
+  if (customer.waitLeft > 0) return;
+  customer.satisfaction = Math.max(0, customer.satisfaction - 18);
+  addReputation(ctx.state, -1);
+  ctx.bus.emit(GameEvents.NOTICE, { text: `${customer.name} bỏ về vì chưa được mở máy`, kind: 'alert' });
+  beginLeave(ctx, customer, 'ignored');
 }
 
 function play(ctx, customer, minutes) {
@@ -230,7 +259,7 @@ function findComputer(ctx, customer) {
   let best = null;
   let bestScore = 0;
   for (const pc of ctx.state.cafe.computers) {
-    if (pc.occupantId || pc.status === 'broken' || pc.status === 'disabled' || pc.status === 'maintenance') continue;
+    if (pc.occupantId || pc.status === 'broken' || pc.status === 'maintenance' || isOutOfService(pc)) continue;
     const tier = tierById(ctx.data, pc.tier);
     const price = priceOf(ctx.state, pc.tier);
     let score = 8 + (tier?.comfort ?? 0);
@@ -259,6 +288,8 @@ function rateSatisfaction(ctx, customer, pc, pressure) {
   if (pressure?.lag && isOnline(customer)) score -= 18;
   if (pressure?.overloaded) score -= 12;
   if (isDemanding(customer) && !customer.preferredTiers.includes(pc.tier)) score -= 14;
+  if (ctx.state.cafe.rooms?.toilet) score += 6;
+  if (pc.room === 'vip') score += 8;
   customer.satisfaction = Math.max(0, Math.min(100, Math.round(score)));
 }
 

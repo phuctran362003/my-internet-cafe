@@ -2,6 +2,8 @@
   {
     "id": "skip_payment",
     "category": "security",
+    "tone": "adverse",
+    "source": "security",
     "priority": "high",
     "pause": true,
     "dialog": {

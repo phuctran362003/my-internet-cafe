@@ -23,12 +23,15 @@ import {
   drawDoor,
   drawEffect,
   drawFloor,
+  drawGate,
   drawItem,
+  drawLamp,
   drawPlant,
   drawPortrait,
   drawRug,
   drawStorage,
   drawToilet,
+  drawVipFloor,
   drawWall,
   drawWindow
 } from './drawables.js';
@@ -43,7 +46,9 @@ const TILE_DRAW = {
   counter: () => drawCounter(),
   storage: () => drawStorage(),
   toilet: () => drawToilet(),
-  rug: () => drawRug()
+  rug: () => drawRug(),
+  vip: () => drawVipFloor(),
+  gate: () => drawGate()
 };
 
 function sheet(frames, columns) {
@@ -85,7 +90,8 @@ export function generateAllAssets() {
       drawCounterProp(),
       drawChair('white', 'shirtGray'),
       drawChair('pantsNavy', 'panel'),
-      drawChair('shirtGray', 'bezel')
+      drawChair('shirtGray', 'bezel'),
+      drawLamp()
     ],
     FURNITURE_FRAMES.length
   );
@@ -95,7 +101,8 @@ export function generateAllAssets() {
 
   return {
     styleId: STYLE_ID,
-    placeholder: true,
+    placeholder: false,
+    final: true,
     textures: {
       'tileset-cafe': tiles,
       characters,

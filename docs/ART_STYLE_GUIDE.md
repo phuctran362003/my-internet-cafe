@@ -1,7 +1,7 @@
 # Art Style Guide — Internet Café Tycoon
 
 **Style ID:** `cafe-pixel-v1`  
-**Trạng thái artwork:** placeholder có quy chuẩn. Chưa có final art.  
+**Trạng thái artwork:** bộ sprite cuối, xuất PNG bằng `npm run art`.  
 **Nguồn màu duy nhất:** `src/assets/palette.js`  
 **Khung hình duy nhất:** `src/assets/layout.js`
 
@@ -25,7 +25,7 @@ Không dùng emoji, hình vuông đơn sắc, hay khối ngẫu nhiên làm hìn
 | Portrait UI | 64×64 |
 | Icon / item / effect | 64×64 trong sheet, nội dung nằm giữa |
 | Outline | 1 design-pixel trên sprite, màu `ink` `#1b1420`. Tile sàn và tường không viền để ghép liền |
-| Zoom camera | số nguyên 1, 2, 3 |
+| Zoom camera | khóa ở 1, cả phòng trong một khung |
 | Filter | NEAREST, `pixelArt: true`, `roundPixels: true` |
 
 Không scale lẻ. Không xoay sprite ngoài các hướng đã vẽ.
@@ -94,24 +94,24 @@ Hàng: `basic, standard, gaming, highend, premium`
 
 Gameplay chỉ gọi texture key và chỉ số frame. Đổi PNG không được đổi thứ tự frame trong `src/assets/layout.js`.
 
-## 8. Cách thay placeholder
+## 8. Cách xuất và thay sprite
 
-1. Vẽ đúng kích thước sheet và đúng thứ tự frame.
-2. Đặt file vào đường dẫn trong `AssetRegistry`.
-3. Đổi `mode` của entry đó từ `placeholder` sang `file`.
+1. Sửa painter trong `src/assets/drawables.js`, giữ đúng thứ tự frame trong `layout.js`.
+2. Chạy `npm run art` để ghi PNG vào `public/assets`.
+3. `AssetRegistry` để `mode: 'file'`. Game nạp PNG lúc preload.
 4. Giữ `styleId` là `cafe-pixel-v1`.
 
-Placeholder và file cuối không được trộn hai phong cách. Khi một nhóm chuyển sang `file`, cả sheet của nhóm đó phải hoàn chỉnh.
+Khi một nhóm dùng file, cả sheet của nhóm đó phải hoàn chỉnh. Không trộn hai phong cách trong cùng một sheet.
 
-## 9. Việc còn lại (chưa phải final art)
+## 9. Bộ đang ship
 
-- Tileset môi trường: sàn, tường gạch, cửa mở/đóng, cửa sổ, quầy, kho, nền vệ sinh, thảm.
+- Tileset: sàn, sàn VIP, tường, cửa, cổng phòng, cửa sổ, quầy, kho, vệ sinh, thảm.
 - 7 biến thể nhân vật × 9 frame.
 - 5 tier máy × 4 trạng thái.
-- Ghế, cây, quầy rời.
+- Ghế, cây, quầy rời, đèn bàn.
 - Đồ uống, mì, thuốc, túi thức ăn.
-- Icon cảnh báo, xu, đồ ăn.
+- Icon cảnh báo, xu, đồ ăn, ổ khóa.
 - 3 portrait: người chơi, vợ, con.
-- Chưa có nhạc và SFX.
+- Nhạc nền: `public/assets/audio/music/background.mp3`.
 
 Prompt tái sử dụng nằm ở `docs/ART_PROMPTS.md`.

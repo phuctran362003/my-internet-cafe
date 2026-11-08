@@ -24,7 +24,9 @@ export function decide(ctx, choiceId, instanceId) {
     choiceLabel: choice.label,
     title: current.title,
     day: ctx.state.meta.currentDay,
-    memberId: current.context?.memberId ?? null
+    memberId: current.context?.memberId ?? null,
+    tone: current.tone ?? null,
+    source: current.source ?? null
   });
   return { ok: true, event: current };
 }

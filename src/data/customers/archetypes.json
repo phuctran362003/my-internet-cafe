@@ -58,8 +58,8 @@
       "session": [30, 70],
       "wallet": [10000, 40000],
       "foodChance": 0.1,
-      "skipChance": 0.65,
-      "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 2, "night": 3 }
+      "skipChance": 0.82,
+      "spawn": { "morning": 1, "midday": 2, "afternoon": 3, "evening": 4, "night": 4 }
     },
     {
       "id": "wealthy",

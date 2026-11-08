@@ -1,5 +1,8 @@
 import { GameEvents } from '../../core/EventBus.js';
+import { clamp } from '../../utils/MathUtils.js';
+import { isOutOfService } from '../business/computerStatus.js';
 import { addReputation } from '../economy/EconomySystem.js';
+import { relationshipKey } from '../customer/CustomerRelationshipSystem.js';
 import { treatMember } from '../family/FamilyHealth.js';
 import { buyFoodPack, payHeatNow } from '../family/FamilySurvival.js';
 import { routeTo } from '../movement/Pathfinding.js';
@@ -85,7 +88,28 @@ const CHECKS = {
   recover_health: (effect, ctx) => {
     const target = member(ctx, effect.target);
     return target && target.status !== 'deceased' ? { ok: true } : { ok: false, reason: 'member' };
-  }
+  },
+  dirty_computer: (effect, ctx) => (
+    computerOf(ctx) && finiteAmount(effect.amount) ? { ok: true } : { ok: false, reason: 'computer' }
+  ),
+  restore_computer: (effect, ctx) => (
+    computerOf(ctx) && finiteAmount(effect.amount) ? { ok: true } : { ok: false, reason: 'computer' }
+  ),
+  adjust_satisfaction: (effect, ctx) => (
+    customerOf(ctx) && Number.isFinite(effect.amount) ? { ok: true } : { ok: false, reason: 'customer' }
+  ),
+  adjust_loyalty: (effect, ctx) => (
+    customerOf(ctx) && Number.isFinite(effect.amount) ? { ok: true } : { ok: false, reason: 'customer' }
+  ),
+  add_resource: (effect, ctx) => {
+    if (!['food', 'medicine'].includes(effect.resource) || !finiteAmount(effect.amount)) {
+      return { ok: false, reason: 'resource' };
+    }
+    return ctx.state.family.resources ? { ok: true } : { ok: false, reason: 'resource' };
+  },
+  add_debt: (effect) => (finiteAmount(effect.amount) ? { ok: true } : { ok: false, reason: 'amount' }),
+  mark_skip: (_effect, ctx) => (customerOf(ctx) ? { ok: true } : { ok: false, reason: 'customer' }),
+  end_session: (_effect, ctx) => (customerOf(ctx) ? { ok: true } : { ok: false, reason: 'customer' })
 };
 
 const HANDLERS = {
@@ -128,8 +152,9 @@ const HANDLERS = {
   },
   damage_computer: (effect, ctx) => {
     const pc = computerOf(ctx);
+    if (!pc || isOutOfService(pc)) return;
     pc.condition = Math.max(0, pc.condition - effect.amount);
-    if (pc.condition <= 20 && pc.status !== 'broken' && pc.status !== 'disabled') {
+    if (pc.condition <= 20 && pc.status !== 'broken') {
       pc.status = 'broken';
       ctx.bus.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
     }
@@ -169,6 +194,50 @@ const HANDLERS = {
   },
   recover_health: (effect, ctx) => {
     treatMember(member(ctx, effect.target), ctx.data.survival);
+  },
+  dirty_computer: (effect, ctx) => {
+    const pc = computerOf(ctx);
+    if (!pc || isOutOfService(pc)) return;
+    pc.cleanliness = clamp(pc.cleanliness - effect.amount, 0, 100);
+  },
+  restore_computer: (effect, ctx) => {
+    const pc = computerOf(ctx);
+    if (!pc || isOutOfService(pc)) return;
+    pc.condition = clamp(pc.condition + effect.amount, 0, 100);
+    if (pc.status === 'broken' && pc.condition > 20) {
+      pc.status = pc.occupantId ? 'occupied' : 'available';
+    }
+  },
+  adjust_satisfaction: (effect, ctx) => {
+    const person = customerOf(ctx);
+    person.satisfaction = clamp(Math.round(person.satisfaction + effect.amount), 0, 100);
+  },
+  adjust_loyalty: (effect, ctx) => {
+    const person = customerOf(ctx);
+    const key = relationshipKey(person);
+    if (!key) return;
+    const current = ctx.state.cafe.relationships[key] ?? {
+      name: person.name,
+      archetype: person.archetype,
+      visits: 0,
+      spent: 0,
+      loyalty: 0
+    };
+    current.loyalty = clamp((current.loyalty || 0) + effect.amount, 0, 30);
+    ctx.state.cafe.relationships[key] = current;
+  },
+  add_resource: (effect, ctx) => {
+    ctx.state.family.resources[effect.resource] += effect.amount;
+  },
+  add_debt: (effect, ctx) => {
+    ctx.economy.addDebt(effect.amount, effect.label || 'Nợ phát sinh');
+  },
+  mark_skip: (_effect, ctx) => {
+    customerOf(ctx).forceSkip = true;
+  },
+  end_session: (_effect, ctx) => {
+    const person = customerOf(ctx);
+    person.plannedMinutes = Math.min(person.plannedMinutes ?? 0, person.sessionMinutes ?? 0);
   }
 };
 

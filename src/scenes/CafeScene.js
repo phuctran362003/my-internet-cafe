@@ -1,7 +1,10 @@
 import Phaser from 'phaser';
-import { TILE_ORDER, TILE_SIZE } from '../assets/layout.js';
+import { EFFECT_FRAMES, TILE_ORDER, TILE_SIZE } from '../assets/layout.js';
+import { isRoomUnlocked } from '../systems/business/RoomSystem.js';
 import { tileNameGrid } from '../systems/movement/Pathfinding.js';
 import { characterFrame, computerFrame } from '../render/frames.js';
+
+const LOCK_FRAME = EFFECT_FRAMES.indexOf('lock');
 
 export class CafeScene extends Phaser.Scene {
   constructor() {
@@ -12,42 +15,21 @@ export class CafeScene extends Phaser.Scene {
     this.session = this.game.registry.get('session');
     this.customerSprites = new Map();
     this.markers = new Map();
+    this.furnitureSprites = new Map();
+    this.locks = new Map();
     this.buildMap();
-    this.buildProps();
     this.guardSprite = this.add.sprite(0, 0, 'characters', 0).setVisible(false).setDepth(20);
     this.staffSprites = new Map();
     this.selection = this.add.graphics().setDepth(30);
+    this.sessionRings = this.add.graphics().setDepth(2001);
+    this.roomShade = this.add.graphics().setDepth(58);
     this.light = this.add.rectangle(this.mapWidth / 2, this.mapHeight / 2, this.mapWidth, this.mapHeight, 0x0b1020, 0);
     this.light.setDepth(80);
     this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
     this.cameras.main.setZoom(1);
-    const lookY = Math.min(this.mapHeight / 2, this.cameras.main.displayHeight / 2);
-    this.cameras.main.centerOn(this.mapWidth / 2, lookY);
+    this.cameras.main.centerOn(this.mapWidth / 2, this.mapHeight / 2);
     this.cameras.main.roundPixels = true;
-    this.drag = null;
-    this.input.on('pointerdown', (pointer) => {
-      this.drag = { x: pointer.x, y: pointer.y, moved: false };
-    });
-    this.input.on('pointermove', (pointer) => {
-      if (!this.drag || !pointer.isDown) return;
-      const dx = pointer.x - this.drag.x;
-      const dy = pointer.y - this.drag.y;
-      if (Math.hypot(dx, dy) > 6) {
-        this.drag.moved = true;
-        this.cameras.main.scrollX -= dx / this.cameras.main.zoom;
-        this.cameras.main.scrollY -= dy / this.cameras.main.zoom;
-        this.drag.x = pointer.x;
-        this.drag.y = pointer.y;
-      }
-    });
-    this.input.on('pointerup', (pointer) => {
-      if (this.drag && !this.drag.moved) this.handleClick(pointer);
-      this.drag = null;
-    });
-    this.input.on('wheel', (_pointer, _objects, _dx, dy) => {
-      const next = Phaser.Math.Clamp(this.cameras.main.zoom + (dy > 0 ? -1 : 1), 1, 3);
-      this.cameras.main.setZoom(next);
-    });
+    this.input.on('pointerup', (pointer) => this.handleClick(pointer));
     this.resetListener = this.session.bus.on('session:reset', () => this.rebuildDynamic());
   }
 
@@ -76,14 +58,6 @@ export class CafeScene extends Phaser.Scene {
     });
   }
 
-  buildProps() {
-    for (const prop of this.session.data.map.props) {
-      const frame = prop.type === 'plant' ? 1 : 0;
-      const sprite = this.add.sprite(prop.x * TILE_SIZE + TILE_SIZE / 2, prop.y * TILE_SIZE + TILE_SIZE / 2, 'furniture', frame);
-      sprite.setDepth(12 + prop.y);
-    }
-  }
-
   rebuildDynamic() {
     for (const sprite of this.customerSprites.values()) sprite.destroy();
     for (const marker of this.markers.values()) marker.destroy();
@@ -98,12 +72,19 @@ export class CafeScene extends Phaser.Scene {
 
   sync() {
     const state = this.session.state;
-    const door = this.session.data.map.door;
+    const map = this.session.data.map;
     const doorIndex = TILE_ORDER.indexOf(state.cafe.open ? 'door' : 'doorClosed');
-    this.ground.putTileAt(doorIndex, door.x, door.y);
+    this.ground.putTileAt(doorIndex, map.door.x, map.door.y);
+    for (const room of map.rooms ?? []) {
+      if (!room.gate) continue;
+      const open = isRoomUnlocked(state, room.id);
+      this.ground.putTileAt(TILE_ORDER.indexOf(open ? 'door' : 'gate'), room.gate.x, room.gate.y);
+    }
     for (const pc of state.cafe.computers) {
       this.computerSprites.get(pc.id)?.setFrame(computerFrame(pc));
     }
+    this.syncFurniture();
+    this.syncRooms();
     const alive = new Set(state.cafe.customers.map((customer) => customer.id));
     for (const [id, sprite] of this.customerSprites) {
       if (!alive.has(id)) {
@@ -125,6 +106,7 @@ export class CafeScene extends Phaser.Scene {
       sprite.setDepth(40 + sprite.y);
       this.syncMarker(customer, sprite);
     }
+    this.drawSessionRings();
     const guard = state.cafe.employees.find((employee) => employee.role === 'guard');
     if (guard) {
       this.guardSprite.setVisible(true);
@@ -152,26 +134,104 @@ export class CafeScene extends Phaser.Scene {
       sprite.x = employee.post.x * TILE_SIZE + TILE_SIZE / 2;
       sprite.y = employee.post.y * TILE_SIZE + TILE_SIZE / 2;
     }
+    this.cameras.main.setZoom(1);
+    this.cameras.main.centerOn(this.mapWidth / 2, this.mapHeight / 2);
     const covered = this.session.ui.screen === 'menu' || this.session.ui.screen === 'naming';
     const periodLight = covered ? 0.45 : getLight(this.session);
     this.light.setAlpha(periodLight);
     this.drawSelection();
   }
 
+  syncFurniture() {
+    const pieces = this.session.state.cafe.furniture ?? [];
+    const alive = new Set(pieces.map((piece) => piece.id));
+    for (const [id, sprite] of this.furnitureSprites) {
+      if (!alive.has(id)) {
+        sprite.destroy();
+        this.furnitureSprites.delete(id);
+      }
+    }
+    for (const piece of pieces) {
+      let sprite = this.furnitureSprites.get(piece.id);
+      if (!sprite) {
+        sprite = this.add.sprite(0, 0, 'furniture', 0);
+        this.furnitureSprites.set(piece.id, sprite);
+      }
+      const spec = this.session.data.furniture.find((item) => item.id === piece.type);
+      sprite.setFrame(spec?.frame ?? 1);
+      sprite.x = piece.x * TILE_SIZE + TILE_SIZE / 2;
+      sprite.y = piece.y * TILE_SIZE + TILE_SIZE / 2;
+      sprite.setDepth(12 + piece.y);
+    }
+  }
+
+  syncRooms() {
+    const map = this.session.data.map;
+    const state = this.session.state;
+    const locked = new Set();
+    this.roomShade.clear();
+    this.roomShade.fillStyle(0x2a3142, 0.62);
+    for (const room of map.rooms ?? []) {
+      if (isRoomUnlocked(state, room.id)) continue;
+      locked.add(room.id);
+      const area = room.area;
+      this.roomShade.fillRect(area.x * TILE_SIZE, area.y * TILE_SIZE, area.w * TILE_SIZE, area.h * TILE_SIZE);
+      if (room.gate) {
+        this.roomShade.fillRect(room.gate.x * TILE_SIZE, room.gate.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      }
+      let lock = this.locks.get(room.id);
+      if (!lock) {
+        lock = this.add.sprite(0, 0, 'effects', LOCK_FRAME).setDepth(72);
+        this.locks.set(room.id, lock);
+      }
+      lock.setVisible(true);
+      lock.x = (area.x + area.w / 2) * TILE_SIZE;
+      lock.y = (area.y + area.h / 2) * TILE_SIZE + Math.sin(this.time.now / 380) * 3;
+    }
+    for (const [id, lock] of this.locks) {
+      if (!locked.has(id)) lock.setVisible(false);
+    }
+  }
+
   syncMarker(customer, sprite) {
-    const show = customer.state === 'incident';
+    const show = customer.state === 'incident' || customer.state === 'waiting';
     let marker = this.markers.get(customer.id);
     if (!show) {
       marker?.setVisible(false);
       return;
     }
     if (!marker) {
-      marker = this.add.sprite(0, 0, 'effects', 0).setDepth(70);
+      marker = this.add.sprite(0, 0, 'effects', 0);
       this.markers.set(customer.id, marker);
     }
     marker.setVisible(true);
+    marker.setDepth(2000);
     marker.x = sprite.x;
-    marker.y = sprite.y - TILE_SIZE * 0.7;
+    marker.y = sprite.y - TILE_SIZE * 0.78 + Math.sin(this.time.now / 180) * 3;
+  }
+
+  drawSessionRings() {
+    const rings = this.sessionRings;
+    rings.clear();
+    for (const customer of this.session.state.cafe.customers) {
+      if (customer.state !== 'playing' || !(customer.plannedMinutes > 0)) continue;
+      const sprite = this.customerSprites.get(customer.id);
+      if (!sprite) continue;
+      const x = sprite.x;
+      const y = sprite.y - TILE_SIZE * 0.78;
+      const progress = Math.max(0, Math.min(1, customer.sessionMinutes / customer.plannedMinutes));
+      rings.fillStyle(0x1b1420, 0.82);
+      rings.fillCircle(x, y, 14);
+      rings.lineStyle(4, 0x6d6458, 1);
+      rings.beginPath();
+      rings.arc(x, y, 11, 0, Math.PI * 2, false);
+      rings.strokePath();
+      if (progress <= 0) continue;
+      rings.lineStyle(4, 0x2fbf5a, 1);
+      rings.beginPath();
+      rings.arc(x, y, 11, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2, false);
+      rings.strokePath();
+    }
   }
 
   drawSelection() {
@@ -189,12 +249,39 @@ export class CafeScene extends Phaser.Scene {
       if (!customer) return;
       this.selection.strokeRect(customer.x * TILE_SIZE, customer.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
+    if (selection.type === 'room') {
+      const room = this.session.data.map.rooms.find((item) => item.id === selection.id);
+      if (!room) return;
+      const area = room.area;
+      this.selection.strokeRect(area.x * TILE_SIZE + 2, area.y * TILE_SIZE + 2, area.w * TILE_SIZE - 4, area.h * TILE_SIZE - 4);
+    }
+    if (selection.type === 'furniture') {
+      const piece = this.session.state.cafe.furniture.find((item) => item.id === selection.id);
+      if (!piece) return;
+      this.selection.strokeRect(piece.x * TILE_SIZE + 2, piece.y * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+    }
   }
 
   handleClick(pointer) {
     const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
     const tileX = Math.floor(world.x / TILE_SIZE);
     const tileY = Math.floor(world.y / TILE_SIZE);
+    const names = tileNameGrid(this.session.data.map);
+    if (tileY < 0 || tileX < 0 || tileY >= names.length || tileX >= names[0].length) return;
+    const room = this.session.roomAt(tileX, tileY);
+    if (room) {
+      this.session.select({ type: 'room', id: room.id });
+      return;
+    }
+    if (this.session.ui.build) {
+      const piece = this.session.furnitureAt(tileX, tileY);
+      if (piece) {
+        this.session.select({ type: 'furniture', id: piece.id });
+        return;
+      }
+      this.session.useTile(tileX, tileY);
+      return;
+    }
     const state = this.session.state;
     const customer = nearestCustomer(state.cafe.customers, world.x, world.y);
     if (customer) {
@@ -214,7 +301,6 @@ export class CafeScene extends Phaser.Scene {
       this.session.select({ type: 'door' });
       return;
     }
-    const names = tileNameGrid(this.session.data.map);
     if (names[tileY]?.[tileX] === 'counter') {
       this.session.select({ type: 'counter' });
     }

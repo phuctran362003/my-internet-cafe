@@ -40,6 +40,32 @@ export function sliceFrame(sheet, index) {
   return frame;
 }
 
+export function portraitUrlsFromTexture(texture, ids) {
+  const urls = {};
+  const source = texture.getSourceImage();
+  ids.forEach((id, index) => {
+    const frame = texture.get(index);
+    const canvas = document.createElement('canvas');
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+    const context = canvas.getContext('2d');
+    context.imageSmoothingEnabled = false;
+    context.drawImage(
+      source,
+      frame.cutX,
+      frame.cutY,
+      frame.width,
+      frame.height,
+      0,
+      0,
+      frame.width,
+      frame.height
+    );
+    urls[id] = canvas.toDataURL();
+  });
+  return urls;
+}
+
 export function portraitDataUrls(portraits, ids) {
   const urls = {};
   ids.forEach((id, index) => {

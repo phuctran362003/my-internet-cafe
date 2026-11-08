@@ -80,6 +80,7 @@ function makeCustomer(ctx, archetype) {
     billPaid: 0,
     paid: false,
     ordered: false,
-    incidentId: null
+    incidentId: null,
+    forceSkip: false
   };
 }

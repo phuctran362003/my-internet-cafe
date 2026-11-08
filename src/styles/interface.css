@@ -1,4 +1,18 @@
 .dialog-copy { margin: 8px 0 12px; line-height: 1.45; }
+.event-kicker {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.event-kicker.adverse { background: #f3c7c2; color: #8d241c; }
+.event-kicker.beneficial { background: #cfeed8; color: #146b34; }
+.sheet.tone-adverse { border-color: #c23b32; box-shadow: 0 0 0 4px #6e2420; }
+.sheet.tone-beneficial { border-color: #2fbf5a; box-shadow: 0 0 0 4px #189447; }
+.modal .sheet { max-height: calc(100% - 28px); overflow: auto; }
 .ledger { max-height: 160px; overflow: auto; font-size: 12px; }
 .ledger div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
 .ledger .earn span:last-child { color: var(--screen); }

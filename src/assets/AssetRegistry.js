@@ -14,8 +14,8 @@ import { STYLE_ID } from './palette.js';
 
 /**
  * Central asset registry.
- * mode `placeholder` draws the shared procedural set.
- * Switch an entry to `file` and add the PNG under public/ when final art exists.
+ * mode `file` loads the shipped PNG sheet under public/.
+ * `npm run art` exports those sheets from the cafe-pixel-v1 painter.
  * Frame layout must stay identical so gameplay code does not change.
  */
 export const AssetRegistry = {
@@ -26,7 +26,7 @@ export const AssetRegistry = {
     'tileset-cafe': {
       group: 'environment',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/tilesets/cafe.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -35,7 +35,7 @@ export const AssetRegistry = {
     characters: {
       group: 'characters',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/characters/customers.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -45,7 +45,7 @@ export const AssetRegistry = {
     computers: {
       group: 'computers',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/computers/computers.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -55,7 +55,7 @@ export const AssetRegistry = {
     furniture: {
       group: 'furniture',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/furniture/furniture.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -64,7 +64,7 @@ export const AssetRegistry = {
     items: {
       group: 'items',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/items/items.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -73,7 +73,7 @@ export const AssetRegistry = {
     effects: {
       group: 'effects',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/effects/effects.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
@@ -82,7 +82,7 @@ export const AssetRegistry = {
     portraits: {
       group: 'ui',
       kind: 'spritesheet',
-      mode: 'placeholder',
+      mode: 'file',
       file: 'assets/ui/portraits.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,

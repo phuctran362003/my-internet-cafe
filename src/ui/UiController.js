@@ -10,6 +10,7 @@ const PANELS = [
   ['shop', 'Quầy'],
   ['staff', 'Nhân sự'],
   ['facility', 'Cơ sở'],
+  ['rooms', 'Phòng'],
   ['finance', 'Giá'],
   ['family', 'Gia đình'],
   ['journal', 'Nhật ký']
@@ -29,7 +30,8 @@ export function mountUi(session, root) {
   let drawerKey = '';
   let modalKey = '';
   let menuKey = '';
-    let guideKey = '';
+  let guideKey = '';
+  let dockKey = '';
   let listedMenu = false;
   const saves = { list: [] };
 
@@ -47,7 +49,11 @@ export function mountUi(session, root) {
       paintGuideBar(guidebar, view, session);
     }
     guidebar.hidden = !view.guide.showBar;
-    paintDock(dock, view, session);
+    const nextDock = dockSignature(view);
+    if (nextDock !== dockKey) {
+      dockKey = nextDock;
+      paintDock(dock, view, session);
+    }
     paintToasts(toasts, view);
     if (view.screen === 'menu' && !listedMenu) {
       listedMenu = true;
@@ -122,27 +128,59 @@ function paintGuideBar(node, view, session) {
   node.replaceChildren(open, houseStat(view, session));
 }
 
+function dockSignature(view) {
+  if (view.screen === 'menu' || view.screen === 'naming') return 'hidden';
+  return [view.userPaused, view.speed, view.open, view.dayEnded, view.music, view.build].join('|');
+}
+
 function paintDock(node, view, session) {
   node.replaceChildren();
-  if (view.screen === 'menu') return;
+  if (view.screen === 'menu' || view.screen === 'naming') return;
   node.append(
-    button(view.userPaused ? 'Tiếp tục' : 'Tạm dừng', () => session.togglePause()),
-    button('x1', () => session.setSpeed(1), view.speed === 1),
-    button('x2', () => session.setSpeed(2), view.speed === 2),
-    button('x3', () => session.setSpeed(3), view.speed === 3),
-    button(view.open ? 'Đóng cửa' : 'Mở cửa', () => session.toggleDoor()),
-    button('Kết thúc ngày', () => session.endDay(), false, view.dayEnded),
-    button('Lưu ô 1', () => session.save(1)),
-    button('Lưu ô 2', () => session.save(2)),
-    button('Lưu ô 3', () => session.save(3))
+    iconButton(view.userPaused ? 'Tiếp tục' : 'Tạm dừng', view.userPaused ? PLAY_ICON : PAUSE_ICON, () => session.togglePause()),
+    iconButton('Tốc độ x1', speedIcon(1), () => session.setSpeed(1), view.speed === 1),
+    iconButton('Tốc độ x2', speedIcon(2), () => session.setSpeed(2), view.speed === 2),
+    iconButton('Tốc độ x3', speedIcon(3), () => session.setSpeed(3), view.speed === 3),
+    iconButton(view.open ? 'Đóng cửa' : 'Mở cửa', view.open ? DOOR_OPEN_ICON : DOOR_SHUT_ICON, () => session.toggleDoor(), !view.open),
+    iconButton(view.music ? 'Tắt nhạc' : 'Bật nhạc', view.music ? MUSIC_ICON : MUSIC_OFF_ICON, () => session.toggleMusic(), view.music),
+    iconButton(view.build ? 'Xong xếp đồ' : 'Xếp đồ', CHAIR_ICON, () => session.toggleBuild(), view.build),
+    iconButton('Kết thúc ngày', MOON_ICON, () => session.endDay(), false, view.dayEnded),
+    iconButton('Lưu ô 1', saveIcon(1), () => session.save(1)),
+    iconButton('Lưu ô 2', saveIcon(2), () => session.save(2)),
+    iconButton('Lưu ô 3', saveIcon(3), () => session.save(3))
   );
+}
+
+const PAUSE_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
+const PLAY_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+const DOOR_OPEN_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 20V5h10v15" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 8l6 2v10l-6 2V8z" fill="currentColor"/><circle cx="17.5" cy="13" r="1" fill="#3a2a1c"/></svg>';
+const DOOR_SHUT_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/></svg>';
+const MOON_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 3a8 8 0 1 0 6 13 6.5 6.5 0 1 1-6-13z" fill="currentColor"/></svg>';
+const MUSIC_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="17" r="2.4" fill="currentColor"/><circle cx="17" cy="15" r="2.4" fill="currentColor"/></svg>';
+const MUSIC_OFF_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="17" r="2.4" fill="currentColor"/><circle cx="17" cy="15" r="2.4" fill="currentColor"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="2"/></svg>';
+const CHAIR_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 11V4h10v7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 11h14v4H5z" fill="currentColor"/><path d="M7 15v5M17 15v5" stroke="currentColor" stroke-width="2"/></svg>';
+
+function speedIcon(count) {
+  const width = 5;
+  const gap = 2;
+  const total = count * width + (count - 1) * gap;
+  const start = (24 - total) / 2;
+  let marks = '';
+  for (let i = 0; i < count; i += 1) {
+    const x = start + i * (width + gap);
+    marks += `<path d="M${x} 6 L${x + width} 12 L${x} 18 Z" fill="currentColor"/>`;
+  }
+  return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">${marks}</svg>`;
+}
+
+function saveIcon(slot) {
+  return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 3h11l3 3v15H5V3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3h8v6H8z" fill="currentColor"/><text x="12" y="19" text-anchor="middle" font-size="8" font-family="Be Vietnam Pro, sans-serif" font-weight="700" fill="currentColor">${slot}</text></svg>`;
 }
 
 function paintMenu(node, view, session, saves, refreshSaves) {
   const sheet = el('div', 'sheet');
   sheet.append(el('h1', '', 'Internet Café Tycoon'));
-  sheet.append(el('p', 'muted', 'Quản lý tiệm net, giữ khách trả tiền, và lo cho gia đình. Điều khiển bằng chuột.'));
-  sheet.append(el('p', 'placeholder-note', 'Hình ảnh đang là placeholder thống nhất (cafe-pixel-v1), chưa phải artwork cuối.'));
+  sheet.append(el('p', 'muted', 'Quản lý tiệm net, giữ khách trả tiền, và lo cho gia đình. Điều khiển bằng chuột. Nhạc nền bật sau lần bấm đầu tiên.'));
   const actions = el('div', 'actions');
   const start = button('Trò chơi mới', () => session.openFounding());
   start.classList.add('btn-go');
@@ -290,6 +328,7 @@ function paintDrawer(node, view, session) {
   if (view.panel === 'shop') node.append(shopPanel(view, session));
   if (view.panel === 'staff') node.append(staffPanel(view, session));
   if (view.panel === 'facility') node.append(facilityPanel(view, session));
+  if (view.panel === 'rooms') node.append(roomsPanel(view, session));
   if (view.panel === 'finance') node.append(financePanel(view, session));
   if (view.panel === 'family') node.append(familyPanel(view, session));
   if (view.panel === 'journal') node.append(journalPanel(view));
@@ -306,7 +345,11 @@ function overview(view, session) {
   box.append(row('Nợ', view.debtLabel));
   if (view.debt > 0) box.append(button('Trả 500.000đ', () => session.repay(500000)));
   if (view.nextSlot) box.append(button(`Mua máy mới (${view.newComputerCost})`, () => session.buyComputer()));
-  box.append(el('p', 'muted', 'Kéo chuột để nhìn quanh. Lăn chuột để phóng to. Click máy, khách, cửa hoặc quầy.'));
+  const locked = view.rooms.filter((room) => !room.unlocked);
+  if (locked.length) {
+    box.append(el('p', 'muted', `Đang khóa: ${locked.map((room) => `${room.name} ${room.costLabel}`).join(' · ')}. Click ô xám để xem giá.`));
+  }
+  box.append(el('p', 'muted', 'Click máy, khách, cửa, quầy hoặc phòng đang khóa.'));
   return box;
 }
 
@@ -323,7 +366,12 @@ function computerPanel(view, session) {
   box.append(el('p', 'muted', selected.specs));
   if (selected.occupantName) box.append(row('Khách', selected.occupantName));
   const actions = el('div', 'actions');
-  if (selected.status === 'disabled') actions.append(button('Mua máy này', () => session.buyComputer()));
+  if (selected.status === 'locked') {
+    const room = view.rooms.find((item) => item.id === selected.room);
+    actions.append(button(room ? `Mở ${room.name} (${room.costLabel})` : 'Mở phòng', () => {
+      if (room) session.unlockRoom(room.id);
+    }));
+  } else if (selected.status === 'disabled') actions.append(button('Mua máy này', () => session.buyComputer()));
   else {
     const tierIndex = view.tiers.findIndex((tier) => tier.id === selected.tier);
     const next = view.tiers[tierIndex + 1];
@@ -344,11 +392,20 @@ function customerPanel(view) {
     return box;
   }
   box.append(row('Loại', customer.label));
-  box.append(row('Việc đang làm', customer.state));
+  box.append(row('Việc đang làm', CUSTOMER_STATE[customer.state] || customer.state));
   box.append(row('Hài lòng', `${customer.satisfaction}`));
   if (customer.visits) box.append(row('Lần ghé', String(customer.visits)));
-  box.append(row('Đã ngồi', `${customer.sessionMinutes} / ${customer.plannedMinutes} phút`));
-  box.append(row('Hóa đơn', customer.billLabel));
+  if (customer.state === 'waiting') {
+    const request = el('p', 'request', `Muốn thuê ${customer.requestLabel}.`);
+    box.append(request);
+    box.append(row('Tiền giờ khoảng', customer.quoteLabel));
+    const start = button('Mở máy', () => session.startMachine(customer.id));
+    start.classList.add('btn-go');
+    box.append(start);
+  } else {
+    box.append(row('Đã ngồi', `${customer.sessionMinutes} / ${customer.plannedMinutes} phút`));
+    box.append(row('Hóa đơn', customer.billLabel));
+  }
   if (customer.state === 'incident') box.append(el('p', 'muted', 'Khách này đang có sự cố. Chọn cách xử lý trong hộp thoại.'));
   return box;
 }
@@ -358,7 +415,7 @@ function shopPanel(view, session) {
   box.append(el('h2', '', 'Quầy hàng'));
   for (const item of view.items) {
     const line = el('div', 'block');
-    line.append(row(item.name, `Kho ${view.stock[item.id] ?? 0}`));
+    line.append(row(item.name, `Kho ${view.stock[item.id] ?? 0}/${view.stockLimit}`));
     line.append(row('Giá nhập', formatMoney(item.cost)));
     line.append(row('Giá bán', formatMoney(item.salePrice)));
     line.append(button('Nhập 1', () => session.buyItem(item.id)));
@@ -415,6 +472,39 @@ function facilityLabel(id) {
   if (id === 'cooling') return 'Máy lạnh';
   if (id === 'network') return 'Mạng';
   return 'Điện';
+}
+
+function roomsPanel(view, session) {
+  const box = el('div');
+  box.append(el('h2', '', 'Phòng'));
+  box.append(el('p', 'muted', 'Phòng chưa mở thì xám và có ổ khóa. Click phòng trên bản đồ để xem giá.'));
+  const selectedId = view.selection?.type === 'room' ? view.selection.id : null;
+  const ordered = [...view.rooms].sort((a, b) => Number(b.id === selectedId) - Number(a.id === selectedId));
+  for (const room of ordered) {
+    const line = el('div', 'block');
+    line.append(row(room.name, room.unlocked ? 'Đã mở' : room.costLabel));
+    line.append(el('p', 'muted', room.effect));
+    if (!room.unlocked) line.append(button(`Mở ${room.name}`, () => session.unlockRoom(room.id)));
+    box.append(line);
+  }
+  box.append(el('h2', '', 'Xếp đồ'));
+  box.append(el('p', 'muted', view.build
+    ? 'Click ô sàn trống để đặt. Click món đã có để chọn, rồi click ô khác để dời.'
+    : 'Bật xếp đồ, chọn món, rồi click sàn. Món cất trong kho đặt lại không mất tiền.'));
+  box.append(button(view.build ? 'Xong' : 'Bật xếp đồ', () => session.toggleBuild(), view.build));
+  for (const item of view.catalog) {
+    const label = item.owned > 0 ? `${item.name} · sẵn ${item.owned}` : `${item.name} · ${item.costLabel}`;
+    box.append(button(label, () => session.armFurniture(item.id), view.build && view.buildType === item.id));
+  }
+  const selected = view.selection?.type === 'furniture'
+    ? view.placed.find((piece) => piece.id === view.selection.id)
+    : null;
+  if (selected) {
+    const spec = view.catalog.find((item) => item.id === selected.type);
+    box.append(el('p', 'muted', `Đang chọn ${spec?.name ?? 'món'} ở ô ${selected.x}, ${selected.y}.`));
+    box.append(button('Cất vào kho', () => session.stashFurniture()));
+  }
+  return box;
 }
 
 function financePanel(view, session) {
@@ -497,7 +587,8 @@ function journalPanel(view) {
   if (!view.journal.length) box.append(el('p', 'muted', 'Chưa có quyết định nào.'));
   for (const entry of view.journal) {
     const line = el('div', 'block');
-    line.append(row(`Ngày ${entry.day}`, entry.title || entry.id));
+    const tone = entry.tone === 'beneficial' ? 'Có lợi' : entry.tone === 'adverse' ? 'Bất lợi' : '';
+    line.append(row(`Ngày ${entry.day}${tone ? ` · ${tone}` : ''}`, entry.title || entry.id));
     line.append(el('p', 'muted', entry.choiceLabel || entry.choiceId));
     box.append(line);
   }
@@ -512,6 +603,10 @@ function paintModal(node, view, session) {
   }
   if (view.activeEvent && view.screen !== 'menu') {
     const sheet = el('div', 'sheet');
+    if (view.activeEvent.tone) sheet.classList.add(`tone-${view.activeEvent.tone}`);
+    if (view.activeEvent.kicker) {
+      sheet.append(el('p', `event-kicker ${view.activeEvent.tone}`, view.activeEvent.kicker));
+    }
     sheet.append(el('h2', '', view.activeEvent.title));
     sheet.append(el('p', 'dialog-copy', view.activeEvent.description));
     if (view.lastError) sheet.append(el('div', 'error', view.lastError));
@@ -537,6 +632,9 @@ function paintModal(node, view, session) {
     sheet.append(row('Chi phí', view.report.expenseLabel));
     sheet.append(row('Lãi', view.report.profitLabel));
     sheet.append(row('Thiếu hụt ghi nợ', view.report.shortfallLabel));
+    if (view.dayEvents.adverse || view.dayEvents.beneficial) {
+      sheet.append(row('Trong ngày', `${view.dayEvents.adverse} bất lợi · ${view.dayEvents.beneficial} có lợi`));
+    }
     const ledger = el('div', 'ledger');
     for (const line of view.report.lines.slice(-8)) {
       const tone = line.type === 'revenue' ? 'earn' : line.type === 'debt' ? 'alert' : 'spend';
@@ -609,12 +707,19 @@ function drawerSignature(view) {
     staff: view.staff.map((member) => member.hired).join(''),
     facilities: view.facilities.map((facility) => facility.level).join(''),
     stock: view.stock,
+    stockLimit: view.stockLimit,
+    rooms: view.rooms.map((room) => room.unlocked),
+    build: view.build,
+    buildType: view.buildType,
+    bag: view.bag,
+    placed: view.placed.map((piece) => [piece.id, piece.type, piece.x, piece.y]),
     prices: view.prices,
     itemPrices: view.items.map((item) => item.salePrice).join(','),
     family: [view.family.food, view.family.medicine, view.family.heatPaid, view.family.autoPayFood, view.family.autoPayHeat, view.family.alert, view.family.members.map((m) => m.status).join()],
     portraits: Object.keys(view.portraits).length,
     debt: view.debt > 0,
     journal: view.journal.map((entry) => entry.choiceId).join(),
+    guests: view.customers.map((customer) => [customer.id, customer.state, customer.sessionMinutes].join(':')).join('|'),
     error: view.lastError
   });
 }
@@ -647,6 +752,17 @@ function button(label, onClick, active = false, disabled = false) {
   const node = el('button', active ? 'active' : '', label);
   node.type = 'button';
   node.disabled = disabled;
+  node.addEventListener('click', onClick);
+  return node;
+}
+
+function iconButton(label, svg, onClick, active = false, disabled = false) {
+  const node = el('button', `dock-btn${active ? ' active' : ''}`);
+  node.type = 'button';
+  node.disabled = disabled;
+  node.title = label;
+  node.setAttribute('aria-label', label);
+  node.innerHTML = svg;
   node.addEventListener('click', onClick);
   return node;
 }

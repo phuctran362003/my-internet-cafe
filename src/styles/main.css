@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "Cafe Pixel";
+  src: url("../assets/fonts/CafePixel-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cafe Pixel";
+  src: url("../assets/fonts/CafePixel-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color: var(--paper);
   background: #241c28;
@@ -29,9 +45,16 @@ html, body, #app {
   inset: 0;
 }
 
+#game-root {
+  top: 58px;
+  right: 336px;
+  bottom: 132px;
+  left: 8px;
+}
+
 #ui-root { pointer-events: none; z-index: 2; }
 
-button, label, input, .panel, .menu, .modal, .toast, .guidebar {
+button, label, input, .panel, .menu, .modal, .guidebar {
   pointer-events: auto;
 }
 
@@ -111,8 +134,8 @@ button.stat {
   min-width: 76px;
 }
 
-.stat b { display: block; color: var(--card-ink); font-size: 14px; line-height: 1.15; }
-.stat span { color: #7a6248; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+.stat b { display: block; color: var(--card-ink); font-size: 14px; line-height: 1.35; }
+.stat span { color: #7a6248; font-size: 10px; letter-spacing: 0.04em; line-height: 1.35; text-transform: uppercase; }
 .stat.tone-money { background: #f0c14a; }
 .stat.tone-money b { color: #5a3a10; }
 .stat.tone-cafe { background: #3a2a4a; border-color: var(--gold); }
@@ -125,15 +148,28 @@ button.stat {
 .stat.tone-alert b { color: #9d2b24; }
 
 .dock {
-  left: 50%;
+  left: 12px;
+  right: 340px;
   bottom: 14px;
-  transform: translateX(calc(-50% - 150px));
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  max-width: calc(100% - 360px);
+  pointer-events: none;
 }
+
+button.dock-btn {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+}
+
+button.dock-btn svg { display: block; }
 
 .drawer {
   top: 64px;
@@ -151,9 +187,11 @@ button.stat {
 
 .drawer h2, .modal h2, .menu h1 {
   margin: 0 0 8px;
-  font-family: "Pixelify Sans", "Be Vietnam Pro", sans-serif;
+  font-family: "Cafe Pixel", "Be Vietnam Pro", sans-serif;
   font-size: 26px;
   font-weight: 700;
+  font-synthesis: none;
+  line-height: 1.35;
 }
 .muted { color: #7a6248; font-size: 13px; line-height: 1.4; }
 .row { display: flex; justify-content: space-between; gap: 8px; margin: 6px 0; font-size: 14px; }
@@ -210,10 +248,12 @@ button.stat {
   justify-content: center;
   gap: 8px;
   margin: 0 0 16px;
-  font-family: "Pixelify Sans", "Be Vietnam Pro", sans-serif;
+  font-family: "Cafe Pixel", "Be Vietnam Pro", sans-serif;
   font-size: 30px;
   font-weight: 700;
+  font-synthesis: none;
   letter-spacing: 0.04em;
+  line-height: 1.35;
 }
 
 .pixel-mark {
@@ -235,9 +275,12 @@ button.stat {
 }
 
 .field-kicker {
-  font-family: "Pixelify Sans", "Be Vietnam Pro", sans-serif;
-  font-size: 14px;
+  font-family: "Cafe Pixel", "Be Vietnam Pro", sans-serif;
+  font-size: 16px;
+  font-synthesis: none;
+  font-weight: 400;
   letter-spacing: 0.04em;
+  line-height: 1.35;
 }
 
 .field-hint { color: #9a7b58; font-size: 12px; }
@@ -273,9 +316,12 @@ button.stat {
   margin: 14px 0 4px;
   background: linear-gradient(#d6453d, var(--banner));
   color: var(--banner-ink);
-  font-family: "Pixelify Sans", "Be Vietnam Pro", sans-serif;
+  font-family: "Cafe Pixel", "Be Vietnam Pro", sans-serif;
   font-size: 28px;
-  letter-spacing: 0.08em;
+  font-synthesis: none;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
   text-align: center;
   text-transform: uppercase;
   padding: 14px 10px;
@@ -313,12 +359,14 @@ button.chip { border-radius: 999px; padding: 6px 12px; font-size: 12px; }
 .tabs button.active { background: var(--coin); color: var(--ink); }
 
 .toasts {
-  left: 8px;
-  top: 78px;
+  left: 12px;
+  top: 118px;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 280px;
+  width: min(280px, calc(100% - 360px));
+  pointer-events: none;
 }
 
 .toast {
@@ -393,6 +441,16 @@ input[type="number"] {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.request {
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  background: #fff3c4;
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 button.guide-reopen {

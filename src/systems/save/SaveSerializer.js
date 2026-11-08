@@ -1,3 +1,9 @@
+import cafeMap from '../../data/maps/cafe.json';
+import furnitureCatalog from '../../data/furniture/catalog.json';
+import { ensureComputers } from '../../state/createInitialState.js';
+import { ensureFurniture } from '../business/FurnitureSystem.js';
+import { ensureRooms } from '../business/RoomSystem.js';
+
 export const SAVE_VERSION = 1;
 
 export function serializeState(state) {
@@ -9,6 +15,7 @@ export function migrateSave(data) {
   copy.meta = copy.meta ?? {};
   if (!copy.meta.version) copy.meta.version = 1;
   copy.meta.version = SAVE_VERSION;
+  copy.meta.eventSeq = copy.meta.eventSeq ?? 0;
   copy.meta.pauseReasons = copy.meta.pauseReasons ?? { user: false, event: false, guide: false };
   copy.meta.pauseReasons.guide = false;
   copy.family = copy.family ?? {};
@@ -16,6 +23,7 @@ export function migrateSave(data) {
   copy.family.resources = copy.family.resources ?? { food: 0, medicine: 0 };
   copy.narrative = copy.narrative ?? {};
   copy.narrative.flags = copy.narrative.flags ?? {};
+  copy.narrative.cooldowns = copy.narrative.cooldowns ?? {};
   copy.narrative.queue = copy.narrative.queue ?? [];
   copy.narrative.eventHistory = copy.narrative.eventHistory ?? [];
   copy.narrative.completedEvents = copy.narrative.completedEvents ?? [];
@@ -27,6 +35,9 @@ export function migrateSave(data) {
   copy.cafe.guide.met = copy.cafe.guide.met ?? {};
   copy.cafe.itemPrices = copy.cafe.itemPrices ?? {};
   copy.cafe.employees = copy.cafe.employees ?? [];
+  ensureRooms(copy, cafeMap);
+  ensureComputers(copy, cafeMap);
+  ensureFurniture(copy, { map: cafeMap, furniture: furnitureCatalog });
   return copy;
 }
 

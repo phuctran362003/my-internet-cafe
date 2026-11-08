@@ -33,7 +33,11 @@ Kết thúc gia đình khi người chơi mất, hoặc cả vợ và con đều
 
 ## Asset
 
-Một style id `cafe-pixel-v1`. Pixel thiết kế 64×64. Mọi màu lấy từ `palette.js`. Gameplay chỉ biết texture key và chỉ số frame trong `layout.js`. Placeholder được vẽ lúc preload. Khi có PNG, đổi `mode` của entry trong `AssetRegistry` sang `file`.
+Một style id `cafe-pixel-v1`. Pixel thiết kế 64×64. Mọi màu lấy từ `palette.js`. Gameplay chỉ biết texture key và chỉ số frame trong `layout.js`. PNG trong `public/assets` là bản xuất từ painter (`npm run art`). Preload nạp các sheet đó.
+
+## Phòng, đồ đạc, nhạc
+
+`cafe.rooms` ghi phòng nào đã mở. Phòng khóa không đi được, vẽ xám và ổ khóa; click mở panel giá và trừ tiền qua `EconomySystem`. Mở VIP thì máy `locked` trong phòng đó thành `available`. `cafe.furniture` là đồ người chơi đặt trên sàn trống. Đặt món mới trừ tiền; cất vào `furnitureBag` rồi đặt lại thì không trừ. Ô đặt không được chặn đường từ cửa tới ghế máy đang dùng. Nhạc nền là file `public/assets/audio/music/background.mp3`, lặp sau lần bấm đầu, tắt bằng nút trên dock. Preference nằm ở `localStorage`, không ghi vào save.
 
 ## Lưu
 

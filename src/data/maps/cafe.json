@@ -1,26 +1,54 @@
 {
   "tileSize": 64,
   "rows": [
-    "##W##W##W##W##W##W##W#",
+    "######################",
     "#SSSS#...............#",
     "#SSSS#...............#",
     "#SSSS#...............#",
-    "####.#...............#",
+    "####G#...............#",
     "#....................#",
     "#....................#",
-    "#....................#",
-    "D....................#",
-    "#....................#",
-    "#....................#",
-    "#..CCC...............#",
-    "#..CCC...............#",
-    "#TTTT#...............#",
-    "#TTTT#...............#",
+    "#............#########",
+    "D............#VVVVVVV#",
+    "#............#VVVVVVV#",
+    "#............GVVVVVVV#",
+    "#..CCC.......#VVVVVVV#",
+    "#..CCC.......#VVVVVVV#",
+    "#TTTT#.......#VVVVVVV#",
+    "#TTTT#.......#VVVVVVV#",
     "######################"
   ],
   "door": { "x": 0, "y": 8 },
   "entrance": { "x": 1, "y": 8 },
   "exit": { "x": 0, "y": 8 },
+  "rooms": [
+    {
+      "id": "storage",
+      "name": "Kho",
+      "cost": 450000,
+      "kind": "storage",
+      "effect": "Chứa thêm nước và mì. Mỗi món lên tối đa 24 cái.",
+      "gate": { "x": 4, "y": 4 },
+      "area": { "x": 1, "y": 1, "w": 4, "h": 3 }
+    },
+    {
+      "id": "toilet",
+      "name": "Nhà vệ sinh",
+      "cost": 280000,
+      "kind": "toilet",
+      "effect": "Khách ngồi máy dễ chịu hơn.",
+      "area": { "x": 1, "y": 13, "w": 4, "h": 2 }
+    },
+    {
+      "id": "vip",
+      "name": "Phòng VIP",
+      "cost": 2200000,
+      "kind": "vip",
+      "effect": "Hai máy Premium. Khách chịu trả giá giờ cao.",
+      "gate": { "x": 13, "y": 10 },
+      "area": { "x": 14, "y": 8, "w": 7, "h": 7 }
+    }
+  ],
   "computers": [
     { "id": "pc1", "x": 7, "y": 2, "seatX": 7, "seatY": 3, "tier": "basic", "status": "available" },
     { "id": "pc2", "x": 9, "y": 2, "seatX": 9, "seatY": 3, "tier": "basic", "status": "available" },
@@ -28,10 +56,12 @@
     { "id": "pc4", "x": 13, "y": 2, "seatX": 13, "seatY": 3, "tier": "basic", "status": "available" },
     { "id": "pc5", "x": 15, "y": 2, "seatX": 15, "seatY": 3, "tier": "basic", "status": "available" },
     { "id": "pc6", "x": 17, "y": 2, "seatX": 17, "seatY": 3, "tier": "basic", "status": "disabled" },
-    { "id": "pc7", "x": 19, "y": 2, "seatX": 19, "seatY": 3, "tier": "basic", "status": "disabled" }
+    { "id": "pc7", "x": 19, "y": 2, "seatX": 19, "seatY": 3, "tier": "basic", "status": "disabled" },
+    { "id": "vip1", "x": 16, "y": 9, "seatX": 16, "seatY": 10, "tier": "premium", "status": "locked", "room": "vip" },
+    { "id": "vip2", "x": 19, "y": 9, "seatX": 19, "seatY": 10, "tier": "premium", "status": "locked", "room": "vip" }
   ],
   "props": [
-    { "type": "plant", "x": 18, "y": 10 },
-    { "type": "plant", "x": 6, "y": 10 }
+    { "type": "plant", "x": 9, "y": 6 },
+    { "type": "plant", "x": 8, "y": 11 }
   ]
 }

@@ -1,3 +1,5 @@
+import { isOutOfService } from '../business/computerStatus.js';
+
 const FLOOR_ROLES = ['cleaner', 'cashier', 'server'];
 
 export function hireStaff(ctx, role) {
@@ -27,7 +29,7 @@ export function fireStaff(ctx, role) {
 export function applyCleaner(state) {
   if (!state.cafe.employees.some((employee) => employee.role === 'cleaner')) return;
   for (const pc of state.cafe.computers) {
-    if (pc.status === 'disabled') continue;
+    if (isOutOfService(pc)) continue;
     pc.cleanliness = Math.min(100, pc.cleanliness + 18);
   }
 }

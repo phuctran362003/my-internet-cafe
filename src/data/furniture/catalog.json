@@ -1,0 +1,5 @@
+[
+  { "id": "plant", "name": "Cây cảnh", "cost": 40000, "frame": 1 },
+  { "id": "chair", "name": "Ghế gỗ", "cost": 55000, "frame": 0 },
+  { "id": "lamp", "name": "Đèn bàn", "cost": 70000, "frame": 6 }
+]

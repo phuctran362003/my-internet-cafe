@@ -9,10 +9,13 @@ import { createSimulation, continueNextDay, requestEndDay } from '../systems/sim
 import { setItemPrice, setPrice } from '../systems/business/PricingSystem.js';
 import { upgradeFacility } from '../systems/business/FacilitySystem.js';
 import { buyComputerSlot, cleanComputer, repairComputer, upgradeComputer } from '../systems/business/UpgradeSystem.js';
+import { furnitureAt as furnitureAtTile, moveFurniture, placeFurniture, stashFurniture as stashPiece } from '../systems/business/FurnitureSystem.js';
+import { lockedRoomAt, unlockRoom as unlockRoomSystem } from '../systems/business/RoomSystem.js';
 import { fireStaff, hireStaff } from '../systems/staff/StaffSystem.js';
 import { buyCafeItem } from '../systems/inventory/InventorySystem.js';
 import { buyFoodPack, buyMedicine } from '../systems/family/FamilySurvival.js';
 import { fireGuard, hireGuard } from '../systems/security/SecuritySystem.js';
+import { startMachine as openCustomerMachine } from '../systems/customer/CustomerAI.js';
 import { createSaveSystem } from '../systems/save/SaveSystem.js';
 
 export function createGameSession({ data, storage, seed = 1 }) {
@@ -26,7 +29,10 @@ export function createGameSession({ data, storage, seed = 1 }) {
     portraits: {},
     assetsReady: false,
     lastError: '',
-    guideOpen: false
+    guideOpen: false,
+    build: false,
+    buildType: 'plant',
+    music: storedMusic()
   };
   const rng = createRng(() => state.meta.rng, (value) => { state.meta.rng = value; });
   const ctx = { state, data, bus, ui, rng, storage };
@@ -39,8 +45,15 @@ export function createGameSession({ data, storage, seed = 1 }) {
   bus.on(GameEvents.PAYMENT_RECEIVED, (tx) => {
     if (tx?.amount) pushNote(ui, `+${formatMoney(tx.amount)} ${tx.description}`, 'earn');
   });
-  bus.on(GameEvents.INCIDENT_CREATED, () => pushNote(ui, 'Có khách không chịu trả tiền', 'alert'));
-  bus.on(GameEvents.FAMILY_EVENT_TRIGGERED, () => pushNote(ui, 'Gia đình cần một quyết định', 'family'));
+  bus.on(GameEvents.INCIDENT_CREATED, (payload) => pushNote(ui, payload?.title || 'Có sự cố cần xử lý', 'alert'));
+  bus.on(GameEvents.FAMILY_EVENT_TRIGGERED, (payload) => {
+    const good = payload?.tone === 'beneficial';
+    pushNote(ui, payload?.title || (good ? 'Gia đình có tin vui' : 'Gia đình cần một quyết định'), good ? 'earn' : 'family');
+  });
+  bus.on(GameEvents.NOTICE, (payload) => {
+    if (!payload?.text) return;
+    pushNote(ui, payload.text, payload.kind || 'info');
+  });
   bus.on(GameEvents.SAVE_COMPLETED, (payload) => {
     if (payload?.quiet) return;
     pushNote(ui, payload?.slot === 0 ? 'Đã tự lưu' : 'Đã lưu game', 'save');
@@ -94,6 +107,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
       ui.notes = [];
       ui.lastError = '';
       ui.guideOpen = true;
+      ui.build = false;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'new' });
       bus.emit(GameEvents.DAY_STARTED, { day: 1 });
       queueSave(0, { quiet: true });
@@ -120,6 +134,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
       ui.screen = state.meta.ending ? 'ending' : state.meta.dayEnded ? 'report' : 'playing';
       ui.panel = 'overview';
       ui.guideOpen = false;
+      ui.build = false;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'load' });
       return { ok: true };
     },
@@ -136,6 +151,60 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     toggleDoor() {
       state.cafe.open = !state.cafe.open;
+      bus.emit(GameEvents.DOOR_TOGGLED, { open: state.cafe.open });
+    },
+    toggleMusic() {
+      ui.music = ui.music === false;
+      try {
+        localStorage.setItem('cafe-music', ui.music === false ? 'off' : 'on');
+      } catch {
+        /* preference stays in this tab */
+      }
+      bus.emit(GameEvents.AUDIO_CHANGED, { music: ui.music !== false });
+    },
+    toggleBuild() {
+      ui.build = !ui.build;
+      ui.lastError = '';
+      if (ui.build) ui.panel = 'rooms';
+      else if (ui.selection?.type === 'furniture') ui.selection = null;
+    },
+    armFurniture(type) {
+      if (!data.furniture.some((item) => item.id === type)) return;
+      ui.build = true;
+      ui.buildType = type;
+      ui.panel = 'rooms';
+      if (ui.selection?.type === 'furniture') ui.selection = null;
+      ui.lastError = '';
+    },
+    roomAt(x, y) {
+      return lockedRoomAt(data.map, state, x, y);
+    },
+    furnitureAt(x, y) {
+      return furnitureAtTile(state, x, y);
+    },
+    useTile(x, y) {
+      if (!ui.build) return { ok: false, reason: 'mode' };
+      if (ui.selection?.type === 'furniture') return toastPlace(ui, moveFurniture(ctx, ui.selection.id, x, y));
+      return toastPlace(ui, placeFurniture(ctx, ui.buildType, x, y));
+    },
+    stashFurniture() {
+      if (ui.selection?.type !== 'furniture') return { ok: false, reason: 'missing' };
+      const result = stashPiece(ctx, ui.selection.id);
+      if (result.ok) {
+        ui.selection = null;
+        ui.lastError = '';
+      }
+      return result;
+    },
+    unlockRoom(id) {
+      const result = unlockRoomSystem(ctx, id);
+      if (!result.ok) {
+        ui.lastError = result.reason === 'money' ? 'Không đủ tiền mở phòng này' : 'Không mở được phòng';
+        return result;
+      }
+      ui.lastError = '';
+      pushNote(ui, `Đã mở ${result.name}`, 'earn');
+      return result;
     },
     endDay() {
       return requestEndDay(state);
@@ -150,12 +219,19 @@ export function createGameSession({ data, storage, seed = 1 }) {
     setPanel(panel) {
       ui.panel = panel;
     },
+    startMachine(customerId) {
+      const result = openCustomerMachine(ctx, customerId);
+      if (!result.ok) ui.lastError = 'Khách chưa ngồi chờ mở máy';
+      else ui.lastError = '';
+      return result;
+    },
     select(selection) {
       ui.selection = selection;
       if (selection?.type === 'computer') ui.panel = 'computer';
       if (selection?.type === 'customer') ui.panel = 'customer';
       if (selection?.type === 'counter') ui.panel = 'shop';
       if (selection?.type === 'door') ui.panel = 'overview';
+      if (selection?.type === 'room' || selection?.type === 'furniture') ui.panel = 'rooms';
     },
     setPrice(tierId, price) {
       const result = setPrice(state, data, tierId, price);
@@ -205,7 +281,12 @@ export function createGameSession({ data, storage, seed = 1 }) {
       return toastResult(ui, buyComputerSlot(ctx), 'Không mua thêm máy được');
     },
     buyItem(id) {
-      return toastResult(ui, buyCafeItem(ctx, id, 1), 'Không nhập được hàng');
+      const result = buyCafeItem(ctx, id, 1);
+      if (!result.ok && result.reason === 'full') {
+        ui.lastError = 'Kho đầy. Mở phòng kho để chứa thêm.';
+        return result;
+      }
+      return toastResult(ui, result, 'Không nhập được hàng');
     },
     buyFood() {
       return toastResult(ui, { ok: buyFoodPack(ctx) }, 'Không đủ tiền mua thức ăn');
@@ -233,6 +314,22 @@ export function createGameSession({ data, storage, seed = 1 }) {
       return result;
     }
   };
+}
+
+function storedMusic() {
+  try {
+    return localStorage.getItem('cafe-music') !== 'off';
+  } catch {
+    return true;
+  }
+}
+
+function toastPlace(ui, result) {
+  if (result?.ok) ui.lastError = '';
+  else if (result?.reason === 'money') ui.lastError = 'Không đủ tiền mua món này';
+  else if (result?.reason === 'tile') ui.lastError = 'Ô này không đặt được. Chừa lối đi tới máy và cửa.';
+  else ui.lastError = 'Không đặt được';
+  return result;
 }
 
 function cleanName(value) {

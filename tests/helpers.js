@@ -61,11 +61,18 @@ export function playUntilDayEnd(session) {
   session.closeGuide();
   for (let i = 0; i < 900 && !session.state.meta.dayEnded; i += 1) {
     const event = session.state.narrative.queue.find((item) => !item.resolved);
-    if (event) {
-      const choice = event.choices.find((item) => ['delay', 'ignore', 'skip', 'accept_loss', 'demand_payment'].includes(item.id))
-        ?? event.choices.find((item) => !item.requires);
-      session.choose(choice.id, event.instanceId);
-    }
+    if (event) resolveForTest(session, event);
     session.update(3000);
+  }
+}
+
+function resolveForTest(session, event) {
+  const preferred = ['delay', 'ignore', 'skip', 'accept_loss', 'demand_payment'];
+  const ordered = [
+    ...event.choices.filter((item) => preferred.includes(item.id)),
+    ...event.choices.filter((item) => !item.requires && !preferred.includes(item.id))
+  ];
+  for (const choice of ordered) {
+    if (session.choose(choice.id, event.instanceId).ok) return;
   }
 }

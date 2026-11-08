@@ -5,6 +5,15 @@ export function formatMoney(value) {
   return `${sign}${digits}đ`;
 }
 
+export function formatDuration(totalMinutes) {
+  const total = Math.max(0, Math.round(Number(totalMinutes) || 0));
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  if (hours && minutes) return `${hours} giờ ${minutes} phút`;
+  if (hours) return `${hours} giờ`;
+  return `${minutes} phút`;
+}
+
 export function formatClock(totalMinutes) {
   let minutes = Math.floor(totalMinutes);
   if (minutes >= 1440) minutes -= 1440;

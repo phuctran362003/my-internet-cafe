@@ -22,7 +22,7 @@ A tileset row, 10 tiles of 64x64 with no gaps: wood floor, alternate wood floor,
 ```text
 [STYLE BLOCK]
 One character row on a transparent spritesheet, 9 frames of 64x64 in this order: face down idle, face down walk, face left idle, face left walk, face right idle, face right walk, face up idle, face up walk, sitting at a computer facing down. Chibi top-down proportions, big head, small body, feet near the bottom of the cell. Same silhouette for every customer. Only hair and shirt colors change per variant.
-Variants in row order: student blue shirt black hair, gamer purple shirt pink hair, office gray shirt brown hair, regular green shirt black hair, troublemaker red shirt blond hair, wealthy gold shirt blond hair, guard gray shirt black hair.
+Variants follow CHARACTER_VARIANTS row order (multiple looks per archetype: student/gamer/office/regular/troublemaker/wealthy, then guard). Same silhouette; hair cut, hair color, and shirt color change per look.
 ```
 
 ## Computers

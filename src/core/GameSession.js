@@ -5,7 +5,7 @@ import { formatMoney } from '../utils/format.js';
 import { createInitialState } from '../state/createInitialState.js';
 import { createEconomySystem } from '../systems/economy/EconomySystem.js';
 import { createEventSystem } from '../systems/event/EventSystem.js';
-import { createSimulation, continueNextDay, requestEndDay } from '../systems/simulation/SimulationSystem.js';
+import { createSimulation, continueNextDay, finishDay, requestEndDay } from '../systems/simulation/SimulationSystem.js';
 import { setItemPrice, setPrice } from '../systems/business/PricingSystem.js';
 import { upgradeFacility } from '../systems/business/FacilitySystem.js';
 import { buyComputerSlot, cleanComputer, repairComputer, upgradeComputer } from '../systems/business/UpgradeSystem.js';
@@ -249,6 +249,14 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     endDay() {
       return requestEndDay(state);
+    },
+    confirmEndDay() {
+      if (!state.meta.pendingDayEnd || state.meta.dayEnded) return { ok: false, reason: 'state' };
+      if (ctx.events.hasBlocking()) {
+        pushNote(ui, 'Xử lý hộp thoại đang mở trước đã', 'alert');
+        return { ok: false, reason: 'event' };
+      }
+      return finishDay(ctx);
     },
     continueDay() {
       return continueNextDay(ctx);

@@ -4,6 +4,7 @@
     {
       "id": "student",
       "label": "Học sinh",
+      "looks": ["student", "studentSoft", "studentBright", "studentCool"],
       "preferredTiers": ["basic", "standard"],
       "priceSensitivity": 0.85,
       "patience": 25,
@@ -16,6 +17,7 @@
     {
       "id": "gamer",
       "label": "Game thủ",
+      "looks": ["gamer", "gamerNeon", "gamerAce", "gamerVivid"],
       "preferredTiers": ["gaming", "highend", "premium", "standard"],
       "priceSensitivity": 0.35,
       "patience": 18,
@@ -28,6 +30,7 @@
     {
       "id": "office",
       "label": "Chạy deadline",
+      "looks": ["office", "officeSharp", "officeLate"],
       "preferredTiers": ["standard", "basic"],
       "priceSensitivity": 0.35,
       "patience": 16,
@@ -40,6 +43,7 @@
     {
       "id": "regular",
       "label": "Khách quen",
+      "looks": ["regular", "regularWarm", "regularCalm"],
       "preferredTiers": ["standard", "gaming", "basic"],
       "priceSensitivity": 0.45,
       "patience": 30,
@@ -52,6 +56,7 @@
     {
       "id": "troublemaker",
       "label": "Khách gây rối",
+      "looks": ["troublemaker", "troublemakerWild"],
       "preferredTiers": ["basic", "standard"],
       "priceSensitivity": 0.2,
       "patience": 10,
@@ -64,6 +69,7 @@
     {
       "id": "wealthy",
       "label": "Khách nhiều tiền",
+      "looks": ["wealthy", "wealthyChic"],
       "preferredTiers": ["premium", "highend", "gaming"],
       "priceSensitivity": 0.15,
       "patience": 14,

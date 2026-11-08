@@ -64,8 +64,10 @@ describe('family', () => {
     evaluateFamilyEvents(ctx, before);
     evaluateFamilyEvents(ctx, before);
     expect(ctx.state.narrative.queue.map((event) => event.id)).toEqual(['child_sick']);
+    const healthBefore = child.health;
     expect(ctx.events.choose('delay', ctx.state.narrative.queue[0].instanceId).ok).toBe(true);
     expect(ctx.state.narrative.flags.child_treatment_delayed).toBe(true);
     expect(child.treatmentDelayed).toBe(true);
+    expect(child.health).toBeLessThan(healthBefore);
   });
 });

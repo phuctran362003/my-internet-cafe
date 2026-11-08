@@ -52,6 +52,14 @@ const CHECKS = {
     if (ctx.state.player.money < effect.amount) return { ok: false, reason: 'money' };
     return { ok: true };
   },
+  /** Pay what you can; leftover becomes debt so costly choices stay available when broke. */
+  charge_money: (effect) => (finiteAmount(effect.amount) ? { ok: true } : { ok: false, reason: 'amount' }),
+  hurt_member: (effect, ctx) => {
+    const target = member(ctx, effect.target);
+    if (!target) return { ok: false, reason: 'member' };
+    if (target.status === 'deceased') return { ok: true };
+    return Number.isFinite(effect.amount) ? { ok: true } : { ok: false, reason: 'amount' };
+  },
   use_medicine: (effect, ctx) => {
     const target = member(ctx, effect.target);
     if (!target || target.status === 'deceased') return { ok: false, reason: 'member' };
@@ -118,6 +126,31 @@ const HANDLERS = {
   },
   subtract_money: (effect, ctx) => {
     ctx.economy.debit(effect.amount, effect.category || 'event', effect.label || 'Sự kiện');
+  },
+  charge_money: (effect, ctx) => {
+    ctx.economy.payObligation(
+      effect.amount,
+      effect.category || 'event',
+      effect.label || 'Sự kiện'
+    );
+  },
+  hurt_member: (effect, ctx) => {
+    const target = member(ctx, effect.target);
+    if (!target || target.status === 'deceased') return;
+    const loss = Math.max(0, Math.round(effect.amount));
+    target.health = Math.max(0, target.health - loss);
+    if (effect.sickness) {
+      target.sicknessLevel = Math.max(0, (target.sicknessLevel || 0) + Math.round(effect.sickness));
+    }
+    if (effect.delayTreatment) target.treatmentDelayed = true;
+    if (target.health <= 0) {
+      target.health = 0;
+      target.status = 'deceased';
+      return;
+    }
+    const rules = ctx.data.survival.health;
+    if (target.sicknessLevel >= rules.verySickLevel) target.status = 'very_sick';
+    else if (target.sicknessLevel >= 1) target.status = 'sick';
   },
   use_medicine: (effect, ctx) => {
     if (ctx.state.family.resources.medicine > 0) ctx.state.family.resources.medicine -= 1;

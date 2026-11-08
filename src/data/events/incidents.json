@@ -16,7 +16,7 @@
         "label": "Giữ lại, đòi đủ tiền",
         "effects": [
           { "type": "pay_bill_ratio", "ratio": 1 },
-          { "type": "add_reputation", "amount": 1 },
+          { "type": "add_reputation", "amount": 2 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]
@@ -26,8 +26,8 @@
         "label": "Nhắc một câu, lấy phân nửa",
         "effects": [
           { "type": "pay_bill_ratio", "ratio": 0.5 },
-          { "type": "add_reputation", "amount": -1 },
-          { "type": "damage_computer", "amount": 12 },
+          { "type": "add_reputation", "amount": -2 },
+          { "type": "damage_computer", "amount": 20 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]
@@ -37,8 +37,8 @@
         "label": "Nhờ bảo vệ giữ lại",
         "requires": "guard",
         "effects": [
-          { "type": "pay_bill_ratio", "ratio": 0.85 },
-          { "type": "add_reputation", "amount": 2 },
+          { "type": "pay_bill_ratio", "ratio": 0.9 },
+          { "type": "add_reputation", "amount": 3 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]
@@ -49,8 +49,8 @@
         "hidden": true,
         "requires": "guard",
         "effects": [
-          { "type": "pay_bill_ratio", "ratio": 0.8 },
-          { "type": "add_reputation", "amount": 1 },
+          { "type": "pay_bill_ratio", "ratio": 0.85 },
+          { "type": "add_reputation", "amount": 2 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]
@@ -60,7 +60,8 @@
         "label": "Ghi sổ, lần sau cấm cửa",
         "effects": [
           { "type": "set_flag", "key": "customer_violation", "value": true },
-          { "type": "add_reputation", "amount": -3 },
+          { "type": "add_debt", "amount": "bill", "label": "Nợ giờ chơi {{name}} bỏ về" },
+          { "type": "add_reputation", "amount": -5 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]
@@ -69,7 +70,9 @@
         "id": "accept_loss",
         "label": "Thôi, cho qua lần này",
         "effects": [
-          { "type": "add_reputation", "amount": -2 },
+          { "type": "add_debt", "amount": "bill", "label": "Mất tiền giờ vì cho {{name}} qua" },
+          { "type": "dirty_computer", "amount": 15 },
+          { "type": "add_reputation", "amount": -6 },
           { "type": "resolve_incident" },
           { "type": "release_customer" }
         ]

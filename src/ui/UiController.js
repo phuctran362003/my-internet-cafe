@@ -35,6 +35,7 @@ const NAV_ICONS = {
 
 export function mountUi(session, root) {
   root.replaceChildren();
+  const holdUi = attachUiHold(root);
   attachButtonFeel(root);
   const menu = el('div', 'menu');
   const hud = el('div', 'hud');
@@ -60,6 +61,7 @@ export function mountUi(session, root) {
   let menuKey = '';
   let guideKey = '';
   let dockKey = '';
+  let hudKey = '';
   let listedMenu = false;
   const saves = { list: [] };
 
@@ -70,19 +72,35 @@ export function mountUi(session, root) {
 
   const paint = () => {
     const view = buildView(session);
-    paintHud(hud, view);
+    const nextHud = hudSignature(view);
+    if (nextHud !== hudKey) {
+      hudKey = nextHud;
+      paintHud(hud, view);
+    }
+    paintToasts(toasts, session);
+    const covered = view.screen === 'menu' || view.screen === 'naming';
+    menu.hidden = !covered;
+    hud.hidden = covered;
+    dock.hidden = covered;
+    drawer.hidden = covered;
+    drawer.classList.toggle('active', !covered && view.drawerOpen);
+    guidebar.hidden = !view.guide.showBar;
+    const nextModal = modalSignature(view);
+    modal.hidden = !nextModal;
+
+    // Rebuilding DOM mid-press drops the click; keep the pressed button alive.
+    if (holdUi()) return;
+
     const nextGuide = view.guide.showBar ? `on-${view.family.alert}` : '';
     if (nextGuide !== guideKey) {
       guideKey = nextGuide;
       paintGuideBar(guidebar, view, session);
     }
-    guidebar.hidden = !view.guide.showBar;
     const nextDock = dockSignature(view);
     if (nextDock !== dockKey) {
       dockKey = nextDock;
       paintDock(dock, view, session);
     }
-    paintToasts(toasts, session);
     if (view.screen === 'menu' && !listedMenu) {
       listedMenu = true;
       refreshSaves();
@@ -98,25 +116,17 @@ export function mountUi(session, root) {
       if (view.screen === 'naming') paintNaming(menu, session);
       else if (view.screen === 'menu') paintMenu(menu, view, session, saves.list, refreshSaves);
     }
-    const covered = view.screen === 'menu' || view.screen === 'naming';
-    menu.hidden = !covered;
-    hud.hidden = covered;
-    dock.hidden = covered;
 
     const nextDrawer = drawerSignature(view);
     if (nextDrawer !== drawerKey) {
       drawerKey = nextDrawer;
       paintDrawer(drawer, view, session);
     }
-    drawer.hidden = covered;
-    drawer.classList.toggle('active', !covered && view.drawerOpen);
 
-    const nextModal = modalSignature(view);
     if (nextModal !== modalKey) {
       modalKey = nextModal;
       paintModal(modal, view, session);
     }
-    modal.hidden = !nextModal;
   };
 
   const loop = () => {
@@ -163,7 +173,7 @@ function paintGuideBar(node, view, session) {
 
 function dockSignature(view) {
   if (view.screen === 'menu' || view.screen === 'naming') return 'hidden';
-  return [view.userPaused, view.speed, view.open, view.dayEnded, view.music, view.viewScale, view.build, view.drawerOpen].join('|');
+  return [view.userPaused, view.speed, view.open, view.dayEnded, view.pendingDayEnd, view.music, view.viewScale, view.build, view.drawerOpen].join('|');
 }
 
 function paintDock(node, view, session) {
@@ -182,7 +192,13 @@ function paintDock(node, view, session) {
     iconButton(`Thu nhỏ bản đồ (${Math.round(view.viewScale * 100)}%)`, ZOOM_OUT_ICON, () => session.nudgeViewScale(-1), false, view.viewScale <= 0.7),
     iconButton(`Phóng to bản đồ (${Math.round(view.viewScale * 100)}%)`, ZOOM_IN_ICON, () => session.nudgeViewScale(1), false, view.viewScale >= 1.8),
     iconButton(view.build ? 'Xong xếp đồ' : 'Xếp đồ', CHAIR_ICON, () => session.toggleBuild(), view.build),
-    iconButton('Kết thúc ngày', MOON_ICON, () => session.endDay(), false, view.dayEnded),
+    iconButton(
+      view.pendingDayEnd ? 'Chốt sổ ngày' : 'Kết thúc ngày',
+      MOON_ICON,
+      () => (view.pendingDayEnd ? session.confirmEndDay() : session.endDay()),
+      view.pendingDayEnd,
+      view.dayEnded
+    ),
     iconButton('Lưu ô 1', saveIcon(1), () => { void session.save(1); }),
     iconButton('Lưu ô 2', saveIcon(2), () => { void session.save(2); }),
     iconButton('Lưu ô 3', saveIcon(3), () => { void session.save(3); })
@@ -747,6 +763,16 @@ function paintModal(node, view, session) {
     node.append(sheet);
     return;
   }
+  if (view.pendingDayEnd && view.screen === 'playing') {
+    const sheet = el('div', 'sheet');
+    sheet.append(el('h2', '', 'Đến giờ đóng quán'));
+    sheet.append(el('p', 'dialog-copy', 'Tiệm mở từ 07:00 đến 22:00. Đã hết giờ — chốt sổ ngày này rồi sang ngày mới.'));
+    const close = button('Kết thúc ngày', () => session.confirmEndDay());
+    close.classList.add('btn-go');
+    sheet.append(close);
+    node.append(sheet);
+    return;
+  }
   if (view.screen === 'report' || view.screen === 'ending') {
     const sheet = el('div', 'sheet');
     const title = view.ending === 'family'
@@ -838,6 +864,20 @@ function paintToasts(node, session) {
   }
 }
 
+function hudSignature(view) {
+  return [
+    view.date,
+    view.clock,
+    view.period,
+    view.cafeName,
+    view.money,
+    view.reputation,
+    view.customerCount,
+    view.freeComputers,
+    view.incidents
+  ].join('|');
+}
+
 function drawerSignature(view) {
   if (view.screen === 'menu' || view.screen === 'naming') return 'hidden';
   return JSON.stringify({
@@ -861,9 +901,26 @@ function drawerSignature(view) {
     portraits: Object.keys(view.portraits).length,
     debt: view.debt > 0,
     journal: view.journal.map((entry) => entry.choiceId).join(),
-    guests: view.customers.map((customer) => [customer.id, customer.state, customer.sessionMinutes, customer.speech].join(':')).join('|'),
+    guests: guestDrawerSignature(view),
     error: view.lastError
   });
+}
+
+/** Keep drawer buttons stable; only track live guest fields when that panel needs them. */
+export function guestDrawerSignature(view) {
+  const guests = view.customers ?? [];
+  if (view.panel === 'customer' && view.selection?.type === 'customer') {
+    const selected = guests.find((customer) => customer.id === view.selection.id);
+    if (!selected) return 'missing';
+    return [
+      selected.id,
+      selected.state,
+      Math.floor(selected.sessionMinutes || 0),
+      selected.satisfaction,
+      selected.speech || ''
+    ].join(':');
+  }
+  return guests.map((customer) => `${customer.id}:${customer.state}`).join('|');
 }
 
 function modalSignature(view) {
@@ -872,6 +929,7 @@ function modalSignature(view) {
     return `guide-${view.guide.cards.map((card) => card.status).join('')}`;
   }
   if (view.activeEvent) return `event-${view.activeEvent.instanceId}-${view.lastError}`;
+  if (view.pendingDayEnd && view.screen === 'playing') return 'closing';
   if (view.screen === 'report' || view.screen === 'ending') {
     return `day-${view.screen}-${view.day}-${view.ending}-${view.report.lines.length}`;
   }
@@ -895,6 +953,23 @@ function row(label, value) {
   const node = el('div', 'row');
   node.append(el('span', '', label), el('span', '', value));
   return node;
+}
+
+function attachUiHold(root) {
+  let held = false;
+  const arm = (event) => {
+    if (event.button != null && event.button !== 0) return;
+    if (!event.target?.closest?.('button, input, select, textarea, label')) return;
+    held = true;
+  };
+  const release = () => {
+    held = false;
+  };
+  root.addEventListener('pointerdown', arm, true);
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+  window.addEventListener('blur', release);
+  return () => held;
 }
 
 function attachButtonFeel(root) {

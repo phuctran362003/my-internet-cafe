@@ -67,7 +67,7 @@ export function instantiateEvent(def, { instanceId, context = {}, vars = {} }) {
     choices: def.choices.map((choice) => ({
       ...choice,
       label: fillTemplate(choice.label, vars),
-      effects: choice.effects.map((effect) => cloneEffect(effect, vars))
+      effects: choice.effects.map((effect) => cloneEffect(effect, vars, context))
     })),
     context,
     resolved: false,
@@ -75,9 +75,12 @@ export function instantiateEvent(def, { instanceId, context = {}, vars = {} }) {
   };
 }
 
-function cloneEffect(effect, vars) {
+function cloneEffect(effect, vars, context = {}) {
   const next = { ...effect };
   if (next.amount === 'rolled') next.amount = vars.amountValue ?? 0;
+  if (next.amount === 'bill') {
+    next.amount = Math.max(0, Math.round(context.bill ?? vars.billValue ?? 0));
+  }
   if (typeof next.label === 'string') next.label = fillTemplate(next.label, vars);
   return next;
 }

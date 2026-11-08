@@ -62,7 +62,14 @@ export function playUntilDayEnd(session) {
   for (let i = 0; i < 900 && !session.state.meta.dayEnded; i += 1) {
     const event = session.state.narrative.queue.find((item) => !item.resolved);
     if (event) resolveForTest(session, event);
+    if (session.state.meta.pendingDayEnd) {
+      session.confirmEndDay();
+      break;
+    }
     session.update(3000);
+  }
+  if (session.state.meta.pendingDayEnd && !session.state.meta.dayEnded) {
+    session.confirmEndDay();
   }
 }
 

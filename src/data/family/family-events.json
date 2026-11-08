@@ -9,11 +9,26 @@
     "pause": true,
     "dialog": {
       "title": "Minh sốt rồi",
-      "description": "Nhà nhắn Minh đang sốt. Cần thuốc, để lâu dễ nặng hơn."
+      "description": "Nhà nhắn Minh đang sốt. Mua thuốc ngay thì đỡ; để lâu bệnh nặng, mất sức học hành."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "child" }] },
-      { "id": "delay", "label": "Để lát nữa tính", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+      {
+        "id": "buy_medicine",
+        "label": "Mua thuốc ngay (150.000đ)",
+        "effects": [
+          { "type": "use_medicine", "target": "child" },
+          { "type": "add_reputation", "amount": 1 }
+        ]
+      },
+      {
+        "id": "delay",
+        "label": "Để lát nữa tính",
+        "effects": [
+          { "type": "delay_treatment", "target": "child" },
+          { "type": "hurt_member", "target": "child", "amount": 15, "sickness": 1, "delayTreatment": true },
+          { "type": "set_flag", "key": "child_treatment_delayed", "value": true }
+        ]
+      }
     ]
   },
   {
@@ -26,11 +41,26 @@
     "pause": true,
     "dialog": {
       "title": "Lan ốm rồi",
-      "description": "Lan ốm, cần thuốc. Để lâu bệnh dễ nặng."
+      "description": "Lan ốm, người lạnh. Có thuốc thì đỡ nhanh; trì hoãn là cả nhà phải gánh."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "wife" }] },
-      { "id": "delay", "label": "Để lát nữa tính", "effects": [{ "type": "delay_treatment", "target": "wife" }, { "type": "set_flag", "key": "wife_treatment_delayed", "value": true }] }
+      {
+        "id": "buy_medicine",
+        "label": "Mua thuốc ngay (150.000đ)",
+        "effects": [
+          { "type": "use_medicine", "target": "wife" },
+          { "type": "add_reputation", "amount": 1 }
+        ]
+      },
+      {
+        "id": "delay",
+        "label": "Để lát nữa tính",
+        "effects": [
+          { "type": "delay_treatment", "target": "wife" },
+          { "type": "hurt_member", "target": "wife", "amount": 15, "sickness": 1, "delayTreatment": true },
+          { "type": "set_flag", "key": "wife_treatment_delayed", "value": true }
+        ]
+      }
     ]
   },
   {
@@ -43,11 +73,26 @@
     "pause": true,
     "dialog": {
       "title": "Nhà hết cơm",
-      "description": "Hôm nay không đủ suất. Không mua thêm thì cả nhà đói."
+      "description": "Hôm nay không đủ suất. Mua thêm thì đói qua; bỏ mặc là cả nhà mất sức."
     },
     "choices": [
-      { "id": "buy_food", "label": "Mua thêm đồ ăn", "effects": [{ "type": "buy_food_pack" }] },
-      { "id": "ignore", "label": "Để mai tính", "effects": [{ "type": "set_flag", "key": "family_food_shortage", "value": true }] }
+      {
+        "id": "buy_food",
+        "label": "Mua thêm đồ ăn",
+        "effects": [
+          { "type": "buy_food_pack" }
+        ]
+      },
+      {
+        "id": "ignore",
+        "label": "Để mai tính",
+        "effects": [
+          { "type": "hurt_member", "target": "child", "amount": 10 },
+          { "type": "hurt_member", "target": "wife", "amount": 8 },
+          { "type": "hurt_member", "target": "player", "amount": 6 },
+          { "type": "set_flag", "key": "family_food_shortage", "value": true }
+        ]
+      }
     ]
   },
   {
@@ -60,11 +105,26 @@
     "pause": true,
     "dialog": {
       "title": "Tiền sưởi chưa đóng",
-      "description": "Nhà lạnh, tiền sưởi hôm nay chưa trả. Đóng thì cả nhà đỡ run."
+      "description": "Nhà lạnh, tiền sưởi hôm nay chưa trả. Đóng thì cả nhà đỡ run; không đóng thì ốm thêm."
     },
     "choices": [
-      { "id": "pay_heat", "label": "Đóng tiền sưởi", "effects": [{ "type": "pay_heat" }] },
-      { "id": "skip", "label": "Chịu lạnh một đêm", "effects": [{ "type": "set_flag", "key": "family_heat_skipped", "value": true }] }
+      {
+        "id": "pay_heat",
+        "label": "Đóng tiền sưởi",
+        "effects": [
+          { "type": "pay_heat" }
+        ]
+      },
+      {
+        "id": "skip",
+        "label": "Chịu lạnh một đêm",
+        "effects": [
+          { "type": "hurt_member", "target": "child", "amount": 12, "sickness": 1 },
+          { "type": "hurt_member", "target": "wife", "amount": 10 },
+          { "type": "hurt_member", "target": "player", "amount": 8 },
+          { "type": "set_flag", "key": "family_heat_skipped", "value": true }
+        ]
+      }
     ]
   },
   {
@@ -77,11 +137,27 @@
     "pause": true,
     "dialog": {
       "title": "Minh bệnh nặng",
-      "description": "Minh nặng lắm rồi. Cần thuốc ngay, không thì nguy."
+      "description": "Minh nặng lắm rồi. Cần thuốc ngay; trì hoãn là nguy thật."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "child" }] },
-      { "id": "delay", "label": "Chưa mua được", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+      {
+        "id": "buy_medicine",
+        "label": "Mua thuốc ngay (150.000đ)",
+        "effects": [
+          { "type": "use_medicine", "target": "child" },
+          { "type": "add_reputation", "amount": 2 }
+        ]
+      },
+      {
+        "id": "delay",
+        "label": "Chưa mua được",
+        "effects": [
+          { "type": "delay_treatment", "target": "child" },
+          { "type": "hurt_member", "target": "child", "amount": 25, "sickness": 1, "delayTreatment": true },
+          { "type": "add_debt", "amount": 200000, "label": "Viện phí tạm ứng vì chậm thuốc" },
+          { "type": "set_flag", "key": "child_treatment_delayed", "value": true }
+        ]
+      }
     ]
   }
 ]

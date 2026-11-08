@@ -28,6 +28,8 @@ const HEAD_SIDE = [[2, 10], [1, 11], [0, 12], [0, 12], [0, 12], [0, 12], [0, 12]
 export function paintCharacterFrames(variant) {
   const look = {
     id: variant.id,
+    kind: variant.kind ?? variant.id,
+    style: variant.style ?? 'short',
     hair: HAIR[variant.hair] ?? RAMPS.hairK,
     shirt: SHIRT[variant.shirt] ?? RAMPS.shirtA,
     pants: PANTS[variant.pants] ?? RAMPS.pantsN
@@ -145,6 +147,7 @@ function frontHead(b, look, back, hy) {
     px(b, 22, hy + 8, SKIN[2]);
     px(b, 15, hy + 12, SKIN[2]);
     px(b, 16, hy + 12, SKIN[2]);
+    styleHair(b, look, 'back', hy);
     accessoryHead(b, look, 'back', hy);
     return;
   }
@@ -173,6 +176,7 @@ function frontHead(b, look, back, hy) {
   px(b, 11, hy + 10, SKIN[0]);
   px(b, 15, hy + 11, SKIN[3]);
   px(b, 16, hy + 11, SKIN[3]);
+  styleHair(b, look, 'front', hy);
   accessoryHead(b, look, 'front', hy);
 }
 
@@ -247,13 +251,102 @@ function sideHead(b, look, hy) {
   px(b, 17, hy + 9, SKIN[2]);
   hline(b, 13, hy + 1, 4, hair[0]);
   hline(b, 12, hy + 2, 3, hair[0]);
+  styleHair(b, look, 'side', hy);
   accessoryHead(b, look, 'side', hy);
+}
+
+/** Extra hair volume / cuts so looks read apart at 32px. */
+function styleHair(b, look, view, hy) {
+  const { hair, style } = look;
+  if (style === 'bob') {
+    if (view === 'front' || view === 'back') {
+      for (const x of [9, 22]) {
+        vline(b, x, hy + 8, 5, hair[1]);
+        px(b, x, hy + 12, hair[2]);
+      }
+      hline(b, 10, hy + 13, 12, hair[2]);
+    } else {
+      vline(b, 21, hy + 8, 5, hair[2]);
+      px(b, 21, hy + 13, hair[2]);
+      hline(b, 16, hy + 13, 5, hair[2]);
+    }
+  } else if (style === 'ponytail') {
+    if (view === 'front') {
+      rect(b, 21, hy + 4, 2, 5, hair[1]);
+      px(b, 22, hy + 9, hair[2]);
+      px(b, 23, hy + 10, hair[2]);
+    } else if (view === 'side') {
+      rect(b, 20, hy + 3, 3, 2, hair[1]);
+      vline(b, 22, hy + 5, 6, hair[2]);
+      px(b, 21, hy + 11, hair[2]);
+    } else {
+      rect(b, 14, hy + 12, 4, 3, hair[1]);
+      hline(b, 15, hy + 15, 2, hair[2]);
+    }
+  } else if (style === 'fringe') {
+    if (view === 'front') {
+      hline(b, 11, hy + 5, 10, hair[1]);
+      hline(b, 12, hy + 6, 8, hair[2]);
+      for (const x of [12, 14, 16, 18]) px(b, x, hy + 7, hair[1]);
+    } else if (view === 'side') {
+      hline(b, 9, hy + 5, 7, hair[1]);
+      hline(b, 10, hy + 6, 5, hair[2]);
+    }
+  } else if (style === 'messy' || style === 'spikes') {
+    const tips = view === 'side' ? [10, 13, 16, 19] : [10, 12, 15, 18, 20];
+    for (const x of tips) {
+      px(b, x, hy - 1, hair[1]);
+      px(b, x + (style === 'spikes' ? 0 : 1), hy - 2, hair[0]);
+    }
+  } else if (style === 'undercut') {
+    if (view === 'front') {
+      hline(b, 10, hy + 5, 12, hair[0]);
+      for (const x of [10, 21]) vline(b, x, hy + 6, 3, SKIN[1]);
+      hline(b, 12, hy + 1, 8, hair[0]);
+    } else if (view === 'side') {
+      hline(b, 9, hy + 5, 7, hair[0]);
+      vline(b, 9, hy + 6, 3, SKIN[1]);
+    }
+  } else if (style === 'bun') {
+    if (view === 'front') {
+      rect(b, 13, hy - 2, 6, 3, hair[1]);
+      hline(b, 14, hy - 2, 4, hair[0]);
+      px(b, 15, hy - 3, hair[0]);
+      px(b, 16, hy - 3, hair[0]);
+    } else if (view === 'side') {
+      rect(b, 14, hy - 2, 5, 3, hair[1]);
+      hline(b, 15, hy - 2, 3, hair[0]);
+      px(b, 16, hy - 3, hair[0]);
+    } else {
+      rect(b, 13, hy - 2, 6, 3, hair[1]);
+      hline(b, 14, hy - 2, 4, hair[0]);
+    }
+  } else if (style === 'side') {
+    if (view === 'front') {
+      hline(b, 10, hy + 5, 6, hair[1]);
+      for (const x of [10, 11, 12]) px(b, x, hy + 6, hair[1]);
+      px(b, 20, hy + 6, SKIN[1]);
+      px(b, 21, hy + 6, SKIN[1]);
+    } else if (view === 'side') {
+      hline(b, 9, hy + 5, 5, hair[1]);
+      px(b, 9, hy + 6, hair[1]);
+    }
+  } else if (style === 'slick') {
+    if (view === 'front') {
+      hline(b, 12, hy + 1, 8, hair[0]);
+      hline(b, 11, hy + 2, 10, hair[0]);
+      px(b, 15, hy, hair[0]);
+    } else if (view === 'side') {
+      hline(b, 12, hy + 1, 6, hair[0]);
+      px(b, 14, hy, hair[0]);
+    }
+  }
 }
 
 /** Per-archetype props that sit on the head. */
 function accessoryHead(b, look, view, hy) {
-  const { id, hair } = look;
-  if (id === 'gamer') {
+  const { kind, hair, style } = look;
+  if (kind === 'gamer') {
     const band = RAMPS.steel;
     if (view === 'side') {
       hline(b, 13, hy - 1, 6, band[6]);
@@ -269,8 +362,8 @@ function accessoryHead(b, look, view, hy) {
     rect(b, 22, hy + 7, 2, 4, band[6]);
     px(b, 8, hy + 8, RAMPS.cyan[1]);
     px(b, 23, hy + 8, RAMPS.cyan[1]);
-  } else if (id === 'regular' || id === 'guard') {
-    const cap = id === 'guard' ? RAMPS.navy : RAMPS.red;
+  } else if (kind === 'guard' || look.id === 'regular') {
+    const cap = kind === 'guard' ? RAMPS.navy : RAMPS.red;
     const capRows = 5;
     for (let row = 0; row < capRows; row += 1) {
       const [l, r] = (view === 'side' ? HEAD_SIDE : HEAD_FRONT)[row];
@@ -280,28 +373,33 @@ function accessoryHead(b, look, view, hy) {
     if (view === 'front') {
       hline(b, 9, hy + 4, 14, cap[3]);
       hline(b, 10, hy + 5, 12, cap[4]);
-      if (id === 'guard') px(b, 15, hy + 1, RAMPS.gold[1]);
+      if (kind === 'guard') px(b, 15, hy + 1, RAMPS.gold[1]);
       else px(b, 15, hy + 1, RAMPS.cream[0]);
     } else if (view === 'side') {
       hline(b, 6, hy + 4, 9, cap[3]);
-      px(b, 13, hy + 1, id === 'guard' ? RAMPS.gold[1] : RAMPS.cream[0]);
+      px(b, 13, hy + 1, kind === 'guard' ? RAMPS.gold[1] : RAMPS.cream[0]);
     } else {
       hline(b, 9, hy + 4, 14, cap[3]);
-      if (id === 'regular') {
+      if (look.id === 'regular') {
         px(b, 15, hy + 3, hair[1]);
         px(b, 16, hy + 3, hair[1]);
       }
     }
-  } else if (id === 'troublemaker') {
-    const spikes = view === 'side' ? [10, 13, 16, 19] : [10, 13, 16, 19];
-    for (const x of spikes) {
-      px(b, x, hy - 1, hair[1]);
-      px(b, x + 1, hy - 1, hair[1]);
-      px(b, x + 1, hy - 2, hair[0]);
+  } else if (kind === 'regular' && view === 'front') {
+    px(b, 15, hy + 1, RAMPS.cream[0]);
+    px(b, 16, hy + 1, RAMPS.cream[1]);
+  } else if (kind === 'troublemaker') {
+    if (style !== 'messy' && style !== 'spikes') {
+      const spikes = view === 'side' ? [10, 13, 16, 19] : [10, 13, 16, 19];
+      for (const x of spikes) {
+        px(b, x, hy - 1, hair[1]);
+        px(b, x + 1, hy - 1, hair[1]);
+        px(b, x + 1, hy - 2, hair[0]);
+      }
     }
     if (view === 'front') px(b, 22, hy + 10, RAMPS.gold[1]);
     if (view === 'side') px(b, 17, hy + 10, RAMPS.gold[1]);
-  } else if (id === 'wealthy') {
+  } else if (kind === 'wealthy') {
     if (view === 'front') {
       rect(b, 11, hy + 8, 4, 2, C.ink);
       rect(b, 17, hy + 8, 4, 2, C.ink);
@@ -313,17 +411,20 @@ function accessoryHead(b, look, view, hy) {
       px(b, 10, hy + 8, RAMPS.steel[3]);
       hline(b, 13, hy + 8, 3, RAMPS.gold[2]);
     }
-  } else if (id === 'office' && view === 'front') {
+  } else if (kind === 'office' && view === 'front') {
     px(b, 12, hy + 5, hair[0]);
     px(b, 13, hy + 5, hair[0]);
+  } else if (kind === 'student' && view === 'front' && style === 'bob') {
+    px(b, 11, hy + 9, RAMPS.pink[1]);
+    px(b, 20, hy + 9, RAMPS.pink[1]);
   }
 }
 
 /** Per-archetype props on the body. */
 function accessoryBody(b, look, view, bob) {
-  const { id } = look;
+  const { kind } = look;
   const ty = 16 + bob;
-  if (id === 'student') {
+  if (kind === 'student') {
     const pack = RAMPS.red;
     if (view === 'front') {
       vline(b, 12, ty, 5, pack[3]);
@@ -337,19 +438,24 @@ function accessoryBody(b, look, view, bob) {
       rect(b, 19, ty + 1, 3, 6, pack[2]);
       vline(b, 21, ty + 1, 6, pack[3]);
       px(b, 19, ty + 1, pack[1]);
+    } else if (view === 'seated') {
+      vline(b, 12, 16, 5, pack[3]);
+      vline(b, 19, 16, 5, pack[3]);
     }
-  } else if (id === 'office' && view === 'front') {
-    hline(b, 13, ty, 6, RAMPS.cream[1]);
-    px(b, 15, ty, RAMPS.red[3]);
-    px(b, 16, ty, RAMPS.red[3]);
-    vline(b, 15, ty + 1, 5, RAMPS.red[2]);
-    vline(b, 16, ty + 1, 5, RAMPS.red[3]);
-  } else if (id === 'wealthy' && view === 'front') {
-    px(b, 14, ty + 1, RAMPS.gold[0]);
-    px(b, 15, ty + 2, RAMPS.gold[1]);
-    px(b, 16, ty + 2, RAMPS.gold[1]);
-    px(b, 17, ty + 1, RAMPS.gold[0]);
-  } else if (id === 'guard' && view !== 'seated') {
+  } else if (kind === 'office' && (view === 'front' || view === 'seated')) {
+    const y = view === 'seated' ? 16 : ty;
+    hline(b, 13, y, 6, RAMPS.cream[1]);
+    px(b, 15, y, RAMPS.red[3]);
+    px(b, 16, y, RAMPS.red[3]);
+    vline(b, 15, y + 1, 5, RAMPS.red[2]);
+    vline(b, 16, y + 1, 5, RAMPS.red[3]);
+  } else if (kind === 'wealthy' && (view === 'front' || view === 'seated')) {
+    const y = view === 'seated' ? 16 : ty;
+    px(b, 14, y + 1, RAMPS.gold[0]);
+    px(b, 15, y + 2, RAMPS.gold[1]);
+    px(b, 16, y + 2, RAMPS.gold[1]);
+    px(b, 17, y + 1, RAMPS.gold[0]);
+  } else if (kind === 'guard' && view !== 'seated') {
     const belt = RAMPS.steel[7];
     if (view === 'side') hline(b, 12, ty + 7, 8, belt);
     else hline(b, 10, ty + 7, 12, belt);
@@ -359,13 +465,18 @@ function accessoryBody(b, look, view, bob) {
       px(b, 15, ty + 7, RAMPS.gold[2]);
       px(b, 16, ty + 7, RAMPS.gold[2]);
     }
-  } else if (id === 'troublemaker' && view === 'front') {
-    rect(b, 14, ty, 4, 5, RAMPS.steel[6]);
-    px(b, 15, ty, SKIN[1]);
-    px(b, 16, ty, SKIN[2]);
-  } else if (id === 'gamer' && view === 'front') {
-    px(b, 13, ty + 3, RAMPS.cyan[1]);
-    px(b, 14, ty + 3, RAMPS.pink[1]);
-    px(b, 13, ty + 4, RAMPS.violet[1]);
+  } else if (kind === 'troublemaker' && (view === 'front' || view === 'seated')) {
+    const y = view === 'seated' ? 16 : ty;
+    rect(b, 14, y, 4, 5, RAMPS.steel[6]);
+    px(b, 15, y, SKIN[1]);
+    px(b, 16, y, SKIN[2]);
+  } else if (kind === 'gamer' && (view === 'front' || view === 'seated')) {
+    const y = view === 'seated' ? 16 : ty;
+    px(b, 13, y + 3, RAMPS.cyan[1]);
+    px(b, 14, y + 3, RAMPS.pink[1]);
+    px(b, 13, y + 4, RAMPS.violet[1]);
+  } else if (kind === 'regular' && view === 'front') {
+    px(b, 14, ty + 2, RAMPS.cream[0]);
+    px(b, 17, ty + 2, RAMPS.cream[0]);
   }
 }

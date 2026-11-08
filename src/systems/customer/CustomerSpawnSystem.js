@@ -1,4 +1,5 @@
 import { GameEvents } from '../../core/EventBus.js';
+import { looksForKind } from '../../assets/layout.js';
 import { getPeriod } from '../simulation/TimeSystem.js';
 import { priceOf, tierById } from '../business/PricingSystem.js';
 import { markMet } from '../guide/GuideSystem.js';
@@ -55,10 +56,12 @@ function makeCustomer(ctx, archetype) {
   ctx.state.meta.customerSeq += 1;
   const baseName = pick(ctx.rng, ctx.data.customers.names);
   const used = ctx.state.cafe.customers.some((customer) => customer.name === baseName);
+  const lookPool = archetype.looks?.length ? archetype.looks : looksForKind(archetype.id);
   return {
     id: `cus_${ctx.state.meta.currentDay}_${ctx.state.meta.customerSeq}`,
     name: used ? `${baseName} ${ctx.state.meta.customerSeq}` : baseName,
     archetype: archetype.id,
+    look: pick(ctx.rng, lookPool.length ? lookPool : [archetype.id]),
     label: archetype.label,
     preferredTiers: archetype.preferredTiers,
     priceSensitivity: archetype.priceSensitivity,

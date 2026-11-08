@@ -3,7 +3,8 @@ import { CHARACTER_VARIANTS, COMPUTER_STATES, COMPUTER_TIERS } from '../assets/l
 const DIR_COL = { down: 0, left: 2, right: 4, up: 6 };
 
 export function characterFrame(customer, now) {
-  const row = Math.max(0, CHARACTER_VARIANTS.findIndex((variant) => variant.id === customer.archetype));
+  const lookId = customer.look || customer.archetype;
+  const row = Math.max(0, CHARACTER_VARIANTS.findIndex((variant) => variant.id === lookId));
   let col = DIR_COL[customer.facing] ?? 0;
   const moving = customer.state === 'moving' || customer.state === 'leaving';
   if (customer.state === 'playing' || customer.state === 'payment' || customer.state === 'waiting') col = 8;

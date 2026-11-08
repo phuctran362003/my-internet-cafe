@@ -75,7 +75,7 @@ Sheet nhân vật, cột cố định:
 
 `downIdle, downWalk, leftIdle, leftWalk, rightIdle, rightWalk, upIdle, upWalk, sit`
 
-Hàng: `student, gamer, office, regular, troublemaker, wealthy, guard`
+Hàng: các look trong `CHARACTER_VARIANTS` (`student`…`studentCool`, `gamer`…`gamerVivid`, `office`…, `regular`…, `troublemaker`…, `wealthy`…, `guard`). Mỗi archetype có nhiều look; gameplay chọn `customer.look`.
 
 Sheet máy tính, cột: `available, occupied, broken, maintenance`  
 Hàng: `basic, standard, gaming, highend, premium`

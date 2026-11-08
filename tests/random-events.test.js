@@ -42,8 +42,20 @@ describe('random events', () => {
     const incident = openRandomEvent(ctx, flicker);
     const pc = ctx.state.cafe.computers.find((item) => item.id === incident.context.computerId);
     const condition = pc.condition;
+    const rep = ctx.state.cafe.reputation;
     expect(ctx.events.choose('ignore', incident.instanceId).ok).toBe(true);
     expect(pc.condition).toBeLessThan(condition);
+    expect(ctx.state.cafe.reputation).toBeLessThan(rep);
+  });
+
+  it('makes ignoring rent knock create real debt', () => {
+    const ctx = bareContext(() => 0.5);
+    const def = ctx.data.randomEvents.find((item) => item.id === 'rent_knock');
+    stage(ctx, def);
+    const beforeDebt = ctx.state.economy.debt;
+    const event = openRandomEvent(ctx, def);
+    expect(ctx.events.choose('ignore', event.instanceId).ok).toBe(true);
+    expect(ctx.state.economy.debt).toBeGreaterThan(beforeDebt + 100000);
   });
 
   it('turns a trusted fake transfer into a skipped bill', () => {

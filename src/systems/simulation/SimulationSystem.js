@@ -20,7 +20,7 @@ export function createSimulation(ctx) {
       const state = ctx.state;
       if (!state.meta.started || state.meta.dayEnded) return;
       if (state.meta.pendingDayEnd) {
-        if (!ctx.events.hasBlocking()) finishDay(ctx);
+        if (state.cafe.open) state.cafe.open = false;
         return;
       }
       if (isSimulationPaused(state)) {
@@ -54,7 +54,7 @@ export function createSimulation(ctx) {
         remaining -= slice;
         steps += 1;
       }
-      if (state.meta.pendingDayEnd && !ctx.events.hasBlocking()) finishDay(ctx);
+      if (state.meta.pendingDayEnd && state.cafe.open) state.cafe.open = false;
     }
   };
 }

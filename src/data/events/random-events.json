@@ -14,11 +14,11 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Gọi thợ xử lý (70.000đ)",
+        "label": "Gọi thợ xử lý (175.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 70000,
+            "type": "charge_money",
+            "amount": 175000,
             "category": "repair",
             "label": "Thợ điện xử lý sập nguồn"
           },
@@ -28,7 +28,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -38,15 +38,15 @@
         "effects": [
           {
             "type": "damage_computer",
-            "amount": 30
+            "amount": 45
           },
           {
             "type": "dirty_computer",
-            "amount": 18
+            "amount": 25
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -6
           }
         ]
       }
@@ -71,11 +71,11 @@
     "choices": [
       {
         "id": "calm",
-        "label": "Mời ly nước, nhắc nhỏ (15.000đ)",
+        "label": "Mời ly nước, nhắc nhỏ (40.000đ)",
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 15000,
+            "amount": 40000,
             "category": "event",
             "label": "Nước mời {{name}}"
           },
@@ -85,7 +85,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -99,7 +99,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -3
           }
         ]
       },
@@ -109,11 +109,17 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -6
+            "amount": -18
+          },
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "release_customer"
           },
           {
             "type": "add_reputation",
-            "amount": -3
+            "amount": -7
           }
         ]
       }
@@ -139,11 +145,11 @@
     "choices": [
       {
         "id": "separate",
-        "label": "Xông vào can, đền đồ vỡ (30.000đ)",
+        "label": "Xông vào can, đền đồ vỡ (75.000đ)",
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 30000,
+            "amount": 75000,
             "category": "event",
             "label": "Đền đồ vỡ sau vụ xô xát"
           },
@@ -153,7 +159,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -168,7 +174,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 3
+            "amount": 5
           }
         ]
       },
@@ -178,11 +184,21 @@
         "effects": [
           {
             "type": "damage_computer",
-            "amount": 22
+            "amount": 40
+          },
+          {
+            "type": "dirty_computer",
+            "amount": 20
+          },
+          {
+            "type": "charge_money",
+            "amount": 150000,
+            "category": "repair",
+            "label": "Đền ghế và màn hình sau ẩu đả"
           },
           {
             "type": "add_reputation",
-            "amount": -6
+            "amount": -10
           }
         ]
       }
@@ -208,11 +224,11 @@
     "choices": [
       {
         "id": "bill",
-        "label": "Bắt đền phím (55.000đ)",
+        "label": "Bắt đền phím (140.000đ)",
         "effects": [
           {
             "type": "add_money",
-            "amount": 55000,
+            "amount": 140000,
             "category": "repair",
             "label": "{{name}} đền phím"
           },
@@ -228,11 +244,11 @@
       },
       {
         "id": "absorb",
-        "label": "Tiệm chịu, thay phím (45.000đ)",
+        "label": "Tiệm chịu, thay phím (115.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 45000,
+            "type": "charge_money",
+            "amount": 115000,
             "category": "repair",
             "label": "Thay phím cho máy khách đập"
           },
@@ -252,11 +268,17 @@
         "effects": [
           {
             "type": "damage_computer",
-            "amount": 20
+            "amount": 50
+          },
+          {
+            "type": "charge_money",
+            "amount": 200000,
+            "category": "repair",
+            "label": "Máy bị đập hỏng phải sửa"
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -6
           }
         ]
       }
@@ -277,11 +299,11 @@
     "choices": [
       {
         "id": "discount",
-        "label": "Nhường chỗ, bù 20.000đ",
+        "label": "Nhường chỗ, bù 50.000đ",
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 20000,
+            "amount": 50000,
             "category": "event",
             "label": "Bù giờ vì tranh chỗ"
           },
@@ -291,7 +313,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -305,7 +327,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -3
           }
         ]
       },
@@ -315,11 +337,17 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -10
+            "amount": -16
+          },
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "release_customer"
           },
           {
             "type": "add_reputation",
-            "amount": -3
+            "amount": -6
           }
         ]
       }
@@ -335,8 +363,8 @@
     "needsCustomers": 1,
     "minSession": 30,
     "amountRange": [
-      15000,
-      40000
+      40000,
+      100000
     ],
     "dialog": {
       "title": "Ngồi quá giờ rồi",
@@ -372,7 +400,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -382,11 +410,15 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": 8
+            "amount": 6
+          },
+          {
+            "type": "dirty_computer",
+            "amount": 12
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": -1
           }
         ]
       }
@@ -406,8 +438,8 @@
       "troublemaker"
     ],
     "amountRange": [
-      20000,
-      60000
+      50000,
+      150000
     ],
     "dialog": {
       "title": "Khách bảo đã chuyển khoản",
@@ -430,7 +462,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -448,7 +480,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -3
           }
         ]
       },
@@ -457,13 +489,16 @@
         "label": "Thôi, xóa cho xong chuyện",
         "effects": [
           {
+            "type": "mark_skip"
+          },
+          {
             "type": "set_flag",
-            "key": "fake_transfer_waived",
+            "key": "trusted_fake_transfer",
             "value": true
           },
           {
             "type": "add_reputation",
-            "amount": -3
+            "amount": -5
           }
         ]
       }
@@ -488,11 +523,11 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Bảo trả tiền mì (18.000đ)",
+        "label": "Bảo trả tiền mì (45.000đ)",
         "effects": [
           {
             "type": "add_money",
-            "amount": 18000,
+            "amount": 45000,
             "category": "food",
             "label": "{{name}} trả mì"
           },
@@ -515,7 +550,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -3
           }
         ]
       },
@@ -524,13 +559,14 @@
         "label": "Thôi, coi như mời",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "snack_theft",
-            "value": true
+            "type": "charge_money",
+            "amount": 80000,
+            "category": "event",
+            "label": "Hàng quầy bị lấy mất"
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -5
           }
         ]
       }
@@ -552,11 +588,11 @@
     "choices": [
       {
         "id": "cleanup",
-        "label": "Thuê người dọn máy (80.000đ)",
+        "label": "Thuê người dọn máy (200.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 80000,
+            "type": "charge_money",
+            "amount": 200000,
             "category": "repair",
             "label": "Dọn máy dính popup"
           },
@@ -579,7 +615,7 @@
           },
           {
             "type": "damage_computer",
-            "amount": 16
+            "amount": 22
           },
           {
             "type": "adjust_satisfaction",
@@ -587,7 +623,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -3
           }
         ]
       },
@@ -597,15 +633,18 @@
         "effects": [
           {
             "type": "damage_computer",
-            "amount": 28
+            "amount": 55
           },
           {
             "type": "dirty_computer",
-            "amount": 20
+            "amount": 30
+          },
+          {
+            "type": "end_session"
           },
           {
             "type": "add_reputation",
-            "amount": -3
+            "amount": -7
           }
         ]
       }
@@ -629,17 +668,17 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Đóng cho xong (120.000đ)",
+        "label": "Đóng cho xong (300.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 120000,
+            "type": "charge_money",
+            "amount": 300000,
             "category": "fine",
-            "label": "Lệ phí kiểm tra cửa hàng"
+            "label": "Lệ phí và phạt kiểm tra"
           },
           {
             "type": "add_reputation",
-            "amount": 3
+            "amount": 5
           },
           {
             "type": "set_flag",
@@ -653,8 +692,13 @@
         "label": "Cãi, quán làm đúng luật",
         "effects": [
           {
+            "type": "add_debt",
+            "amount": 250000,
+            "label": "Phạt sau khi cãi kiểm tra"
+          },
+          {
             "type": "add_reputation",
-            "amount": -6
+            "amount": -12
           },
           {
             "type": "set_flag",
@@ -668,8 +712,13 @@
         "label": "Hẹn hôm khác được không",
         "effects": [
           {
+            "type": "add_debt",
+            "amount": 350000,
+            "label": "Phạt chậm kiểm tra cửa hàng"
+          },
+          {
             "type": "add_reputation",
-            "amount": -4
+            "amount": -10
           },
           {
             "type": "set_flag",
@@ -694,11 +743,11 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Đưa 100.000đ cho xong",
+        "label": "Đưa 250.000đ cho xong",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 100000,
+            "type": "charge_money",
+            "amount": 250000,
             "category": "rent",
             "label": "Ứng tiền thuê giữa ngày"
           }
@@ -706,11 +755,11 @@
       },
       {
         "id": "borrow",
-        "label": "Khất, ghi nợ 120.000đ",
+        "label": "Khất, ghi nợ 340.000đ",
         "effects": [
           {
             "type": "add_debt",
-            "amount": 120000,
+            "amount": 340000,
             "label": "Khất tiền thuê với chủ nhà"
           },
           {
@@ -725,8 +774,13 @@
         "label": "Hẹn tối tính sau",
         "effects": [
           {
+            "type": "add_debt",
+            "amount": 280000,
+            "label": "Chủ nhà ghi nợ tiền thuê"
+          },
+          {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -5
           },
           {
             "type": "set_flag",
@@ -752,11 +806,11 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Đóng học phí (90.000đ)",
+        "label": "Đóng học phí (220.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 90000,
+            "type": "charge_money",
+            "amount": 220000,
             "category": "family",
             "label": "Học phí của {{child}}"
           },
@@ -769,11 +823,11 @@
       },
       {
         "id": "borrow",
-        "label": "Vay đóng, ghi nợ 110.000đ",
+        "label": "Vay đóng, ghi nợ 295.000đ",
         "effects": [
           {
             "type": "add_debt",
-            "amount": 110000,
+            "amount": 295000,
             "label": "Nợ vay đóng học phí"
           },
           {
@@ -788,13 +842,25 @@
         "label": "Bảo cô chờ thêm",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "child_school_unpaid",
-            "value": true
+            "type": "hurt_member",
+            "target": "child",
+            "amount": 12,
+            "sickness": 1,
+            "delayTreatment": true
+          },
+          {
+            "type": "add_debt",
+            "amount": 220000,
+            "label": "Học phí trễ hạn"
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -4
+          },
+          {
+            "type": "set_flag",
+            "key": "child_school_unpaid",
+            "value": true
           }
         ]
       }
@@ -815,11 +881,11 @@
     "choices": [
       {
         "id": "pay",
-        "label": "Trả 70.000đ, lấy thuốc luôn",
+        "label": "Trả 180.000đ, lấy thuốc luôn",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 70000,
+            "type": "charge_money",
+            "amount": 180000,
             "category": "medicine",
             "label": "Khám và thuốc cho {{wife}}"
           },
@@ -832,13 +898,19 @@
       },
       {
         "id": "visit",
-        "label": "Chỉ trả công khám (40.000đ)",
+        "label": "Chỉ trả công khám (100.000đ)",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 40000,
+            "type": "charge_money",
+            "amount": 100000,
             "category": "medicine",
             "label": "Công khám của {{wife}}"
+          },
+          {
+            "type": "hurt_member",
+            "target": "wife",
+            "amount": 8,
+            "delayTreatment": true
           }
         ]
       },
@@ -846,6 +918,18 @@
         "id": "ignore",
         "label": "Để lát tính",
         "effects": [
+          {
+            "type": "hurt_member",
+            "target": "wife",
+            "amount": 18,
+            "sickness": 1,
+            "delayTreatment": true
+          },
+          {
+            "type": "add_debt",
+            "amount": 180000,
+            "label": "Công khám và thuốc chưa trả"
+          },
           {
             "type": "set_flag",
             "key": "clinic_skipped",
@@ -869,20 +953,20 @@
       "troublemaker"
     ],
     "periods": [
-      "night"
+      "evening"
     ],
     "dialog": {
-      "title": "Đêm rồi còn hét",
+      "title": "Tối rồi còn hét",
       "description": "{{name}} đeo tai nghe, mic thì quên tắt. Hàng xóm gõ kính. Bàn phím trước mặt rung vì đập tay."
     },
     "choices": [
       {
         "id": "quiet",
-        "label": "Mời nước, xin nhỏ tiếng (10.000đ)",
+        "label": "Mời nước, xin nhỏ tiếng (25.000đ)",
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 10000,
+            "amount": 25000,
             "category": "event",
             "label": "Nước mời khách đêm"
           },
@@ -892,7 +976,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -909,7 +993,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -4
           }
         ]
       },
@@ -924,7 +1008,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -934,11 +1018,17 @@
         "effects": [
           {
             "type": "damage_computer",
-            "amount": 12
+            "amount": 28
+          },
+          {
+            "type": "charge_money",
+            "amount": 120000,
+            "category": "fine",
+            "label": "Đền hàng xóm vì ồn đêm"
           },
           {
             "type": "add_reputation",
-            "amount": -4
+            "amount": -8
           }
         ]
       }
@@ -954,8 +1044,8 @@
     "needsCustomers": 1,
     "needsRole": "cashier",
     "amountRange": [
-      10000,
-      40000
+      25000,
+      100000
     ],
     "dialog": {
       "title": "Thu ngân tính nhầm hóa đơn",
@@ -982,7 +1072,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 3
+            "amount": 5
           }
         ]
       },
@@ -1002,7 +1092,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -4
+            "amount": -7
           }
         ]
       },
@@ -1012,11 +1102,17 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -6
+            "amount": -14
+          },
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "release_customer"
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -6
           }
         ]
       }
@@ -1035,8 +1131,8 @@
       "gamer"
     ],
     "amountRange": [
-      30000,
-      90000
+      75000,
+      225000
     ],
     "dialog": {
       "title": "Khách để tiền boa",
@@ -1073,7 +1169,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 3
+            "amount": 5
           }
         ]
       },
@@ -1082,13 +1178,12 @@
         "label": "Lắc đầu, không nhận",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "tip_refused",
-            "value": true
+            "type": "adjust_loyalty",
+            "amount": 1
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 2
           }
         ]
       }
@@ -1121,7 +1216,7 @@
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 20000,
+            "amount": 50000,
             "category": "event",
             "label": "Nước đãi streamer"
           },
@@ -1131,23 +1226,23 @@
           },
           {
             "type": "add_reputation",
-            "amount": 8
+            "amount": 13
           }
         ]
       },
       {
         "id": "charge",
-        "label": "Vẫn tính giờ (60.000đ)",
+        "label": "Vẫn tính giờ (150.000đ)",
         "effects": [
           {
             "type": "add_money",
-            "amount": 60000,
+            "amount": 150000,
             "category": "computer_usage",
             "label": "Streamer trả giờ"
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -1157,11 +1252,17 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -4
+            "amount": -12
+          },
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "release_customer"
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -6
           }
         ]
       }
@@ -1180,8 +1281,8 @@
       "student"
     ],
     "amountRange": [
-      40000,
-      110000
+      100000,
+      275000
     ],
     "dialog": {
       "title": "Có hội muốn vào hết",
@@ -1204,23 +1305,23 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
       {
         "id": "partial",
-        "label": "Chỉ giữ một chỗ (25.000đ)",
+        "label": "Chỉ giữ một chỗ (65.000đ)",
         "effects": [
           {
             "type": "add_money",
-            "amount": 25000,
+            "amount": 65000,
             "category": "computer_usage",
             "label": "Giữ chỗ cho hội {{name}}"
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -1230,11 +1331,15 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -8
+            "amount": -14
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": -2
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -5
           }
         ]
       }
@@ -1256,8 +1361,8 @@
       "afternoon"
     ],
     "amountRange": [
-      30000,
-      80000
+      75000,
+      200000
     ],
     "dialog": {
       "title": "Nhóm học muốn giữ máy",
@@ -1280,7 +1385,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 3
           }
         ]
       },
@@ -1290,12 +1395,15 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -3
+            "amount": -10
           },
           {
-            "type": "set_flag",
-            "key": "study_group_declined",
-            "value": true
+            "type": "adjust_loyalty",
+            "amount": -1
+          },
+          {
+            "type": "add_reputation",
+            "amount": -3
           }
         ]
       }
@@ -1310,8 +1418,8 @@
     "cooldownDays": 1,
     "needsCustomers": 1,
     "amountRange": [
-      10000,
-      35000
+      25000,
+      90000
     ],
     "dialog": {
       "title": "Khách đưa nhầm tờ to",
@@ -1334,7 +1442,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -4
           }
         ]
       },
@@ -1352,7 +1460,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 4
+            "amount": 6
           }
         ]
       }
@@ -1372,17 +1480,17 @@
     "choices": [
       {
         "id": "accept",
-        "label": "Dán đi, lấy 160.000đ",
+        "label": "Dán đi, lấy 400.000đ",
         "effects": [
           {
             "type": "add_money",
-            "amount": 160000,
+            "amount": 400000,
             "category": "event",
             "label": "Tiền banner cửa kính"
           },
           {
             "type": "add_reputation",
-            "amount": -2
+            "amount": -4
           },
           {
             "type": "set_flag",
@@ -1397,7 +1505,7 @@
         "effects": [
           {
             "type": "add_reputation",
-            "amount": 1
+            "amount": 2
           }
         ]
       }
@@ -1417,11 +1525,11 @@
     "choices": [
       {
         "id": "sell",
-        "label": "Bán, lấy 75.000đ",
+        "label": "Bán, lấy 190.000đ",
         "effects": [
           {
             "type": "add_money",
-            "amount": 75000,
+            "amount": 190000,
             "category": "event",
             "label": "Bán linh kiện cũ"
           }
@@ -1432,9 +1540,8 @@
         "label": "Để dành, lát sửa",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "scrap_kept",
-            "value": true
+            "type": "add_reputation",
+            "amount": 1
           }
         ]
       }
@@ -1458,23 +1565,23 @@
         "effects": [
           {
             "type": "add_reputation",
-            "amount": 7
+            "amount": 11
           }
         ]
       },
       {
         "id": "comp",
-        "label": "Đãi một vòng nước (25.000đ)",
+        "label": "Đãi một vòng nước (65.000đ)",
         "effects": [
           {
             "type": "subtract_money",
-            "amount": 25000,
+            "amount": 65000,
             "category": "event",
             "label": "Đãi nước theo bài review"
           },
           {
             "type": "add_reputation",
-            "amount": 9
+            "amount": 14
           }
         ]
       },
@@ -1484,7 +1591,7 @@
         "effects": [
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 3
           }
         ]
       }
@@ -1522,17 +1629,17 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
       {
         "id": "pay",
-        "label": "Trả công 35.000đ cho có",
+        "label": "Trả công 90.000đ cho có",
         "effects": [
           {
-            "type": "subtract_money",
-            "amount": 35000,
+            "type": "charge_money",
+            "amount": 90000,
             "category": "repair",
             "label": "Công {{name}} sửa máy"
           },
@@ -1577,17 +1684,17 @@
     "choices": [
       {
         "id": "host",
-        "label": "Mở, nhận 130.000đ vé",
+        "label": "Mở, nhận 325.000đ vé",
         "effects": [
           {
             "type": "add_money",
-            "amount": 130000,
+            "amount": 325000,
             "category": "event",
             "label": "Vé giải đấu tại tiệm"
           },
           {
             "type": "add_reputation",
-            "amount": 4
+            "amount": 6
           },
           {
             "type": "set_flag",
@@ -1602,13 +1709,13 @@
         "effects": [
           {
             "type": "add_money",
-            "amount": 40000,
+            "amount": 100000,
             "category": "event",
             "label": "Giao hữu tại tiệm"
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -1618,11 +1725,11 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -3
+            "amount": -8
           },
           {
             "type": "add_reputation",
-            "amount": -1
+            "amount": -4
           }
         ]
       }
@@ -1642,11 +1749,11 @@
     "choices": [
       {
         "id": "take",
-        "label": "Cất hết 120.000đ vào quỹ",
+        "label": "Cất hết 300.000đ vào quỹ",
         "effects": [
           {
             "type": "add_money",
-            "amount": 120000,
+            "amount": 300000,
             "category": "event",
             "label": "Tiền họ hàng gửi"
           }
@@ -1654,11 +1761,11 @@
       },
       {
         "id": "share",
-        "label": "Giữ 40.000đ, còn lại mua đồ ăn",
+        "label": "Giữ 100.000đ, còn lại mua đồ ăn",
         "effects": [
           {
             "type": "add_money",
-            "amount": 40000,
+            "amount": 100000,
             "category": "event",
             "label": "Phần tiền họ hàng giữ lại"
           },
@@ -1674,9 +1781,8 @@
         "label": "Bảo họ giữ, nhà chưa cần",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "gift_returned",
-            "value": true
+            "type": "add_reputation",
+            "amount": 1
           }
         ]
       }
@@ -1712,11 +1818,11 @@
       },
       {
         "id": "cash",
-        "label": "Đổi lấy 45.000đ",
+        "label": "Đổi lấy 115.000đ",
         "effects": [
           {
             "type": "add_money",
-            "amount": 45000,
+            "amount": 115000,
             "category": "event",
             "label": "Hàng xóm đổi thuốc lấy tiền"
           }
@@ -1727,9 +1833,8 @@
         "label": "Cảm ơn, khỏi nhận",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "neighbor_help_declined",
-            "value": true
+            "type": "add_reputation",
+            "amount": 1
           }
         ]
       }
@@ -1743,8 +1848,8 @@
     "weight": 5,
     "cooldownDays": 3,
     "amountRange": [
-      30000,
-      80000
+      75000,
+      200000
     ],
     "dialog": {
       "title": "Điện lực hoàn tiền ghi nhầm",
@@ -1768,9 +1873,10 @@
         "label": "Để kỳ sau trừ vào hóa đơn",
         "effects": [
           {
-            "type": "set_flag",
-            "key": "power_refund_deferred",
-            "value": true
+            "type": "add_money",
+            "amount": 40000,
+            "category": "event",
+            "label": "Hoàn tiền điện kỳ sau (ít hơn)"
           }
         ]
       }
@@ -1795,11 +1901,11 @@
     "choices": [
       {
         "id": "treat",
-        "label": "Nhận 40.000đ, mang nước ra",
+        "label": "Nhận 100.000đ, mang nước ra",
         "effects": [
           {
             "type": "add_money",
-            "amount": 40000,
+            "amount": 100000,
             "category": "food",
             "label": "{{name}} khao cả bàn"
           },
@@ -1813,7 +1919,7 @@
           },
           {
             "type": "add_reputation",
-            "amount": 2
+            "amount": 4
           }
         ]
       },
@@ -1823,7 +1929,11 @@
         "effects": [
           {
             "type": "adjust_satisfaction",
-            "amount": -2
+            "amount": -6
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": -1
           },
           {
             "type": "add_reputation",
@@ -1850,17 +1960,17 @@
     "choices": [
       {
         "id": "feature",
-        "label": "Kể chuyện, nhận 20.000đ cà phê",
+        "label": "Kể chuyện, nhận 50.000đ cà phê",
         "effects": [
           {
             "type": "add_money",
-            "amount": 20000,
+            "amount": 50000,
             "category": "event",
             "label": "Báo địa phương trả cafe"
           },
           {
             "type": "add_reputation",
-            "amount": 5
+            "amount": 8
           }
         ]
       },
@@ -1870,12 +1980,7 @@
         "effects": [
           {
             "type": "add_reputation",
-            "amount": 1
-          },
-          {
-            "type": "set_flag",
-            "key": "press_declined",
-            "value": true
+            "amount": -4
           }
         ]
       }

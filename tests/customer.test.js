@@ -98,7 +98,7 @@ describe('customers', () => {
     ctx.state.cafe.customers = guests;
     tickBanter(ctx, 1);
     expect(guests.filter((guest) => guest.speech)).toHaveLength(3);
-    expect(guests[0].speech.text).toMatch(/máy|NPC|crush|aura|AFK/i);
+    expect(guests[0].speech.text).toMatch(/máy|anh|em|chờ/i);
     const hold = guests[0].speech.left;
     tickBanter(ctx, hold);
     expect(guests[0].speech).toBe(null);

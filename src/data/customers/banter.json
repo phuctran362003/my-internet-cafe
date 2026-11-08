@@ -5,121 +5,372 @@
   "states": {
     "searching": {
       "chance": 0.1,
-      "onEnter": 0.85,
+      "onEnter": 0.7,
       "lines": [
-        "Quán này vibes ổn, máy đâu rồi ta?",
-        "Tui vào 2 giây đã muốn ngồi rồi đó.",
-        "Ai chỉ chỗ máy sống không lag với.",
-        "Bestie ơi ghế nào còn trống?",
-        "Điểm danh người tới net trốn deadline."
+        "Còn máy không anh?",
+        "Ghế nào trống vậy?",
+        "Vào ngồi một chút thôi.",
+        "Quán này lạ, lần đầu vào.",
+        "Tìm chỗ ngồi.",
+        "Còn chỗ trống không?"
       ]
     },
     "moving": {
-      "chance": 0.06,
-      "onEnter": 0.4,
+      "chance": 0.05,
+      "onEnter": 0.3,
       "lines": [
-        "Đường tới ghế dài như queue rank.",
-        "Tui walk thẳng tới destiny.",
-        "Ghế kia gọi tên tui rồi."
+        "Ghế kia nha.",
+        "Ngồi chỗ đó được rồi.",
+        "Tìm chỗ yên tĩnh.",
+        "Đi tới ghế."
       ]
     },
     "waiting": {
-      "chance": 0.22,
+      "chance": 0.2,
       "onEnter": 1,
       "lines": [
-        "Anh ơi mở máy đi, tui sắp thành NPC.",
-        "Chờ như chờ crush seen 3 tiếng.",
-        "Ngồi đây aura giảm 10 điểm rồi.",
-        "Bấm phát là tui ready, hứa luôn.",
-        "Tui không AFK, tui đang thiền vì chưa có máy."
+        "Anh mở máy giúp với.",
+        "Ngồi chờ hơi lâu rồi.",
+        "Mở cái được chưa?",
+        "Mở máy giúp.",
+        "Lâu quá rồi.",
+        "Chờ chi, mở đi.",
+        "Khi nào mới mở?"
       ]
     },
     "playing": {
-      "chance": 0.18,
-      "onEnter": 0.55,
+      "chance": 0.16,
+      "onEnter": 0.45,
       "lines": [
-        "Một ván nữa thôi... lần thứ 9.",
-        "Team mình toàn main support cảm xúc.",
-        "Đầu hàng? Không, tui đang nghiên cứu meta.",
-        "Chat all: gáy nhẹ cho vui thôi.",
-        "Clip này lên TikTok là nổi, tin tui.",
-        "Não tui 5G nhưng tay vẫn 2G.",
-        "Win cái này tui mời mì ly... trong tâm trí.",
-        "Đừng gọi, tui đang trong cutscene cuộc đời."
+        "Một ván nữa rồi về.",
+        "Ê team ơi.",
+        "Im một chút, đang đánh.",
+        "Đánh sướng.",
+        "Quân này hay.",
+        "Một lúc nữa.",
+        "Chơi thoải mái.",
+        "Được máy này ổn."
       ]
     },
     "incident": {
-      "chance": 0.28,
+      "chance": 0.25,
       "onEnter": 1,
       "lines": [
-        "Hóa đơn? Tui tưởng chơi vì đẹp trai.",
-        "Ví tui đang 404, load lại giúp cái.",
-        "Tui không quỵt, tui đang buffering tiền.",
-        "Bestie tin tui, mai trả kèm tip aura."
+        "Để hôm khác tính.",
+        "Đợi xíu, tiền chưa đủ.",
+        "Quên ví rồi.",
+        "Thiếu chút, trả sau."
       ]
     },
     "leaving": {
-      "chance": 0.2,
-      "onEnter": 0.55,
+      "chance": 0.18,
+      "onEnter": 0.5,
       "lines": [
-        "Out nha, não hết RAM rồi.",
-        "Mai quay lại, hôm nay rank đau.",
-        "Bye quán, nhớ giữ ghế tui đó.",
-        "Về trước khi mẹ lock acc đời tui."
+        "Về đây, mai ghé lại.",
+        "Đủ rồi, mắt mỏi quá.",
+        "Về cơm tối.",
+        "Thời gian quá nhanh.",
+        "Xin lỗi, phải đi."
       ]
     }
   },
-  "archetypes": {
-    "student": [
-      "Mẹ tưởng đi học nhóm, đừng bóc phốt nha.",
-      "Bài tập? Để mai, rank không chờ ai.",
-      "Tiền ăn sáng hóa tiền net, logic hoàn hảo."
-    ],
-    "gamer": [
-      "GG EZ... à nhầm, mình thua.",
-      "Diff lane thôi, tâm lý vẫn diamond.",
-      "Gánh team như gánh cả vũ trụ."
-    ],
-    "office": [
-      "Nghỉ trưa 15 phút, biến hình 2 tiếng.",
-      "Boss inbox, tui pretend mất sóng.",
-      "Excel xong, vào net chữa lành."
-    ],
-    "regular": [
-      "Ghế này là chỗ tui từ đời F0.",
-      "Quán như nhà, nhà mới là quán lạ.",
-      "Khách quen check-in, stamp đâu anh?"
-    ],
-    "troublemaker": [
-      "Tính tiền? Tui quên ví ở nhà vibe.",
-      "Chơi trước, drama sau, classic.",
-      "Đừng nhìn tui, tui innocent lắm."
-    ],
-    "wealthy": [
-      "Máy VIP đâu, tui cần thêm aura.",
-      "Lag là không xứng với ví tui.",
-      "Order full topping, kể cả rank."
-    ]
+  "voices": {
+    "student": {
+      "searching": [
+        "Còn chỗ cho em không ạ?",
+        "Em vào ngồi học một chút.",
+        "Em tìm máy có mạng.",
+        "Lần đầu em vào."
+      ],
+      "moving": [
+        "Em ngồi máy này nha.",
+        "Chỗ kia gần cửa, mát hơn.",
+        "Ghế này được.",
+        "Em ngồi đây nha."
+      ],
+      "waiting": [
+        "Anh ơi mở máy giúp em.",
+        "Em ngồi đây được chưa ạ?",
+        "Lâu quá, em đói bụng rồi.",
+        "Em chờ hơi lâu rồi.",
+        "Mở giúp em với."
+      ],
+      "playing": [
+        "Chơi nhẹ thôi, mai còn kiểm tra.",
+        "Đừng nói nhỏ, mẹ em hay gọi.",
+        "Một ván này rồi về học.",
+        "Em chơi tí thôi.",
+        "Vui quá, quên thời gian."
+      ],
+      "incident": [
+        "Em xin lỗi, để em gọi mẹ hỏi tiền.",
+        "Anh thông cảm, em quên mang ví.",
+        "Em không có tiền trả.",
+        "Tính sai hả anh?"
+      ],
+      "leaving": [
+        "Em về đây, mai rảnh em ghé.",
+        "Tới giờ, mẹ em la đó.",
+        "Cảm ơn anh, bye bye.",
+        "Đi học rồi."
+      ],
+      "any": [
+        "Quán này quen, em hay ngồi.",
+        "Có bán mì không anh?",
+        "Quán này vui.",
+        "Em lại ghé nha."
+      ]
+    },
+    "gamer": {
+      "searching": [
+        "Máy mạnh đâu, chỉ tao cái.",
+        "Còn ghế không, đứng chán rồi.",
+        "Có máy tốt không?",
+        "Quán này như nào?"
+      ],
+      "moving": [
+        "Máy này được, ngồi.",
+        "Đừng lấy ghế tao.",
+        "Ghế này ổn."
+      ],
+      "waiting": [
+        "Mở máy đi, đứng đây chi vậy.",
+        "Ê mở cái, nóng ghế rồi.",
+        "Còn chờ nữa là về đó.",
+        "Mở cái mà.",
+        "Chần vẫn là gì."
+      ],
+      "playing": [
+        "Team này phá game quá.",
+        "Một ván nữa, thua thì về.",
+        "Im đi, đang gỡ kèo.",
+        "Mà sao lag vậy.",
+        "Đánh được ổn.",
+        "Máy này không tệ."
+      ],
+      "incident": [
+        "Tính sau, đang xếp hạng.",
+        "Thiếu thì thiếu, la hoài.",
+        "Đợi chút, xem lại.",
+        "Tính nhầm hả?"
+      ],
+      "leaving": [
+        "Về, hôm nay đen.",
+        "Mai lại, hôm nay team hại.",
+        "Chán, về.",
+        "Thua hết rồi, về."
+      ],
+      "any": [
+        "Máy nào cũng được, miễn đừng giật.",
+        "Có nước không, khát quá.",
+        "Quán đông quá.",
+        "Nóng quá đồ."
+      ]
+    },
+    "office": {
+      "searching": [
+        "Trưa nay tranh thủ một tiếng.",
+        "Còn máy không, mình ngồi ngắn thôi.",
+        "Mình xin phép một chút."
+      ],
+      "moving": [
+        "Ngồi đây, gần cửa ra cho lẹ.",
+        "Chỗ này được."
+      ],
+      "waiting": [
+        "Mở giúp mình với, giờ nghỉ có hạn.",
+        "Nhanh lên được không?",
+        "Mình phải về công ty đó.",
+        "Có thời gian có hạn."
+      ],
+      "playing": [
+        "Chơi ván này rồi tính.",
+        "Điện thoại rung hoài, kệ.",
+        "Năm phút nữa phải đi.",
+        "Chơi nhanh thôi.",
+        "Lúc này vui nhất."
+      ],
+      "incident": [
+        "Để mình chuyển khoản sau.",
+        "Giờ này ví không đủ, mai ghé trả.",
+        "Tính lại được không?"
+      ],
+      "leaving": [
+        "Hết giờ, mình về công ty.",
+        "Mai trưa ghé tiếp.",
+        "Cảm ơn, bye.",
+        "Phải đi rồi."
+      ],
+      "any": [
+        "Im một chút, mình đang mệt.",
+        "Quán hôm nay đông ghê.",
+        "Xin lỗi, bận một chút.",
+        "Quán ổn lắm."
+      ]
+    },
+    "regular": {
+      "searching": [
+        "Ghế cũ của tôi đâu {owner}?",
+        "Như mọi hôm, tôi vào ngồi.",
+        "Tôi ghé lại rồi.",
+        "Lâu không ghé."
+      ],
+      "moving": [
+        "Máy này tôi ngồi quen rồi.",
+        "Chỗ kia, đừng ai lấy.",
+        "Ghế quen rồi.",
+        "Ngồi cái này thôi."
+      ],
+      "waiting": [
+        "{owner} ơi, mở như mọi lần.",
+        "Biết tôi mà còn bắt chờ.",
+        "Mở đi, tôi ngồi đây cả buổi.",
+        "Mở nhanh lên."
+      ],
+      "playing": [
+        "Quen máy này rồi, đánh sướng.",
+        "Hôm nay tay hơi chậm.",
+        "Ngồi đây cho hết chiều.",
+        "Ngồi thoải mái.",
+        "Quán này tôi yêu."
+      ],
+      "incident": [
+        "Tôi quen quán mà, để cuối tuần trả.",
+        "{owner} tin tôi được mà.",
+        "Tin tôi, mai trả."
+      ],
+      "leaving": [
+        "Về đây, tối ghé lại.",
+        "Giữ máy cho tôi, đừng ai ngồi.",
+        "Bye bye, mai ghé.",
+        "Tạm biệt."
+      ],
+      "any": [
+        "Quán này như nhà.",
+        "Có gì ăn không, đói.",
+        "Quán được lắm.",
+        "Tôi hay ghé."
+      ]
+    },
+    "troublemaker": {
+      "searching": [
+        "Máy đâu, chỉ cái coi.",
+        "Đông vậy, chen vô được không?",
+        "Còn chỗ không?",
+        "Chỉ tao cái máy."
+      ],
+      "moving": [
+        "Ngồi đây, ai nói gì nói.",
+        "Máy này được, lấy.",
+        "Ghế kia tôi ngồi."
+      ],
+      "waiting": [
+        "Mở đi rồi tính.",
+        "Làm nhanh cái coi.",
+        "Ngồi chờ mệt, mở chưa?",
+        "Làm đi, đứng đây chi vậy."
+      ],
+      "playing": [
+        "Thua thì thua, kêu gì.",
+        "Đừng nhìn, đang đánh.",
+        "Nãy suýt thắng rồi.",
+        "Để tôi chơi.",
+        "Được ổn."
+      ],
+      "incident": [
+        "Tính sau đi, đang bận.",
+        "Không có tiền thì sao, la hoài.",
+        "Để mai, hôm nay quên ví.",
+        "Tôi sẽ trả."
+      ],
+      "leaving": [
+        "Đi đây, kêu gì kệ.",
+        "Về, chán.",
+        "Bye bye.",
+        "Tạm biệt."
+      ],
+      "any": [
+        "Quán này cũng được.",
+        "Đừng hỏi nhiều.",
+        "Tôi ghé thôi.",
+        "Kệ vội."
+      ]
+    },
+    "wealthy": {
+      "searching": [
+        "Máy nào mạnh nhất quán này?",
+        "Có chỗ ngồi yên không?",
+        "Mình cần chỗ tốt.",
+        "Có chỗ nào thoải mái?"
+      ],
+      "moving": [
+        "Máy này được, mình ngồi.",
+        "Chỗ kia ồn quá.",
+        "Ngồi chỗ này nhé.",
+        "Ổn, mình ngồi."
+      ],
+      "waiting": [
+        "Mở giúp mình với, chờ hơi lâu.",
+        "Cho máy chạy mượt nhất nhé.",
+        "Ngồi đây hơi nôn.",
+        "Chưa mở hả?"
+      ],
+      "playing": [
+        "Được, máy này ổn.",
+        "Có gì uống ngọt không?",
+        "Đánh thêm một lúc nữa.",
+        "Ổn lắm.",
+        "Mịn, được."
+      ],
+      "incident": [
+        "Để mình kiểm tra lại hóa đơn.",
+        "Tính nhầm thì nói, mình trả đủ.",
+        "Kiểm tra lại."
+      ],
+      "leaving": [
+        "Tạm biệt, quán ổn.",
+        "Mai mình ghé máy này.",
+        "Cảm ơn, bye.",
+        "Chào."
+      ],
+      "any": [
+        "Quán sạch là mình ngồi lâu.",
+        "Nóng thì nói, mình không chịu được.",
+        "Quán ổn lắm.",
+        "Lịch sự quán này."
+      ]
+    }
   },
   "pressure": {
     "hot": [
-      "Nóng như rank trong lò vi sóng.",
-      "Máy lạnh đâu, tui tan chảy mất.",
-      "Mồ hôi này không phải clutch đâu."
+      "Nóng quá, bật máy lạnh đi.",
+      "Ngồi đây đổ mồ hôi rồi.",
+      "Nóng vậy sao ngồi lâu được.",
+      "Nóng không kìm được.",
+      "Quán nóng lắm.",
+      "Bật lạnh đi anh."
     ],
     "lag": [
-      "Ping nhảy disco rồi anh ơi.",
-      "Skill tui bay, nhân vật thì đứng.",
-      "Mạng buffering, tâm trạng cũng luôn."
+      "Mạng lag quá anh ơi.",
+      "Bấm cái chờ một nỗi.",
+      "Giật quá, khó đánh.",
+      "Mạng sao vậy?",
+      "Lag liên tục.",
+      "Chậm quá đồ."
     ],
     "overloaded": [
-      "Điện giật nhẹ cái là tilt.",
-      "Máy thở còn mệt hơn tui.",
-      "Quán đang lag tập thể luôn."
+      "Máy nặng quá, chạy không nổi.",
+      "Quán đông vậy điện chịu nổi không.",
+      "Giật hoài, khó chịu.",
+      "Máy yếu quá.",
+      "Giật nhẹ cái là tilt."
     ]
   },
   "owner": [
-    "Chủ {owner} ơi cứu mạng với.",
-    "{owner} ơi, tui khen quán nha, đừng tăng giá."
+    "{owner} ơi, mở máy giúp.",
+    "{owner} ơi, còn nước không?",
+    "Chủ {owner} ơi.",
+    "{owner}, giúp tí.",
+    "{owner} ơi, cảm ơn."
   ]
 }

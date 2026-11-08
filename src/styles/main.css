@@ -290,8 +290,27 @@ button.dock-btn svg { display: block; }
 .drawer-body {
   flex: 1;
   min-height: 0;
-  overflow: auto;
-  padding: 0 2px 2px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0 6px 2px 2px;
+}
+
+.drawer-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.drawer-body::-webkit-scrollbar-track {
+  background: #efe2c8;
+  border-radius: 4px;
+}
+
+.drawer-body::-webkit-scrollbar-thumb {
+  background: #c4a15a;
+  border-radius: 4px;
+}
+
+.drawer-body::-webkit-scrollbar-thumb:hover {
+  background: #b08c4d;
 }
 
 .nav {

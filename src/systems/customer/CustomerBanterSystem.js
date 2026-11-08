@@ -58,17 +58,21 @@ function maybeSpeak(ctx, customer) {
 function chooseLine(ctx, customer, reason = 'idle') {
   const data = ctx.data.banter;
   const spec = stateSpec(ctx, customer.state);
-  if (reason === 'enter') return distinctPick(ctx, customer, spec?.lines ?? []);
+  const voice = data.voices?.[customer.archetype];
+  const voiceNow = [...(voice?.[customer.state] ?? []), ...(reason === 'idle' ? voice?.any ?? [] : [])];
+  if (reason === 'enter') {
+    if (voiceNow.length && ctx.rng() < 0.78) return distinctPick(ctx, customer, voiceNow);
+    return distinctPick(ctx, customer, spec?.lines ?? voiceNow);
+  }
   const bags = [];
   const pressure = ctx.cafePressure;
   if (pressure?.hot) bags.push(data.pressure.hot);
   if (pressure?.lag) bags.push(data.pressure.lag);
   if (pressure?.overloaded) bags.push(data.pressure.overloaded);
-  const archetype = data.archetypes[customer.archetype];
-  if (bags.length && ctx.rng() < 0.45) return distinctPick(ctx, customer, bags.flat());
-  if (archetype && ctx.rng() < 0.28) return distinctPick(ctx, customer, archetype);
-  if (data.owner && ctx.rng() < 0.12) return distinctPick(ctx, customer, data.owner);
-  return distinctPick(ctx, customer, spec?.lines ?? []);
+  if (bags.length && ctx.rng() < 0.4) return distinctPick(ctx, customer, bags.flat());
+  if (voiceNow.length && ctx.rng() < 0.62) return distinctPick(ctx, customer, voiceNow);
+  if (data.owner && ctx.rng() < 0.1) return distinctPick(ctx, customer, data.owner);
+  return distinctPick(ctx, customer, spec?.lines ?? voiceNow);
 }
 
 function distinctPick(ctx, customer, lines) {

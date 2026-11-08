@@ -324,7 +324,7 @@ function paintDrawer(node, view, session) {
   node.append(el('div', 'error', view.lastError));
   if (view.panel === 'overview') node.append(overview(view, session));
   if (view.panel === 'computer') node.append(computerPanel(view, session));
-  if (view.panel === 'customer') node.append(customerPanel(view));
+  if (view.panel === 'customer') node.append(customerPanel(view, session));
   if (view.panel === 'shop') node.append(shopPanel(view, session));
   if (view.panel === 'staff') node.append(staffPanel(view, session));
   if (view.panel === 'facility') node.append(facilityPanel(view, session));
@@ -383,7 +383,18 @@ function computerPanel(view, session) {
   return box;
 }
 
-function customerPanel(view) {
+const CUSTOMER_STATE = {
+  searching: 'Đang tìm máy',
+  moving: 'Đang vào chỗ',
+  waiting: 'Chờ mở máy',
+  playing: 'Đang chơi',
+  payment: 'Đang trả tiền',
+  incident: 'Đang có sự cố',
+  leaving: 'Đang ra về',
+  exiting: 'Đang ra về'
+};
+
+function customerPanel(view, session) {
   const box = el('div');
   const customer = view.customers.find((item) => item.id === view.selection?.id);
   box.append(el('h2', '', customer ? customer.name : 'Khách'));

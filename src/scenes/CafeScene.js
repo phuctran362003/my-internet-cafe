@@ -309,12 +309,20 @@ export class CafeScene extends Phaser.Scene {
 
 function nearestCustomer(customers, x, y) {
   let best = null;
-  let bestDist = TILE_SIZE * 0.7;
+  let bestDist = TILE_SIZE * 0.85;
   for (const customer of customers) {
-    const dist = Math.hypot(customer.x * TILE_SIZE + TILE_SIZE / 2 - x, customer.y * TILE_SIZE + TILE_SIZE / 2 - y);
-    if (dist < bestDist) {
-      best = customer;
-      bestDist = dist;
+    const cx = customer.x * TILE_SIZE + TILE_SIZE / 2;
+    const cy = customer.y * TILE_SIZE + TILE_SIZE / 2;
+    const marks = [[cx, cy]];
+    if (customer.state === 'waiting' || customer.state === 'playing' || customer.state === 'incident') {
+      marks.push([cx, cy - TILE_SIZE * 0.78]);
+    }
+    for (const [px, py] of marks) {
+      const dist = Math.hypot(px - x, py - y);
+      if (dist < bestDist) {
+        best = customer;
+        bestDist = dist;
+      }
     }
   }
   return best;

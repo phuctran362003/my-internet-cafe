@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { shouldSkipPayment } from '../src/systems/customer/CustomerAI.js';
+import { beginPayment, shouldSkipPayment, startMachine, tickCustomers } from '../src/systems/customer/CustomerAI.js';
 import { recordVisit } from '../src/systems/customer/CustomerRelationshipSystem.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
-import { beginPayment } from '../src/systems/customer/CustomerAI.js';
 
 describe('customers', () => {
   it('only troublemakers skip payment on a failed roll', () => {
@@ -26,6 +25,41 @@ describe('customers', () => {
     expect(ctx.events.choose('accept_loss', event.instanceId).ok).toBe(true);
     expect(ctx.events.choose('accept_loss', event.instanceId).ok).toBe(false);
     expect(ctx.state.player.money).toBe(5000000);
+  });
+
+  it('keeps the clock stopped until the owner starts the machine', () => {
+    const ctx = bareContext(() => 0.5);
+    const pc = ctx.state.cafe.computers[0];
+    const customer = sampleCustomer({
+      state: 'waiting',
+      waitLeft: 40,
+      sessionMinutes: 0,
+      plannedMinutes: 30,
+      targetComputerId: pc.id
+    });
+    pc.occupantId = customer.id;
+    pc.status = 'occupied';
+    ctx.state.cafe.customers = [customer];
+    tickCustomers(ctx, 10);
+    expect(customer.sessionMinutes).toBe(0);
+    expect(customer.state).toBe('waiting');
+    expect(startMachine(ctx, customer.id).ok).toBe(true);
+    tickCustomers(ctx, 10);
+    expect(customer.state).toBe('playing');
+    expect(customer.sessionMinutes).toBeGreaterThan(9);
+
+    const impatient = sampleCustomer({
+      id: 'c2',
+      name: 'Bình',
+      state: 'waiting',
+      waitLeft: 4,
+      targetComputerId: pc.id
+    });
+    pc.occupantId = impatient.id;
+    ctx.state.cafe.customers = [impatient];
+    tickCustomers(ctx, 5);
+    expect(impatient.state).toBe('leaving');
+    expect(impatient.leaveReason).toBe('ignored');
   });
 
   it('remembers a customer by name across visits', () => {

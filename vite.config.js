@@ -1,9 +1,6 @@
 import { defineConfig } from 'vite';
 
-// Relative base so the same dist works on Vercel (site root) and
-// GitHub Pages (https://<owner>.github.io/my-internet-cafe/).
 export default defineConfig({
-  base: './',
   server: {
     port: 5173,
     strictPort: true,

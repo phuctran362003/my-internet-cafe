@@ -5,9 +5,9 @@
     { "level": 3, "name": "Máy lạnh cả quán", "seats": 12, "dailyKwh": 14, "cost": 1400000 }
   ],
   "network": [
-    { "level": 1, "name": "Wifi nhà", "quality": 64, "billMultiplier": 1, "cost": 0 },
-    { "level": 2, "name": "Gói 100Mbps", "quality": 86, "billMultiplier": 1.8, "cost": 350000 },
-    { "level": 3, "name": "Gói 500Mbps và router", "quality": 98, "billMultiplier": 2.6, "cost": 900000 }
+    { "level": 1, "name": "Mạng 4 chữ", "quality": 62, "billMultiplier": 1, "cost": 0 },
+    { "level": 2, "name": "Mạng Viettel", "quality": 84, "billMultiplier": 1.7, "cost": 380000 },
+    { "level": 3, "name": "Mạng ép bê tê", "quality": 97, "billMultiplier": 2.5, "cost": 950000 }
   ],
   "power": [
     { "level": 1, "name": "Aptomat cũ", "watts": 1100, "cost": 0 },

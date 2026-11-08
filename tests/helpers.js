@@ -74,7 +74,7 @@ export function playUntilDayEnd(session) {
 }
 
 function resolveForTest(session, event) {
-  const preferred = ['delay', 'ignore', 'skip', 'accept_loss', 'demand_payment'];
+  const preferred = ['delay', 'ignore', 'skip', 'later', 'accept_loss', 'demand_payment'];
   const ordered = [
     ...event.choices.filter((item) => preferred.includes(item.id)),
     ...event.choices.filter((item) => !item.requires && !preferred.includes(item.id))

@@ -1,5 +1,7 @@
 import cafeMap from '../../data/maps/cafe.json';
 import furnitureCatalog from '../../data/furniture/catalog.json';
+import tiers from '../../data/computers/tiers.json';
+import items from '../../data/items/items.json';
 import { ensureComputers } from '../../state/createInitialState.js';
 import { ensureFurniture } from '../business/FurnitureSystem.js';
 import { ensureRooms } from '../business/RoomSystem.js';
@@ -34,6 +36,15 @@ export function migrateSave(data) {
   copy.cafe.guide = copy.cafe.guide ?? { met: {} };
   copy.cafe.guide.met = copy.cafe.guide.met ?? {};
   copy.cafe.itemPrices = copy.cafe.itemPrices ?? {};
+  copy.cafe.prices = copy.cafe.prices ?? {};
+  for (const tier of tiers) {
+    if (copy.cafe.prices[tier.id] == null) copy.cafe.prices[tier.id] = tier.basePrice;
+  }
+  copy.cafe.inventory = copy.cafe.inventory ?? {};
+  for (const item of items) {
+    if (copy.cafe.itemPrices[item.id] == null) copy.cafe.itemPrices[item.id] = item.salePrice;
+    if (copy.cafe.inventory[item.id] == null) copy.cafe.inventory[item.id] = 0;
+  }
   copy.cafe.employees = copy.cafe.employees ?? [];
   ensureRooms(copy, cafeMap);
   ensureComputers(copy, cafeMap);

@@ -1,7 +1,8 @@
 import { GameEvents } from '../../core/EventBus.js';
 import { isSimulationPaused } from '../../state/createInitialState.js';
 import { applyBusinessExpenses } from '../business/ExpenseSystem.js';
-import { priceOf } from '../business/PricingSystem.js';
+import { priceOf, usageBill } from '../business/PricingSystem.js';
+import { checkComputerCareNeeds } from '../business/ComputerCareSystem.js';
 import { applyComputerWear } from '../business/UpgradeSystem.js';
 import { applyCleaner, tickStaff } from '../staff/StaffSystem.js';
 import { tickCustomers } from '../customer/CustomerAI.js';
@@ -73,8 +74,9 @@ export function finishDay(ctx) {
   applyBusinessExpenses(ctx);
   const family = settleFamilyDay(ctx);
   evaluateFamilyEvents(ctx, family.before);
-  applyComputerWear(state, ctx.bus);
+  applyComputerWear(ctx);
   applyCleaner(state);
+  checkComputerCareNeeds(ctx);
   ctx.ui.guideOpen = false;
   for (const pc of state.cafe.computers) pc.dailyMinutes = 0;
   checkEndings(ctx);
@@ -109,8 +111,7 @@ function closeCustomers(ctx) {
   for (const customer of ctx.state.cafe.customers) {
     if (customer.paid || customer.state === 'incident' || customer.sessionMinutes <= 0) continue;
     const pc = ctx.state.cafe.computers.find((item) => item.id === customer.targetComputerId);
-    const price = priceOf(ctx.state, pc?.tier || 'basic');
-    const bill = Math.round((customer.sessionMinutes * price) / 60);
+    const bill = usageBill(customer.sessionMinutes, priceOf(ctx.state, pc?.tier || 'basic'));
     const paid = Math.min(customer.money, Math.max(0, bill));
     if (paid > 0) ctx.economy.credit(paid, 'computer_usage', `${customer.name} chốt giờ cuối ngày`);
     customer.paid = true;

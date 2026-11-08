@@ -568,6 +568,7 @@ function customerPanel(view, session) {
 function shopPanel(view, session) {
   const box = el('div');
   box.append(el('h2', '', 'Quầy hàng'));
+  box.append(el('p', 'muted', 'Khách hay gọi đồ ăn nước uống. Hết đúng món họ muốn là tụt uy tín — nhập đủ và đa dạng.'));
   for (const item of view.items) {
     const line = el('div', 'block');
     line.append(row(item.name, `Kho ${view.stock[item.id] ?? 0}/${view.stockLimit}`));
@@ -678,7 +679,7 @@ function financePanel(view, session) {
     line.append(input);
     box.append(line);
   }
-  box.append(el('p', 'muted', 'Giá từ 2.000đ đến 40.000đ mỗi giờ. Cao quá khách ngại, đứng dậy về.'));
+  box.append(el('p', 'muted', 'Giá từ 2.000đ đến 40.000đ mỗi giờ. Ngồi máy tính tối thiểu một giờ; cao quá khách ngại, đứng dậy về.'));
   box.append(el('h2', '', 'Đồ ăn và nước'));
   for (const item of view.items) {
     const line = el('div', 'row');
@@ -786,6 +787,9 @@ function paintModal(node, view, session) {
   }
   if (view.screen === 'report' || view.screen === 'ending') {
     const sheet = el('div', 'sheet');
+    const profit = Number(view.report.profit) || 0;
+    if (profit > 0) sheet.classList.add('tone-beneficial');
+    else if (profit < 0) sheet.classList.add('tone-adverse');
     const title = view.ending === 'family'
       ? 'Nhà không trụ nổi nữa'
       : view.ending === 'collapse'
@@ -794,14 +798,13 @@ function paintModal(node, view, session) {
           ? 'Tạm ổn, sống được'
           : `Sổ ngày ${view.day}`;
     sheet.append(el('h2', '', title));
-    sheet.append(row('Doanh thu', view.report.revenueLabel));
-    sheet.append(row('Chi phí', view.report.expenseLabel));
-    sheet.append(row('Lãi', view.report.profitLabel));
-    sheet.append(row('Thiếu, ghi nợ', view.report.shortfallLabel));
-    if (view.dayEvents.adverse || view.dayEvents.beneficial) {
-      sheet.append(row('Trong ngày', `${view.dayEvents.adverse} rắc rối · ${view.dayEvents.beneficial} tin vui`));
+    if (profit > 0) {
+      sheet.append(el('p', 'dialog-copy day-result', `Ngày dương ${formatMoney(profit)}.`));
+    } else if (profit < 0) {
+      sheet.append(el('p', 'dialog-copy day-result', `Ngày âm ${formatMoney(Math.abs(profit))}.`));
+    } else {
+      sheet.append(el('p', 'dialog-copy day-result', 'Ngày hôm nay hòa vốn.'));
     }
-    sheet.append(moneyBreakdown(view.report.breakdown, { compact: false }));
     if (view.ending === 'balanced') {
       sheet.append(el('p', 'muted', 'Tiệm với nhà đang đứng được. Có thể chơi tiếp, không hạn ngày.'));
       sheet.append(button('Chơi tiếp', () => session.continueDay()));

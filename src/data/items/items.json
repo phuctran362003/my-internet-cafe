@@ -1,4 +1,6 @@
 [
   { "id": "drink", "name": "Nước ngọt", "cost": 5000, "salePrice": 12000 },
-  { "id": "noodle", "name": "Mì ly", "cost": 8000, "salePrice": 20000 }
+  { "id": "noodle", "name": "Mì ly", "cost": 8000, "salePrice": 20000 },
+  { "id": "snack", "name": "Bim bim", "cost": 6000, "salePrice": 15000 },
+  { "id": "coffee", "name": "Cà phê lon", "cost": 7000, "salePrice": 18000 }
 ]

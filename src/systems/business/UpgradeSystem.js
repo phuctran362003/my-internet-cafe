@@ -1,5 +1,6 @@
 import { GameEvents } from '../../core/EventBus.js';
 import { isOutOfService } from './computerStatus.js';
+import { markComputerBroken } from './ComputerCareSystem.js';
 import { nextTier } from './PricingSystem.js';
 
 export function upgradeComputer(ctx, computerId) {
@@ -50,16 +51,21 @@ export function buyComputerSlot(ctx, computerId = null) {
   return { ok: true, id: slot.id };
 }
 
-export function applyComputerWear(state, bus) {
+export function applyComputerWear(ctx) {
+  const state = ctx.state ?? ctx;
+  const bus = ctx.bus;
   for (const pc of state.cafe.computers) {
     if (isOutOfService(pc)) continue;
     const hours = pc.dailyMinutes / 60;
     pc.condition = Math.max(0, pc.condition - (1 + hours * 0.35));
     pc.cleanliness = Math.max(0, pc.cleanliness - 4);
-    if (pc.condition <= 15 && pc.status !== 'broken') {
-      pc.status = 'broken';
-      pc.occupantId = null;
-      bus?.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
+    if (pc.condition <= 15) {
+      if (ctx.events) markComputerBroken(ctx, pc);
+      else if (pc.status !== 'broken') {
+        pc.status = 'broken';
+        pc.occupantId = null;
+        bus?.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
+      }
     }
   }
 }

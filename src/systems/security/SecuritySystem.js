@@ -11,6 +11,7 @@ export function tickSecurity(ctx, minutes) {
     incident.ageMinutes += minutes;
     const queued = ctx.state.narrative.queue.find((event) => event.instanceId === incident.instanceId);
     if (queued) queued.ageMinutes = incident.ageMinutes;
+    if (incident.kind && incident.kind !== 'skip_payment') continue;
     if (!guard || incident.ageMinutes < guard.reactionMinutes) continue;
     ctx.events.choose('guard_auto', incident.instanceId);
   }

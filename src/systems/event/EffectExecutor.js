@@ -1,13 +1,13 @@
-import { GameEvents } from '../../core/EventBus.js';
 import { clamp } from '../../utils/MathUtils.js';
+import { formatMoney } from '../../utils/format.js';
 import { isOutOfService } from '../business/computerStatus.js';
-import { addReputation } from '../economy/EconomySystem.js';
+import { markComputerBroken, openDirtyComputerIncident } from '../business/ComputerCareSystem.js';
 import { relationshipKey } from '../customer/CustomerRelationshipSystem.js';
+import { addReputation } from '../economy/EconomySystem.js';
 import { treatMember } from '../family/FamilyHealth.js';
 import { buyFoodPack, payHeatNow } from '../family/FamilySurvival.js';
 import { routeTo } from '../movement/Pathfinding.js';
 import { setFlag } from './NarrativeFlagSystem.js';
-import { formatMoney } from '../../utils/format.js';
 
 export function validateEffects(effects, ctx) {
   if (!Array.isArray(effects)) return { ok: false, reason: 'effects' };
@@ -87,6 +87,8 @@ const CHECKS = {
   damage_computer: (effect, ctx) => (
     computerOf(ctx) && finiteAmount(effect.amount) ? { ok: true } : { ok: false, reason: 'computer' }
   ),
+  repair_computer: (_effect, ctx) => (computerOf(ctx) ? { ok: true } : { ok: false, reason: 'computer' }),
+  clean_computer: (_effect, ctx) => (computerOf(ctx) ? { ok: true } : { ok: false, reason: 'computer' }),
   resolve_incident: (_effect, ctx) => (ctx.event ? { ok: true } : { ok: false, reason: 'incident' }),
   release_customer: (_effect, ctx) => (customerOf(ctx) ? { ok: true } : { ok: false, reason: 'customer' }),
   consume_resource: (effect, ctx) => {
@@ -187,10 +189,20 @@ const HANDLERS = {
     const pc = computerOf(ctx);
     if (!pc || isOutOfService(pc)) return;
     pc.condition = Math.max(0, pc.condition - effect.amount);
-    if (pc.condition <= 20 && pc.status !== 'broken') {
-      pc.status = 'broken';
-      ctx.bus.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
-    }
+    if (pc.condition <= 20) markComputerBroken(ctx, pc);
+  },
+  repair_computer: (_effect, ctx) => {
+    const pc = computerOf(ctx);
+    if (!pc) return;
+    ctx.economy.payObligation(ctx.data.economy.repairCost, 'repair', `Sửa ${pc.id}`);
+    pc.condition = 100;
+    if (pc.status === 'broken') pc.status = pc.occupantId ? 'occupied' : 'available';
+  },
+  clean_computer: (_effect, ctx) => {
+    const pc = computerOf(ctx);
+    if (!pc) return;
+    ctx.economy.payObligation(ctx.data.economy.cleanCost, 'cleaning', `Vệ sinh ${pc.id}`);
+    pc.cleanliness = 100;
   },
   resolve_incident: (_effect, ctx) => {
     const incident = ctx.state.cafe.incidents.find((item) => item.instanceId === ctx.event.instanceId);
@@ -203,6 +215,7 @@ const HANDLERS = {
       pc.occupantId = null;
       if (pc.status === 'occupied') pc.status = 'available';
     }
+    person.paid = true;
     person.state = 'leaving';
     person.incidentId = null;
     const path = routeTo(
@@ -232,6 +245,7 @@ const HANDLERS = {
     const pc = computerOf(ctx);
     if (!pc || isOutOfService(pc)) return;
     pc.cleanliness = clamp(pc.cleanliness - effect.amount, 0, 100);
+    openDirtyComputerIncident(ctx, pc);
   },
   restore_computer: (effect, ctx) => {
     const pc = computerOf(ctx);

@@ -52,5 +52,14 @@
     "action": "Nâng điện",
     "panel": "facility",
     "toast": "Điện sắp quá tải. Nâng tủ điện kẻo quán sập nguồn."
+  },
+  {
+    "id": "stock",
+    "icon": "🍜",
+    "title": "Quầy hàng trống",
+    "body": "Tiệm net sống nhờ đồ ăn nước uống. Khách muốn món nào phải có món đó — thiếu hàng là mất uy tín. Nhập đủ và đa dạng.",
+    "action": "Nhập hàng",
+    "panel": "shop",
+    "toast": "Hết hàng rồi. Nhập đủ món kẻo khách chê quán."
   }
 ]

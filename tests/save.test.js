@@ -118,10 +118,10 @@ describe('events and save', () => {
     ctx.bus.on(GameEvents.COMPUTER_BROKEN, (payload) => broken.push(payload.id));
     ctx.state.cafe.computers[0].condition = 16;
     ctx.state.cafe.computers[0].dailyMinutes = 600;
-    applyComputerWear(ctx.state, ctx.bus);
+    applyComputerWear(ctx);
     expect(ctx.state.cafe.computers[0].status).toBe('broken');
     expect(broken).toEqual(['pc1']);
-    applyComputerWear(ctx.state, ctx.bus);
+    applyComputerWear(ctx);
     expect(broken).toEqual(['pc1']);
   });
 });

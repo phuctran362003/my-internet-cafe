@@ -5,9 +5,9 @@ import { consumeStock } from '../inventory/InventorySystem.js';
 import { advanceAlongPath } from '../movement/Movement.js';
 import { routeTo } from '../movement/Pathfinding.js';
 import { isOutOfService } from '../business/computerStatus.js';
-import { itemPrice, priceOf, tierById } from '../business/PricingSystem.js';
+import { itemPrice, priceOf, tierById, usageBill } from '../business/PricingSystem.js';
 import { readPressure } from '../business/FacilitySystem.js';
-import { isDemanding, isOnline, observeCafe } from '../guide/GuideSystem.js';
+import { isDemanding, isOnline, markMet, observeCafe } from '../guide/GuideSystem.js';
 import { recordVisit } from './CustomerRelationshipSystem.js';
 
 export function shouldSkipPayment(customer, roll) {
@@ -122,7 +122,7 @@ function play(ctx, customer, minutes) {
     pc.sessionMinutes += minutes;
   }
   if (pc?.status === 'broken') {
-    beginLeave(ctx, customer, 'broken');
+    cutSession(ctx, customer, 'broken');
     return;
   }
   const pressure = ctx.cafePressure;
@@ -161,25 +161,32 @@ export function beginPayment(ctx, customer, leaveReason = 'paid') {
   if (customer.paid || customer.state === 'incident') return;
   const pc = computerById(ctx, customer.targetComputerId);
   const tierId = pc?.tier || customer.preferredTiers?.[0] || 'basic';
-  const price = priceOf(ctx.state, tierId);
-  const bill = Math.max(0, Math.round((customer.sessionMinutes * price) / 60));
+  const bill = usageBill(customer.sessionMinutes, priceOf(ctx.state, tierId));
   customer.bill = bill;
   if (pc) rateSatisfaction(ctx, customer, pc, ctx.cafePressure);
+
+  if (bill <= 0) {
+    customer.paid = true;
+    customer.billPaid = 0;
+    freeComputer(customer, pc);
+    beginLeave(ctx, customer, leaveReason);
+    return;
+  }
+
   const cashier = ctx.state.cafe.employees.some((employee) => employee.role === 'cashier');
   const skipRoll = ctx.rng() + (cashier ? 0.35 : 0);
-  if (shouldSkipPayment(customer, skipRoll)) {
+  const refuses = shouldSkipPayment(customer, skipRoll);
+  const shortOnCash = customer.money < bill;
+  if (refuses || shortOnCash) {
     openSkipIncident(ctx, customer, bill);
     return;
   }
-  const paid = Math.min(customer.money, bill);
-  if (paid > 0) ctx.economy.credit(paid, 'computer_usage', `${customer.name} trả giờ chơi`);
-  customer.money -= paid;
-  customer.billPaid = paid;
+
+  ctx.economy.credit(bill, 'computer_usage', `${customer.name} trả giờ chơi`);
+  customer.money -= bill;
+  customer.billPaid = bill;
   customer.paid = true;
-  if (bill > 0 && paid < bill) {
-    addReputation(ctx.state, -2);
-    ctx.bus.emit(GameEvents.PAYMENT_FAILED, { id: customer.id, bill, paid });
-  } else if (customer.satisfaction >= 60) addReputation(ctx.state, 1);
+  if (customer.satisfaction >= 60) addReputation(ctx.state, 1);
   freeComputer(customer, pc);
   beginLeave(ctx, customer, leaveReason);
 }
@@ -187,6 +194,14 @@ export function beginPayment(ctx, customer, leaveReason = 'paid') {
 function openSkipIncident(ctx, customer, bill) {
   const template = ctx.data.incidents.find((item) => item.id === 'skip_payment');
   const pc = computerById(ctx, customer.targetComputerId);
+  if (!template) {
+    ctx.bus.emit(GameEvents.PAYMENT_FAILED, { id: customer.id, bill, paid: 0 });
+    customer.paid = true;
+    customer.billPaid = 0;
+    freeComputer(customer, pc);
+    beginLeave(ctx, customer, 'skip');
+    return;
+  }
   ctx.state.meta.incidentSeq += 1;
   const instanceId = `inc_${ctx.state.meta.currentDay}_${ctx.state.meta.incidentSeq}`;
   const event = instantiateEvent(template, {
@@ -208,21 +223,53 @@ function openSkipIncident(ctx, customer, bill) {
 }
 
 function maybeSnack(ctx, customer) {
-  if (customer.ordered || customer.sessionMinutes < 8) return;
+  if (customer.ordered || customer.sessionMinutes < 6) return;
   const server = ctx.state.cafe.employees.some((employee) => employee.role === 'server');
-  const chance = Math.min(0.95, customer.foodChance + (server ? 0.25 : 0));
+  const chance = Math.min(0.95, customer.foodChance + (server ? 0.2 : 0));
   if (ctx.rng() > chance) {
     customer.ordered = true;
     return;
   }
   customer.ordered = true;
-  const item = ctx.data.items.find((entry) => (ctx.state.cafe.inventory[entry.id] ?? 0) > 0);
-  const price = item ? itemPrice(ctx.state, item) : 0;
-  if (!item || customer.money < price) return;
-  if (!consumeStock(ctx.state, item.id, 1)) return;
+  const wanted = pickCraving(ctx, customer);
+  const price = itemPrice(ctx.state, wanted);
+  const pc = computerById(ctx, customer.targetComputerId);
+  const tierId = pc?.tier || customer.preferredTiers?.[0] || 'basic';
+  const reserved = usageBill(customer.plannedMinutes, priceOf(ctx.state, tierId));
+  if (customer.money - reserved < price) return;
+  if ((ctx.state.cafe.inventory[wanted.id] ?? 0) < 1) {
+    missSnack(ctx, customer, wanted);
+    return;
+  }
+  if (!consumeStock(ctx.state, wanted.id, 1)) {
+    missSnack(ctx, customer, wanted);
+    return;
+  }
   customer.money -= price;
-  ctx.economy.credit(price, 'food', `${customer.name} mua ${item.name}`);
-  customer.satisfaction = Math.min(100, customer.satisfaction + 4);
+  ctx.economy.credit(price, 'food', `${customer.name} mua ${wanted.name}`);
+  customer.satisfaction = Math.min(100, customer.satisfaction + 5);
+}
+
+function pickCraving(ctx, customer) {
+  if (customer.cravingId) {
+    const known = ctx.data.items.find((entry) => entry.id === customer.cravingId);
+    if (known) return known;
+  }
+  const list = ctx.data.items;
+  const index = Math.min(list.length - 1, Math.floor(ctx.rng() * list.length));
+  const wanted = list[index];
+  customer.cravingId = wanted.id;
+  return wanted;
+}
+
+function missSnack(ctx, customer, wanted) {
+  customer.satisfaction = Math.max(0, customer.satisfaction - 10);
+  addReputation(ctx.state, -2);
+  markMet(ctx, 'stock');
+  ctx.bus.emit(GameEvents.NOTICE, {
+    text: `${customer.name} muốn ${wanted.name} nhưng hết hàng`,
+    kind: 'alert'
+  });
 }
 
 function beginLeave(ctx, customer, reason) {

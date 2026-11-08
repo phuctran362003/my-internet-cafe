@@ -30,6 +30,9 @@ export function observeCafe(ctx, pressure) {
   }
   if (pressure.overloaded) markMet(ctx, 'power');
   if (customers.some((customer) => demandingOnWeakPc(ctx, customer))) markMet(ctx, 'computers');
+  if (customers.some((customer) => customer.state === 'playing') && cafeStockEmpty(ctx.state, ctx.data)) {
+    markMet(ctx, 'stock');
+  }
 }
 
 export function guideView(state, data) {
@@ -81,7 +84,12 @@ function problemActive(state, data, id, pressure) {
       .every((pc) => pc.tier === 'basic');
     return stillBasic || state.cafe.customers.some((customer) => demandingOnWeakPc({ state }, customer));
   }
+  if (id === 'stock') return cafeStockEmpty(state, data);
   return false;
+}
+
+function cafeStockEmpty(state, data) {
+  return data.items.every((item) => (state.cafe.inventory[item.id] ?? 0) < 1);
 }
 
 function pricesAreHigh(state, data) {

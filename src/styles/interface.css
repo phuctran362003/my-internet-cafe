@@ -1,4 +1,12 @@
 .dialog-copy { margin: 8px 0 12px; line-height: 1.45; }
+.day-result {
+  margin: 16px 0 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+.sheet.tone-beneficial .day-result { color: #146b34; }
+.sheet.tone-adverse .day-result { color: #8d241c; }
 .event-kicker {
   display: inline-block;
   margin: 0 0 8px;

@@ -1,7 +1,7 @@
 import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
 import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
-import { itemPrice, tierById } from '../systems/business/PricingSystem.js';
+import { itemPrice, tierById, usageBill } from '../systems/business/PricingSystem.js';
 import { stockLimit } from '../systems/inventory/InventorySystem.js';
 import { visibleChoices } from '../systems/event/EventSystem.js';
 import { dailyReport } from '../systems/economy/EconomySystem.js';
@@ -77,7 +77,7 @@ export function buildView(session) {
     computers,
     customers: customers.map((customer) => {
       const seat = computers.find((pc) => pc.id === customer.targetComputerId);
-      const quote = Math.round(((customer.plannedMinutes || 0) * (seat?.price || 0)) / 60);
+      const quote = usageBill(customer.plannedMinutes || 0, seat?.price || 0);
       return {
         id: customer.id,
         name: customer.name,

@@ -17,7 +17,15 @@ export function setPrice(state, data, tierId, price) {
 }
 
 export function priceOf(state, tierId) {
-  return state.cafe.prices[tierId];
+  return state.cafe.prices[tierId] ?? 0;
+}
+
+/** Hourly rate, billed per minute but never less than one hour once the customer has sat down. */
+export function usageBill(sessionMinutes, pricePerHour) {
+  const minutes = Math.max(0, Number(sessionMinutes) || 0);
+  const rate = Math.max(0, Number(pricePerHour) || 0);
+  if (minutes <= 0 || rate <= 0) return 0;
+  return Math.max(rate, Math.round((minutes * rate) / 60));
 }
 
 export function itemPrice(state, item) {

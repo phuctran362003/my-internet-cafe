@@ -78,5 +78,65 @@
         ]
       }
     ]
+  },
+  {
+    "id": "computer_broken",
+    "category": "security",
+    "tone": "adverse",
+    "source": "maintenance",
+    "priority": "high",
+    "pause": true,
+    "dialog": {
+      "title": "Máy {{pcId}} hỏng",
+      "description": "{{pcId}} đơ, không bật nổi. Sửa hết {{repairCost}}. Để vậy thì mất chỗ khách ngồi."
+    },
+    "choices": [
+      {
+        "id": "repair",
+        "label": "Sửa ngay ({{repairCost}})",
+        "effects": [
+          { "type": "repair_computer" },
+          { "type": "resolve_incident" }
+        ]
+      },
+      {
+        "id": "later",
+        "label": "Để đó, sửa sau",
+        "effects": [
+          { "type": "add_reputation", "amount": -2 },
+          { "type": "resolve_incident" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "computer_filthy",
+    "category": "security",
+    "tone": "adverse",
+    "source": "maintenance",
+    "priority": "normal",
+    "pause": true,
+    "dialog": {
+      "title": "Máy {{pcId}} bẩn quá",
+      "description": "{{pcId}} chỉ còn sạch {{cleanliness}}. Khách nhìn là nhăn mặt. Vệ sinh hết {{cleanCost}}."
+    },
+    "choices": [
+      {
+        "id": "clean",
+        "label": "Vệ sinh ngay ({{cleanCost}})",
+        "effects": [
+          { "type": "clean_computer" },
+          { "type": "resolve_incident" }
+        ]
+      },
+      {
+        "id": "later",
+        "label": "Để bẩn vậy đã",
+        "effects": [
+          { "type": "add_reputation", "amount": -1 },
+          { "type": "resolve_incident" }
+        ]
+      }
+    ]
   }
 ]

@@ -73,7 +73,7 @@ export function createInitialState(data, seed = 1) {
       computers: data.map.computers.map((pc) => computerFromMap(pc, rooms)),
       customers: [],
       employees: [],
-      inventory: Object.fromEntries(data.items.map((item) => [item.id, 4])),
+      inventory: Object.fromEntries(data.items.map((item) => [item.id, 2])),
       relationships: {},
       incidents: [],
       spawnTimer: 0,

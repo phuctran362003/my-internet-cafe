@@ -28,6 +28,50 @@ describe('customers', () => {
     expect(ctx.state.player.money).toBe(5000000);
   });
 
+  it('opens the demand dialog when a customer cannot cover the full bill', () => {
+    const ctx = bareContext(() => 0.99);
+    ctx.state.cafe.prices.basic = 12000;
+    const pc = ctx.state.cafe.computers[0];
+    const customer = sampleCustomer({
+      archetype: 'student',
+      skipChance: 0,
+      money: 5000,
+      sessionMinutes: 60,
+      plannedMinutes: 60,
+      targetComputerId: pc.id
+    });
+    pc.occupantId = customer.id;
+    pc.status = 'occupied';
+    ctx.state.cafe.customers = [customer];
+    beginPayment(ctx, customer);
+    expect(customer.state).toBe('incident');
+    expect(customer.paid).toBe(false);
+    expect(ctx.state.narrative.queue[0]?.id).toBe('skip_payment');
+    expect(ctx.events.choose('demand_payment', ctx.state.narrative.queue[0].instanceId).ok).toBe(true);
+    expect(customer.billPaid).toBe(5000);
+    expect(customer.state).toBe('leaving');
+  });
+
+  it('still bills customers when the machine breaks mid-session', () => {
+    const ctx = bareContext(() => 0.99);
+    ctx.state.cafe.prices.basic = 12000;
+    const pc = ctx.state.cafe.computers[0];
+    const customer = sampleCustomer({
+      state: 'playing',
+      money: 50000,
+      sessionMinutes: 20,
+      plannedMinutes: 60,
+      targetComputerId: pc.id
+    });
+    pc.occupantId = customer.id;
+    pc.status = 'broken';
+    ctx.state.cafe.customers = [customer];
+    tickCustomers(ctx, 1);
+    expect(customer.paid).toBe(true);
+    expect(customer.billPaid).toBe(12000);
+    expect(customer.state).toBe('leaving');
+  });
+
   it('keeps the clock stopped until the owner starts the machine', () => {
     const ctx = bareContext(() => 0.5);
     const pc = ctx.state.cafe.computers[0];

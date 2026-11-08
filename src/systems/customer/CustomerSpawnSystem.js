@@ -81,6 +81,8 @@ function makeCustomer(ctx, archetype) {
     paid: false,
     ordered: false,
     incidentId: null,
-    forceSkip: false
+    forceSkip: false,
+    banterIn: 0,
+    banterState: ''
   };
 }

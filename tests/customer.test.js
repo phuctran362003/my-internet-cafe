@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { beginPayment, shouldSkipPayment, startMachine, tickCustomers } from '../src/systems/customer/CustomerAI.js';
+import { tickBanter } from '../src/systems/customer/CustomerBanterSystem.js';
 import { recordVisit } from '../src/systems/customer/CustomerRelationshipSystem.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
 
@@ -84,5 +85,22 @@ describe('customers', () => {
       const holders = session.state.cafe.computers.map((pc) => pc.occupantId).filter(Boolean);
       expect(new Set(holders).size).toBe(holders.length);
     }
+  });
+
+  it('lets customers say random lines and caps visible bubbles', () => {
+    const ctx = bareContext(() => 0);
+    const guests = [0, 1, 2, 3].map((index) => sampleCustomer({
+      id: `talk${index}`,
+      name: `An${index}`,
+      state: 'waiting',
+      sessionMinutes: 0
+    }));
+    ctx.state.cafe.customers = guests;
+    tickBanter(ctx, 1);
+    expect(guests.filter((guest) => guest.speech)).toHaveLength(3);
+    expect(guests[0].speech.text).toMatch(/máy|NPC|crush|aura|AFK/i);
+    const hold = guests[0].speech.left;
+    tickBanter(ctx, hold);
+    expect(guests[0].speech).toBe(null);
   });
 });

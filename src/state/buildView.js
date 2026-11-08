@@ -89,7 +89,8 @@ export function buildView(session) {
         plannedMinutes: customer.plannedMinutes,
         requestLabel: formatDuration(customer.plannedMinutes),
         quoteLabel: formatMoney(quote),
-        visits: state.cafe.relationships[relationshipKey(customer)]?.visits ?? 0
+        visits: state.cafe.relationships[relationshipKey(customer)]?.visits ?? 0,
+        speech: customer.speech?.text ?? ''
       };
     }),
     family: {

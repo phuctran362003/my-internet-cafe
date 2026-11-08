@@ -213,12 +213,12 @@ export class CafeScene extends Phaser.Scene {
       const y = sprite.y - 34 + (customer.state === 'playing' ? 0 : bob);
       if (customer.state === 'waiting' || customer.state === 'incident') {
         rings.fillStyle(0xffe14a, 1);
-        rings.fillCircle(x, y, 13);
+        rings.fillCircle(x, y, 16);
         rings.lineStyle(2, 0x1b1420, 1);
-        rings.strokeCircle(x, y, 13);
+        rings.strokeCircle(x, y, 16);
         rings.fillStyle(0xc23b32, 1);
-        rings.fillRect(x - 2, y - 7, 4, 9);
-        rings.fillRect(x - 2, y + 4, 4, 3);
+        rings.fillRect(x - 3, y - 9, 6, 11);
+        rings.fillRect(x - 3, y + 5, 6, 4);
         continue;
       }
       if (customer.state !== 'playing' || !(customer.plannedMinutes > 0)) continue;

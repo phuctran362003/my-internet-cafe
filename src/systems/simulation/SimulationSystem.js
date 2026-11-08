@@ -5,6 +5,7 @@ import { priceOf } from '../business/PricingSystem.js';
 import { applyComputerWear } from '../business/UpgradeSystem.js';
 import { applyCleaner } from '../staff/StaffSystem.js';
 import { tickCustomers } from '../customer/CustomerAI.js';
+import { tickBanter } from '../customer/CustomerBanterSystem.js';
 import { tickSpawn } from '../customer/CustomerSpawnSystem.js';
 import { evaluateFamilyEvents } from '../event/EventSystem.js';
 import { tickRandomEvents } from '../event/RandomEventSystem.js';
@@ -45,6 +46,7 @@ export function createSimulation(ctx) {
         if (minutes > 0) {
           tickSpawn(ctx, minutes);
           tickCustomers(ctx, minutes);
+          tickBanter(ctx, minutes);
           tickSecurity(ctx, minutes);
           tickRandomEvents(ctx, minutes);
         }

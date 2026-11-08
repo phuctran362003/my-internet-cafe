@@ -2,6 +2,7 @@ import simulation from './simulation.json';
 import economy from './economy/economy.json';
 import tiers from './computers/tiers.json';
 import customers from './customers/archetypes.json';
+import banter from './customers/banter.json';
 import map from './maps/cafe.json';
 import familyMembers from './family/family-members.json';
 import survival from './family/survival-config.json';
@@ -20,6 +21,7 @@ export function loadGameData() {
     economy,
     tiers,
     customers,
+    banter,
     map,
     familyMembers,
     survival,

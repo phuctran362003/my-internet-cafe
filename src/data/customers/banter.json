@@ -1,0 +1,125 @@
+{
+  "maxVisible": 3,
+  "holdMin": 6,
+  "holdMax": 12,
+  "states": {
+    "searching": {
+      "chance": 0.1,
+      "onEnter": 0.85,
+      "lines": [
+        "Quán này vibes ổn, máy đâu rồi ta?",
+        "Tui vào 2 giây đã muốn ngồi rồi đó.",
+        "Ai chỉ chỗ máy sống không lag với.",
+        "Bestie ơi ghế nào còn trống?",
+        "Điểm danh người tới net trốn deadline."
+      ]
+    },
+    "moving": {
+      "chance": 0.06,
+      "onEnter": 0.4,
+      "lines": [
+        "Đường tới ghế dài như queue rank.",
+        "Tui walk thẳng tới destiny.",
+        "Ghế kia gọi tên tui rồi."
+      ]
+    },
+    "waiting": {
+      "chance": 0.22,
+      "onEnter": 1,
+      "lines": [
+        "Anh ơi mở máy đi, tui sắp thành NPC.",
+        "Chờ như chờ crush seen 3 tiếng.",
+        "Ngồi đây aura giảm 10 điểm rồi.",
+        "Bấm phát là tui ready, hứa luôn.",
+        "Tui không AFK, tui đang thiền vì chưa có máy."
+      ]
+    },
+    "playing": {
+      "chance": 0.18,
+      "onEnter": 0.55,
+      "lines": [
+        "Một ván nữa thôi... lần thứ 9.",
+        "Team mình toàn main support cảm xúc.",
+        "Đầu hàng? Không, tui đang nghiên cứu meta.",
+        "Chat all: gáy nhẹ cho vui thôi.",
+        "Clip này lên TikTok là nổi, tin tui.",
+        "Não tui 5G nhưng tay vẫn 2G.",
+        "Win cái này tui mời mì ly... trong tâm trí.",
+        "Đừng gọi, tui đang trong cutscene cuộc đời."
+      ]
+    },
+    "incident": {
+      "chance": 0.28,
+      "onEnter": 1,
+      "lines": [
+        "Hóa đơn? Tui tưởng chơi vì đẹp trai.",
+        "Ví tui đang 404, load lại giúp cái.",
+        "Tui không quỵt, tui đang buffering tiền.",
+        "Bestie tin tui, mai trả kèm tip aura."
+      ]
+    },
+    "leaving": {
+      "chance": 0.2,
+      "onEnter": 0.55,
+      "lines": [
+        "Out nha, não hết RAM rồi.",
+        "Mai quay lại, hôm nay rank đau.",
+        "Bye quán, nhớ giữ ghế tui đó.",
+        "Về trước khi mẹ lock acc đời tui."
+      ]
+    }
+  },
+  "archetypes": {
+    "student": [
+      "Mẹ tưởng đi học nhóm, đừng bóc phốt nha.",
+      "Bài tập? Để mai, rank không chờ ai.",
+      "Tiền ăn sáng hóa tiền net, logic hoàn hảo."
+    ],
+    "gamer": [
+      "GG EZ... à nhầm, mình thua.",
+      "Diff lane thôi, tâm lý vẫn diamond.",
+      "Gánh team như gánh cả vũ trụ."
+    ],
+    "office": [
+      "Nghỉ trưa 15 phút, biến hình 2 tiếng.",
+      "Boss inbox, tui pretend mất sóng.",
+      "Excel xong, vào net chữa lành."
+    ],
+    "regular": [
+      "Ghế này là chỗ tui từ đời F0.",
+      "Quán như nhà, nhà mới là quán lạ.",
+      "Khách quen check-in, stamp đâu anh?"
+    ],
+    "troublemaker": [
+      "Tính tiền? Tui quên ví ở nhà vibe.",
+      "Chơi trước, drama sau, classic.",
+      "Đừng nhìn tui, tui innocent lắm."
+    ],
+    "wealthy": [
+      "Máy VIP đâu, tui cần thêm aura.",
+      "Lag là không xứng với ví tui.",
+      "Order full topping, kể cả rank."
+    ]
+  },
+  "pressure": {
+    "hot": [
+      "Nóng như rank trong lò vi sóng.",
+      "Máy lạnh đâu, tui tan chảy mất.",
+      "Mồ hôi này không phải clutch đâu."
+    ],
+    "lag": [
+      "Ping nhảy disco rồi anh ơi.",
+      "Skill tui bay, nhân vật thì đứng.",
+      "Mạng buffering, tâm trạng cũng luôn."
+    ],
+    "overloaded": [
+      "Điện giật nhẹ cái là tilt.",
+      "Máy thở còn mệt hơn tui.",
+      "Quán đang lag tập thể luôn."
+    ]
+  },
+  "owner": [
+    "Chủ {owner} ơi cứu mạng với.",
+    "{owner} ơi, tui khen quán nha, đừng tăng giá."
+  ]
+}

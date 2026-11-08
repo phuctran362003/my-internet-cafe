@@ -1,23 +1,38 @@
 import '../styles/interface.css';
 
+import { TILE_SIZE } from '../assets/layout.js';
 import { buildView } from '../state/buildView.js';
 import { formatMoney } from '../utils/format.js';
 
 const PANELS = [
-  ['overview', 'Tiệm'],
-  ['computer', 'Máy'],
-  ['customer', 'Khách'],
-  ['shop', 'Quầy'],
-  ['staff', 'Nhân sự'],
-  ['facility', 'Cơ sở'],
-  ['rooms', 'Phòng'],
-  ['finance', 'Giá'],
-  ['family', 'Gia đình'],
-  ['journal', 'Nhật ký']
+  ['overview', 'Tiệm', 'shop'],
+  ['computer', 'Máy', 'pc'],
+  ['customer', 'Khách', 'guest'],
+  ['shop', 'Quầy', 'counter'],
+  ['staff', 'Nhân sự', 'staff'],
+  ['facility', 'Cơ sở', 'facility'],
+  ['rooms', 'Phòng', 'door'],
+  ['finance', 'Giá', 'price'],
+  ['family', 'Gia đình', 'home'],
+  ['journal', 'Nhật ký', 'book']
 ];
+
+const NAV_ICONS = {
+  shop: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6.5 10v9h11v-9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 19v-5h4v5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  pc: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20h8M12 16v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  guest: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3" fill="currentColor"/><path d="M5.5 19.5c.9-3.2 3.3-5 6.5-5s5.6 1.8 6.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  counter: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h10v5.5a5 5 0 0 1-10 0V9z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 10.5h2.2a2.3 2.3 0 0 1 0 4.6H15" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 5c.5 1 .4 1.7 0 2.6M11 5c.5 1 .4 1.7 0 2.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  staff: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="2.3" fill="currentColor"/><circle cx="16" cy="9" r="1.8" fill="currentColor"/><path d="M3.8 19c.7-2.8 2.7-4.3 5.2-4.3s4.6 1.5 5.3 4.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.2 15.1c1.5-.2 2.9.3 3.8 1.5.6.8.8 1.6.8 2.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  facility: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 5.5 13H11l-1 8.5L19 10h-5.5L13 2.5z" fill="currentColor"/></svg>',
+  door: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8.5a1.5 1.5 0 0 1 1.5 1.5V21H7V3z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="14.2" cy="12" r="1.1" fill="currentColor"/></svg>',
+  price: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 4H20v7.8L11.2 20.6 4.4 13.8 12.2 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="16.2" cy="8" r="1.2" fill="currentColor"/></svg>',
+  home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6.5 10.5V20h11v-9.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  book: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.2A2.2 2.2 0 0 1 7.2 3H19v16H7.2A2.2 2.2 0 0 0 5 21.2V5.2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 8h6M9 12h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
 
 export function mountUi(session, root) {
   root.replaceChildren();
+  attachButtonFeel(root);
   const menu = el('div', 'menu');
   const hud = el('div', 'hud');
   const guidebar = el('div', 'guidebar');
@@ -25,7 +40,13 @@ export function mountUi(session, root) {
   const dock = el('div', 'dock');
   const modal = el('div', 'modal');
   const toasts = el('div', 'toasts');
-  root.append(menu, hud, guidebar, drawer, dock, modal, toasts);
+  const speech = el('div', 'speech-layer');
+  root.append(menu, hud, guidebar, drawer, dock, modal, toasts, speech);
+  const tickSpeech = () => {
+    syncSpeechLayer(speech, session);
+    requestAnimationFrame(tickSpeech);
+  };
+  requestAnimationFrame(tickSpeech);
 
   let drawerKey = '';
   let modalKey = '';
@@ -99,21 +120,25 @@ export function mountUi(session, root) {
 
 function paintHud(node, view) {
   node.replaceChildren(
-    stat('Ngày', view.date, 'calm'),
-    stat('Giờ', `${view.clock} ${view.period}`, 'calm'),
-    stat('Tiệm', view.cafeName, 'cafe'),
-    stat('Tiền', view.money, 'money'),
-    stat('Uy tín', String(view.reputation), view.reputation >= 50 ? 'good' : 'warn'),
-    stat('Khách', String(view.customerCount), view.customerCount ? 'good' : 'calm'),
-    stat('Máy trống', String(view.freeComputers), view.freeComputers ? 'good' : 'warn'),
-    stat('Sự cố', String(view.incidents), view.incidents ? 'alert' : 'good')
+    stat('Ngày', view.date, 'calm', HUD_DAY),
+    stat('Giờ', `${view.clock} ${view.period}`, 'calm', HUD_CLOCK),
+    stat('Tiệm', view.cafeName, 'cafe', HUD_CAFE),
+    stat('Tiền', view.money, 'money', HUD_MONEY),
+    stat('Uy tín', String(view.reputation), view.reputation >= 50 ? 'good' : 'warn', HUD_REP),
+    stat('Khách', String(view.customerCount), view.customerCount ? 'good' : 'calm', HUD_GUEST),
+    stat('Máy trống', String(view.freeComputers), view.freeComputers ? 'good' : 'warn', HUD_PC),
+    stat('Sự cố', String(view.incidents), view.incidents ? 'alert' : 'good', HUD_ALERT)
   );
 }
 
 function houseStat(view, session) {
   const node = el('button', `stat tone-${view.family.alert ? 'alert' : 'good'}`);
   node.type = 'button';
-  node.append(el('span', '', 'Nhà'), el('b', '', view.family.alert ? 'Cần lo' : 'Ổn'));
+  node.title = 'Gia đình';
+  node.setAttribute('aria-label', view.family.alert ? 'Gia đình: Cần lo' : 'Gia đình: Ổn');
+  const icon = el('i', 'stat-icon');
+  icon.innerHTML = HUD_HOME;
+  node.append(icon, el('b', '', view.family.alert ? 'Cần lo' : 'Ổn'));
   node.addEventListener('click', () => session.setPanel('family'));
   return node;
 }
@@ -159,6 +184,19 @@ const MOON_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="
 const MUSIC_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="17" r="2.4" fill="currentColor"/><circle cx="17" cy="15" r="2.4" fill="currentColor"/></svg>';
 const MUSIC_OFF_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="17" r="2.4" fill="currentColor"/><circle cx="17" cy="15" r="2.4" fill="currentColor"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="2"/></svg>';
 const CHAIR_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 11V4h10v7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 11h14v4H5z" fill="currentColor"/><path d="M7 15v5M17 15v5" stroke="currentColor" stroke-width="2"/></svg>';
+const HUD_DAY = hudSvg('<rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 10h16M8 3v4M16 3v4" stroke="currentColor" stroke-width="2"/><rect x="8" y="13" width="3" height="3" fill="currentColor"/>');
+const HUD_CLOCK = hudSvg('<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>');
+const HUD_CAFE = hudSvg('<path d="M4 11h16l-1.2 8H5.2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 11l9-7 9 7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 19v-5h4v5" fill="none" stroke="currentColor" stroke-width="2"/>');
+const HUD_MONEY = hudSvg('<circle cx="9" cy="14" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="10" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 7.5v5M13.4 9c.4-.5 1-.8 1.6-.8 1 0 1.6.5 1.6 1.2s-.6 1.2-2 1.4c-1.3.2-2 .7-2 1.5 0 .8.7 1.3 1.8 1.3.7 0 1.3-.3 1.6-.8" fill="none" stroke="currentColor" stroke-width="1.6"/>');
+const HUD_REP = hudSvg('<path d="M12 3.4l2.2 5.1 5.5.6-4.1 3.7 1.2 5.5L12 15.8 7.2 18.3l1.2-5.5L4.3 9.1l5.5-.6z" fill="currentColor"/>');
+const HUD_GUEST = hudSvg('<circle cx="12" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 19c.8-3.4 3.2-5 6.5-5s5.7 1.6 6.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>');
+const HUD_PC = hudSvg('<rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>');
+const HUD_ALERT = hudSvg('<path d="M12 4l9 16H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.1" fill="currentColor"/>');
+const HUD_HOME = hudSvg('<path d="M4 11l8-7 8 7v9H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20v-6h4v6" fill="none" stroke="currentColor" stroke-width="2"/>');
+
+function hudSvg(inner) {
+  return `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">${inner}</svg>`;
+}
 
 function speedIcon(count) {
   const width = 5;
@@ -316,22 +354,42 @@ function textField(placeholder, maxLength) {
 
 function paintDrawer(node, view, session) {
   node.replaceChildren();
-  const tabs = el('div', 'tabs');
-  for (const [id, label] of PANELS) {
-    tabs.append(button(label, () => session.setPanel(id), view.panel === id));
+  const nav = el('nav', 'nav');
+  nav.setAttribute('aria-label', 'Mục quản lý');
+  for (const [id, label, icon] of PANELS) {
+    const item = navButton(label, NAV_ICONS[icon], () => session.setPanel(id), view.panel === id);
+    if (id === 'family' && view.family.alert) {
+      item.classList.add('has-alert');
+      item.setAttribute('aria-label', `${label}, cần lo`);
+    }
+    nav.append(item);
   }
-  node.append(tabs);
-  node.append(el('div', 'error', view.lastError));
-  if (view.panel === 'overview') node.append(overview(view, session));
-  if (view.panel === 'computer') node.append(computerPanel(view, session));
-  if (view.panel === 'customer') node.append(customerPanel(view, session));
-  if (view.panel === 'shop') node.append(shopPanel(view, session));
-  if (view.panel === 'staff') node.append(staffPanel(view, session));
-  if (view.panel === 'facility') node.append(facilityPanel(view, session));
-  if (view.panel === 'rooms') node.append(roomsPanel(view, session));
-  if (view.panel === 'finance') node.append(financePanel(view, session));
-  if (view.panel === 'family') node.append(familyPanel(view, session));
-  if (view.panel === 'journal') node.append(journalPanel(view));
+  const body = el('div', 'drawer-body');
+  const error = el('div', 'error', view.lastError);
+  if (!view.lastError) error.hidden = true;
+  body.append(error);
+  if (view.panel === 'overview') body.append(overview(view, session));
+  if (view.panel === 'computer') body.append(computerPanel(view, session));
+  if (view.panel === 'customer') body.append(customerPanel(view, session));
+  if (view.panel === 'shop') body.append(shopPanel(view, session));
+  if (view.panel === 'staff') body.append(staffPanel(view, session));
+  if (view.panel === 'facility') body.append(facilityPanel(view, session));
+  if (view.panel === 'rooms') body.append(roomsPanel(view, session));
+  if (view.panel === 'finance') body.append(financePanel(view, session));
+  if (view.panel === 'family') body.append(familyPanel(view, session));
+  if (view.panel === 'journal') body.append(journalPanel(view));
+  node.append(nav, body);
+}
+
+function navButton(label, svg, onClick, active) {
+  const node = el('button', `nav-item${active ? ' active' : ''}`);
+  node.type = 'button';
+  if (active) node.setAttribute('aria-current', 'page');
+  const icon = el('span', 'nav-ico');
+  icon.innerHTML = svg;
+  node.append(icon, el('span', 'nav-label', label));
+  node.addEventListener('click', onClick);
+  return node;
 }
 
 function overview(view, session) {
@@ -418,6 +476,7 @@ function customerPanel(view, session) {
     box.append(row('Hóa đơn', customer.billLabel));
   }
   if (customer.state === 'incident') box.append(el('p', 'muted', 'Khách này đang có sự cố. Chọn cách xử lý trong hộp thoại.'));
+  if (customer.speech) box.append(el('p', 'speech-quote', `“${customer.speech}”`));
   return box;
 }
 
@@ -730,7 +789,7 @@ function drawerSignature(view) {
     portraits: Object.keys(view.portraits).length,
     debt: view.debt > 0,
     journal: view.journal.map((entry) => entry.choiceId).join(),
-    guests: view.customers.map((customer) => [customer.id, customer.state, customer.sessionMinutes].join(':')).join('|'),
+    guests: view.customers.map((customer) => [customer.id, customer.state, customer.sessionMinutes, customer.speech].join(':')).join('|'),
     error: view.lastError
   });
 }
@@ -747,9 +806,16 @@ function modalSignature(view) {
   return '';
 }
 
-function stat(label, value, tone = 'calm') {
+function stat(label, value, tone = 'calm', icon = '') {
   const node = el('div', `stat tone-${tone}`);
-  node.append(el('span', '', label), el('b', '', value));
+  node.title = label;
+  node.setAttribute('aria-label', `${label}: ${value}`);
+  if (icon) {
+    const mark = el('i', 'stat-icon');
+    mark.innerHTML = icon;
+    node.append(mark);
+  }
+  node.append(el('b', '', value));
   return node;
 }
 
@@ -757,6 +823,21 @@ function row(label, value) {
   const node = el('div', 'row');
   node.append(el('span', '', label), el('span', '', value));
   return node;
+}
+
+function attachButtonFeel(root) {
+  root.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    const target = event.target.closest('button');
+    if (!target || target.disabled) return;
+    const pop = el('span', 'btn-pop');
+    const tone = getComputedStyle(target).getPropertyValue('--press').trim();
+    if (tone && tone !== 'transparent') pop.style.setProperty('--pop', tone);
+    pop.style.left = `${event.clientX}px`;
+    pop.style.top = `${event.clientY}px`;
+    root.append(pop);
+    pop.addEventListener('animationend', () => pop.remove());
+  });
 }
 
 function button(label, onClick, active = false, disabled = false) {
@@ -781,6 +862,39 @@ function iconButton(label, svg, onClick, active = false, disabled = false) {
 function pip(status) {
   const node = el('i', `pip ${status === 'healthy' ? 'ok' : status === 'hungry' ? 'hunger' : status === 'cold' ? 'cold' : status === 'deceased' || status === 'sick' || status === 'very_sick' ? 'bad' : ''}`);
   return node;
+}
+
+function syncSpeechLayer(layer, session) {
+  const keep = new Set();
+  const canvas = document.querySelector('#game-root canvas');
+  const playing = session.ui.screen === 'playing' && canvas;
+  if (playing) {
+    const map = session.data.map;
+    const worldW = map.rows[0].length * TILE_SIZE;
+    const worldH = map.rows.length * TILE_SIZE;
+    const host = layer.getBoundingClientRect();
+    const box = canvas.getBoundingClientRect();
+    for (const customer of session.state.cafe.customers) {
+      const text = customer.speech?.text;
+      if (!text) continue;
+      keep.add(customer.id);
+      let node = layer.querySelector(`[data-speech="${customer.id}"]`);
+      if (!node) {
+        node = el('div', 'world-bubble');
+        node.dataset.speech = customer.id;
+        layer.append(node);
+      }
+      if (node.textContent !== text) node.textContent = text;
+      const marker = customer.state === 'playing' || customer.state === 'waiting' || customer.state === 'incident';
+      const worldX = customer.x * TILE_SIZE + TILE_SIZE / 2;
+      const worldY = customer.y * TILE_SIZE + TILE_SIZE / 2 - (marker ? 68 : 44);
+      node.style.left = `${box.left - host.left + (worldX / worldW) * box.width}px`;
+      node.style.top = `${box.top - host.top + (worldY / worldH) * box.height}px`;
+    }
+  }
+  for (const node of [...layer.children]) {
+    if (!keep.has(node.dataset.speech)) node.remove();
+  }
 }
 
 function el(tag, className, text) {

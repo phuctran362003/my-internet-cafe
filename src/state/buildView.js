@@ -154,6 +154,7 @@ export function buildView(session) {
     build: Boolean(ui.build),
     buildType: ui.buildType || 'plant',
     music: ui.music !== false,
+    viewScale: ui.viewScale || 1,
     bag: { ...(state.cafe.furnitureBag ?? {}) },
     catalog: (data.furniture ?? []).map((item) => ({
       ...item,
@@ -169,7 +170,7 @@ export function buildView(session) {
       title: active.title,
       description: active.description,
       tone: active.tone || '',
-      kicker: active.tone === 'beneficial' ? 'Có lợi' : active.tone === 'adverse' ? 'Bất lợi' : '',
+      kicker: active.tone === 'beneficial' ? 'Tin vui' : active.tone === 'adverse' ? 'Rắc rối' : '',
       choices: visibleChoices(active, state).map((choice) => ({ id: choice.id, label: choice.label }))
     } : null,
     report: {
@@ -194,7 +195,7 @@ export function buildView(session) {
 }
 
 function facilityDetail(id, spec) {
-  if (id === 'cooling') return `Mát cho ${spec.seats} máy đang ngồi`;
-  if (id === 'network') return `Chất lượng ${spec.quality}`;
-  return `Chịu ${spec.watts}W`;
+  if (id === 'cooling') return `Mát được ${spec.seats} máy đang có người`;
+  if (id === 'network') return `Mạng ${spec.quality}/100`;
+  return `Chịu được ${spec.watts}W`;
 }

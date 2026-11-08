@@ -8,12 +8,12 @@
     "priority": "urgent",
     "pause": true,
     "dialog": {
-      "title": "Con bạn bị ốm",
-      "description": "Minh bị ốm. Gia đình cần thuốc. Nếu trì hoãn, bệnh có thể nặng hơn."
+      "title": "Minh sốt rồi",
+      "description": "Nhà nhắn Minh đang sốt. Cần thuốc, để lâu dễ nặng hơn."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "child" }] },
-      { "id": "delay", "label": "Trì hoãn điều trị", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "child" }] },
+      { "id": "delay", "label": "Để lát nữa tính", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
     ]
   },
   {
@@ -25,12 +25,12 @@
     "priority": "urgent",
     "pause": true,
     "dialog": {
-      "title": "Vợ bạn bị ốm",
-      "description": "Lan bị ốm và cần thuốc. Trì hoãn sẽ khiến bệnh tiến triển."
+      "title": "Lan ốm rồi",
+      "description": "Lan ốm, cần thuốc. Để lâu bệnh dễ nặng."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "wife" }] },
-      { "id": "delay", "label": "Trì hoãn điều trị", "effects": [{ "type": "delay_treatment", "target": "wife" }, { "type": "set_flag", "key": "wife_treatment_delayed", "value": true }] }
+      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "wife" }] },
+      { "id": "delay", "label": "Để lát nữa tính", "effects": [{ "type": "delay_treatment", "target": "wife" }, { "type": "set_flag", "key": "wife_treatment_delayed", "value": true }] }
     ]
   },
   {
@@ -42,12 +42,12 @@
     "priority": "urgent",
     "pause": true,
     "dialog": {
-      "title": "Gia đình thiếu thức ăn",
-      "description": "Không đủ suất ăn cho hôm nay. Các thành viên sẽ đói nếu không mua thêm."
+      "title": "Nhà hết cơm",
+      "description": "Hôm nay không đủ suất. Không mua thêm thì cả nhà đói."
     },
     "choices": [
-      { "id": "buy_food", "label": "Mua thức ăn", "effects": [{ "type": "buy_food_pack" }] },
-      { "id": "ignore", "label": "Để sau", "effects": [{ "type": "set_flag", "key": "family_food_shortage", "value": true }] }
+      { "id": "buy_food", "label": "Mua thêm đồ ăn", "effects": [{ "type": "buy_food_pack" }] },
+      { "id": "ignore", "label": "Để mai tính", "effects": [{ "type": "set_flag", "key": "family_food_shortage", "value": true }] }
     ]
   },
   {
@@ -59,12 +59,12 @@
     "priority": "urgent",
     "pause": true,
     "dialog": {
-      "title": "Không đủ tiền sưởi",
-      "description": "Nhà không được sưởi hôm nay. Trả tiền sưởi sẽ làm cả nhà đỡ lạnh."
+      "title": "Tiền sưởi chưa đóng",
+      "description": "Nhà lạnh, tiền sưởi hôm nay chưa trả. Đóng thì cả nhà đỡ run."
     },
     "choices": [
-      { "id": "pay_heat", "label": "Trả tiền sưởi", "effects": [{ "type": "pay_heat" }] },
-      { "id": "skip", "label": "Chịu lạnh", "effects": [{ "type": "set_flag", "key": "family_heat_skipped", "value": true }] }
+      { "id": "pay_heat", "label": "Đóng tiền sưởi", "effects": [{ "type": "pay_heat" }] },
+      { "id": "skip", "label": "Chịu lạnh một đêm", "effects": [{ "type": "set_flag", "key": "family_heat_skipped", "value": true }] }
     ]
   },
   {
@@ -76,12 +76,12 @@
     "priority": "urgent",
     "pause": true,
     "dialog": {
-      "title": "Con bạn bệnh nặng",
-      "description": "Minh bệnh rất nặng. Cần thuốc ngay, nếu không tình trạng sẽ nguy kịch."
+      "title": "Minh bệnh nặng",
+      "description": "Minh nặng lắm rồi. Cần thuốc ngay, không thì nguy."
     },
     "choices": [
-      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "child" }] },
-      { "id": "delay", "label": "Chưa mua", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+      { "id": "buy_medicine", "label": "Mua thuốc ngay", "effects": [{ "type": "use_medicine", "target": "child" }] },
+      { "id": "delay", "label": "Chưa mua được", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
     ]
   }
 ]

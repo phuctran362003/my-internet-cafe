@@ -7,13 +7,13 @@
     "priority": "high",
     "pause": true,
     "dialog": {
-      "title": "Khách không chịu trả tiền",
-      "description": "{{name}} định rời tiệm khi hóa đơn còn {{bill}}."
+      "title": "Khách toan ra mà chưa trả",
+      "description": "{{name}} đứng dậy, hóa đơn còn {{bill}} mà chưa thấy móc ví."
     },
     "choices": [
       {
         "id": "demand_payment",
-        "label": "Yêu cầu thanh toán",
+        "label": "Giữ lại, đòi đủ tiền",
         "effects": [
           { "type": "pay_bill_ratio", "ratio": 1 },
           { "type": "add_reputation", "amount": 1 },
@@ -23,7 +23,7 @@
       },
       {
         "id": "warn",
-        "label": "Cảnh cáo",
+        "label": "Nhắc một câu, lấy phân nửa",
         "effects": [
           { "type": "pay_bill_ratio", "ratio": 0.5 },
           { "type": "add_reputation", "amount": -1 },
@@ -34,7 +34,7 @@
       },
       {
         "id": "call_guard",
-        "label": "Gọi bảo vệ",
+        "label": "Nhờ bảo vệ giữ lại",
         "requires": "guard",
         "effects": [
           { "type": "pay_bill_ratio", "ratio": 0.85 },
@@ -57,7 +57,7 @@
       },
       {
         "id": "record",
-        "label": "Ghi nhận vi phạm",
+        "label": "Ghi sổ, lần sau cấm cửa",
         "effects": [
           { "type": "set_flag", "key": "customer_violation", "value": true },
           { "type": "add_reputation", "amount": -3 },
@@ -67,7 +67,7 @@
       },
       {
         "id": "accept_loss",
-        "label": "Chấp nhận thất thoát",
+        "label": "Thôi, cho qua lần này",
         "effects": [
           { "type": "add_reputation", "amount": -2 },
           { "type": "resolve_incident" },

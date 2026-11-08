@@ -27,7 +27,7 @@
       "name": "Kho",
       "cost": 450000,
       "kind": "storage",
-      "effect": "Chứa thêm nước và mì. Mỗi món lên tối đa 24 cái.",
+      "effect": "Chứa thêm nước và mì. Mỗi món để được tới 24 gói.",
       "gate": { "x": 4, "y": 4 },
       "area": { "x": 1, "y": 1, "w": 4, "h": 3 }
     },
@@ -36,7 +36,7 @@
       "name": "Nhà vệ sinh",
       "cost": 280000,
       "kind": "toilet",
-      "effect": "Khách ngồi máy dễ chịu hơn.",
+      "effect": "Khách ngồi máy đỡ bồn chồn, ngồi lâu hơn.",
       "area": { "x": 1, "y": 13, "w": 4, "h": 2 }
     },
     {
@@ -44,7 +44,7 @@
       "name": "Phòng VIP",
       "cost": 2200000,
       "kind": "vip",
-      "effect": "Hai máy Premium. Khách chịu trả giá giờ cao.",
+      "effect": "Hai máy Premium. Khách chịu trả giờ cao hơn.",
       "gate": { "x": 13, "y": 10 },
       "area": { "x": 14, "y": 8, "w": 7, "h": 7 }
     }

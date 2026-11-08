@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { beginPayment, shouldSkipPayment, startMachine, tickCustomers } from '../src/systems/customer/CustomerAI.js';
-import { tickBanter } from '../src/systems/customer/CustomerBanterSystem.js';
+import { speakNow, tickBanter } from '../src/systems/customer/CustomerBanterSystem.js';
 import { recordVisit } from '../src/systems/customer/CustomerRelationshipSystem.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
 
@@ -102,5 +102,28 @@ describe('customers', () => {
     const hold = guests[0].speech.left;
     tickBanter(ctx, hold);
     expect(guests[0].speech).toBe(null);
+  });
+
+  it('picks playing lines from a shared pool, not archetype voices', () => {
+    const lines = new Set();
+    for (let i = 0; i < 48; i += 1) {
+      let step = 0;
+      const ctx = bareContext(() => {
+        const value = ((i * 11 + step * 7) % 97) / 97;
+        step += 1;
+        return value;
+      });
+      const guest = sampleCustomer({
+        id: `play${i}`,
+        archetype: i % 2 ? 'student' : 'wealthy',
+        state: 'playing'
+      });
+      ctx.state.cafe.customers = [guest];
+      expect(speakNow(ctx, guest, 'idle')).toBe(true);
+      lines.add(guest.speech.text);
+    }
+    expect(lines.size).toBeGreaterThan(5);
+    const joined = [...lines].join(' ');
+    expect(joined).toMatch(/PUBG|Liên Minh|Minecraft|deadline|Zoom|Excel/i);
   });
 });

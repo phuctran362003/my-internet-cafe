@@ -16,7 +16,8 @@ import { buyCafeItem } from '../systems/inventory/InventorySystem.js';
 import { buyFoodPack, buyMedicine } from '../systems/family/FamilySurvival.js';
 import { fireGuard, hireGuard } from '../systems/security/SecuritySystem.js';
 import { startMachine as openCustomerMachine } from '../systems/customer/CustomerAI.js';
-import { createSaveSystem } from '../systems/save/SaveSystem.js';
+import { createSaveSystem, latestSave } from '../systems/save/SaveSystem.js';
+import { pushNote } from '../ui/notes.js';
 
 export function createGameSession({ data, storage, seed = 1 }) {
   const state = createInitialState(data, seed);
@@ -32,7 +33,8 @@ export function createGameSession({ data, storage, seed = 1 }) {
     guideOpen: false,
     build: false,
     buildType: 'plant',
-    music: storedMusic()
+    music: storedMusic(),
+    viewScale: storedViewScale()
   };
   const rng = createRng(() => state.meta.rng, (value) => { state.meta.rng = value; });
   const ctx = { state, data, bus, ui, rng, storage };
@@ -61,8 +63,13 @@ export function createGameSession({ data, storage, seed = 1 }) {
   bus.on(GameEvents.COMPUTER_BROKEN, (payload) => pushNote(ui, `${payload?.id || 'Máy'} hỏng`, 'alert'));
   bus.on(GameEvents.DAY_ENDED, () => queueSave(0));
 
-  function queueSave(slot, options) {
-    saveQueue = saveQueue.then(() => ctx.saveSystem.save(slot, options)).catch(() => ({ ok: false }));
+  function queueSave(slot, options = {}) {
+    saveQueue = saveQueue
+      .then(() => ctx.saveSystem.save(slot, options))
+      .catch(() => {
+        if (!options.quiet) pushNote(ui, 'Lưu không thành công', 'alert');
+        return { ok: false, reason: 'storage' };
+      });
     return saveQueue;
   }
 
@@ -114,6 +121,10 @@ export function createGameSession({ data, storage, seed = 1 }) {
       return { ok: true };
     },
     async save(slot = 0) {
+      if (!state.meta.started && slot !== 0) {
+        pushNote(ui, 'Chưa có ván để lưu', 'alert');
+        return { ok: false, reason: 'idle' };
+      }
       return queueSave(slot);
     },
     flushSaves() {
@@ -124,22 +135,30 @@ export function createGameSession({ data, storage, seed = 1 }) {
       const result = await ctx.saveSystem.load(slot);
       if (!result.ok) {
         ui.lastError = 'Không tải được bản lưu';
+        pushNote(ui, 'Không tải được bản lưu', 'alert');
         return result;
       }
       copyInto(state, result.data);
       state.meta.started = true;
       ui.selection = null;
       ui.lastError = '';
+      ui.notes = [];
       ctx.events.syncPause();
       ui.screen = state.meta.ending ? 'ending' : state.meta.dayEnded ? 'report' : 'playing';
       ui.panel = 'overview';
       ui.guideOpen = false;
       ui.build = false;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'load' });
-      return { ok: true };
+      return { ok: true, slot, savedAt: result.savedAt };
     },
     async listSaves() {
       return ctx.saveSystem.list();
+    },
+    async latestSaveSlot() {
+      const records = await ctx.saveSystem.list();
+      const metaSlot = await ctx.saveSystem.lastSlot();
+      if (metaSlot != null && records.some((record) => record.slot === metaSlot)) return metaSlot;
+      return latestSave(records)?.slot ?? null;
     },
     togglePause() {
       if (!state.meta.started || state.meta.dayEnded) return;
@@ -161,6 +180,17 @@ export function createGameSession({ data, storage, seed = 1 }) {
         /* preference stays in this tab */
       }
       bus.emit(GameEvents.AUDIO_CHANGED, { music: ui.music !== false });
+    },
+    nudgeViewScale(dir) {
+      const next = clampViewScale(ui.viewScale + Math.sign(dir || 0) * VIEW_SCALE_STEP);
+      if (next === ui.viewScale) return;
+      ui.viewScale = next;
+      try {
+        localStorage.setItem('cafe-view-scale', String(next));
+      } catch {
+        /* preference stays in this tab */
+      }
+      bus.emit(GameEvents.VIEW_SCALE_CHANGED, { scale: next });
     },
     toggleBuild() {
       ui.build = !ui.build;
@@ -316,12 +346,30 @@ export function createGameSession({ data, storage, seed = 1 }) {
   };
 }
 
+const VIEW_SCALE_MIN = 0.7;
+const VIEW_SCALE_MAX = 1.8;
+const VIEW_SCALE_STEP = 0.1;
+
 function storedMusic() {
   try {
     return localStorage.getItem('cafe-music') !== 'off';
   } catch {
     return true;
   }
+}
+
+function storedViewScale() {
+  try {
+    return clampViewScale(Number(localStorage.getItem('cafe-view-scale')));
+  } catch {
+    return 1;
+  }
+}
+
+function clampViewScale(value) {
+  if (!Number.isFinite(value)) return 1;
+  const stepped = Math.round(value / VIEW_SCALE_STEP) * VIEW_SCALE_STEP;
+  return Math.min(VIEW_SCALE_MAX, Math.max(VIEW_SCALE_MIN, Number(stepped.toFixed(1))));
 }
 
 function toastPlace(ui, result) {
@@ -334,11 +382,6 @@ function toastPlace(ui, result) {
 
 function cleanName(value) {
   return String(value ?? '').trim().replace(/\s+/g, ' ');
-}
-
-function pushNote(ui, text, kind = 'info') {
-  ui.notes.unshift({ id: `${Date.now()}-${ui.notes.length}-${text.slice(0, 12)}`, text, kind });
-  ui.notes = ui.notes.slice(0, 5);
 }
 
 function toastResult(ui, result, message) {

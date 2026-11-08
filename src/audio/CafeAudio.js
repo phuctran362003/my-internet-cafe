@@ -6,31 +6,66 @@ export function attachCafeAudio(session) {
   music.loop = true;
   music.preload = 'auto';
   music.volume = 0.42;
-  music.addEventListener('ended', () => {
-    if (session.ui.music === false) return;
-    music.currentTime = 0;
-    music.play().catch(() => {});
-  });
 
   let context = null;
+  let wantPlay = false;
+  let resumeAt = 0;
+
   const audioContext = () => {
     if (!context) context = new AudioContext();
     return context;
   };
   const audible = () => session.ui.music !== false;
 
+  const tryPlay = () => {
+    if (!wantPlay || !audible() || document.hidden) return;
+    const play = music.play();
+    if (play) play.catch(() => {});
+  };
+
   const startMusic = () => {
     if (!audible()) {
+      wantPlay = false;
       music.pause();
       return;
     }
-    music.play().catch(() => {});
+    wantPlay = true;
+    if (context?.state === 'suspended') context.resume().catch(() => {});
+    tryPlay();
   };
 
-  document.addEventListener('pointerdown', () => {
-    if (context?.state === 'suspended') context.resume().catch(() => {});
-    startMusic();
+  music.addEventListener('ended', () => {
+    if (!wantPlay) return;
+    music.currentTime = 0;
+    tryPlay();
   });
+  music.addEventListener('pause', () => {
+    if (!wantPlay || document.hidden) return;
+    const now = performance.now();
+    if (now - resumeAt < 400) return;
+    resumeAt = now;
+    tryPlay();
+  });
+  music.addEventListener('stalled', tryPlay);
+  music.addEventListener('error', () => {
+    if (!wantPlay) return;
+    music.load();
+    tryPlay();
+  });
+  music.addEventListener('timeupdate', () => {
+    if (!wantPlay) return;
+    const duration = music.duration;
+    if (!Number.isFinite(duration) || duration < 2) return;
+    if (duration - music.currentTime > 0.18) return;
+    music.currentTime = 0.04;
+  });
+
+  document.addEventListener('pointerdown', startMusic);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) startMusic();
+  });
+  window.addEventListener('focus', startMusic);
+  window.addEventListener('pageshow', startMusic);
 
   session.bus.on(GameEvents.AUDIO_CHANGED, startMusic);
   session.bus.on(GameEvents.PAYMENT_RECEIVED, (tx) => {

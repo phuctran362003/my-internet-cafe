@@ -6,7 +6,6 @@ import { CafeScene } from '../scenes/CafeScene.js';
 
 const ROOM_WIDTH = cafeMap.rows[0].length * cafeMap.tileSize;
 const ROOM_HEIGHT = cafeMap.rows.length * cafeMap.tileSize;
-const GAME_SCALE = 1.15; // Tăng scale nhẹ từ 1.0 lên 1.15
 
 export function createGame(parent, session) {
   const game = new Phaser.Game({
@@ -18,10 +17,11 @@ export function createGame(parent, session) {
     antialias: false,
     banner: false,
     scale: {
-      mode: Phaser.Scale.FIT,
+      mode: Phaser.Scale.RESIZE,
       autoCenter: Phaser.Scale.CENTER_BOTH,
-      width: ROOM_WIDTH * GAME_SCALE,
-      height: ROOM_HEIGHT * GAME_SCALE
+      width: ROOM_WIDTH,
+      height: ROOM_HEIGHT,
+      expandParent: false
     },
     callbacks: {
       preBoot: (instance) => instance.registry.set('session', session)
@@ -29,6 +29,7 @@ export function createGame(parent, session) {
     scene: [BootScene, PreloadScene, CafeScene]
   });
   game.registry.set('session', session);
+  session.game = game;
   game.events.once(Phaser.Core.Events.READY, () => {
     const sync = () => syncSmoothing(game);
     sync();

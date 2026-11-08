@@ -28,6 +28,17 @@ export function formatDate(day) {
   return date.toISOString().slice(0, 10);
 }
 
+export function formatSavedAt(iso) {
+  const date = new Date(iso);
+  if (!Number.isFinite(date.getTime())) return '';
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
 export function fillTemplate(text, vars) {
   return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) => (vars[key] == null ? '' : String(vars[key])));
 }

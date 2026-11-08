@@ -8,7 +8,7 @@
     "salary": 80000,
     "reactionMinutes": 12,
     "post": { "x": 2, "y": 10 },
-    "blurb": "Tự xử lý khách quỵt tiền sau một lúc."
+    "blurb": "Khách toan chuồn thì ông giữ lại, không cần bạn chạy ra."
   },
   "cleaner": {
     "id": "cleaner-basic",
@@ -17,7 +17,7 @@
     "look": "office",
     "salary": 70000,
     "post": { "x": 8, "y": 8 },
-    "blurb": "Cuối ngày vệ sinh máy cho sạch hơn."
+    "blurb": "Cuối ngày lau máy, bàn đỡ dính nước ngọt."
   },
   "cashier": {
     "id": "cashier-basic",
@@ -26,7 +26,7 @@
     "look": "regular",
     "salary": 90000,
     "post": { "x": 3, "y": 10 },
-    "blurb": "Trông quầy, khách khó quỵt hơn."
+    "blurb": "Ngồi quầy tính tiền, khách khó chuồn."
   },
   "server": {
     "id": "server-basic",
@@ -35,6 +35,6 @@
     "look": "student",
     "salary": 75000,
     "post": { "x": 5, "y": 10 },
-    "blurb": "Bán thêm nước và mì khi khách đang ngồi."
+    "blurb": "Mang nước với mì tới bàn khi khách đang chơi."
   }
 }

@@ -1,5 +1,6 @@
 import { isOutOfService } from '../business/computerStatus.js';
 import { readPressure } from '../business/FacilitySystem.js';
+import { pushNote } from '../../ui/notes.js';
 
 const HELPERS = ['cleaner', 'cashier', 'server'];
 
@@ -14,10 +15,7 @@ export function markMet(ctx, id) {
   if (guide.met[id]) return false;
   guide.met[id] = true;
   const lesson = ctx.data.guide.find((item) => item.id === id);
-  if (lesson && Array.isArray(ctx.ui?.notes)) {
-    ctx.ui.notes.unshift({ id: `guide-${id}`, text: lesson.toast, kind: 'alert' });
-    ctx.ui.notes = ctx.ui.notes.slice(0, 5);
-  }
+  if (lesson) pushNote(ctx.ui, lesson.toast, 'alert');
   return true;
 }
 
@@ -49,7 +47,7 @@ export function guideView(state, data) {
       action: lesson.action,
       panel: lesson.panel,
       status,
-      statusLabel: status === 'active' ? 'Đang gặp' : status === 'seen' ? 'Đã gặp' : 'Chưa gặp'
+      statusLabel: status === 'active' ? 'Đang xảy ra' : status === 'seen' ? 'Rồi' : 'Chưa tới'
     };
   });
   const metCount = cards.filter((card) => card.status !== 'unseen').length;

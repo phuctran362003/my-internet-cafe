@@ -8,26 +8,46 @@
     "cooldownDays": 2,
     "needsComputer": true,
     "dialog": {
-      "title": "Điện chập trong tiệm",
-      "description": "Cầu dao nhảy. Một máy tắt giữa chừng, khách giật mình. Gọi thợ thì tốn tiền, bỏ qua thì máy đó yếu đi."
+      "title": "Cầu dao nhảy",
+      "description": "Một máy vụt tắt giữa ván. Khách giật mình, màn hình tối om. Gọi thợ thì tốn tiền; tự bật lại thì máy dễ yếu."
     },
     "choices": [
       {
         "id": "pay",
-        "label": "Gọi thợ, 70.000đ",
+        "label": "Gọi thợ xử lý (70.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 70000, "category": "repair", "label": "Thợ điện xử lý sập nguồn" },
-          { "type": "restore_computer", "amount": 35 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "subtract_money",
+            "amount": 70000,
+            "category": "repair",
+            "label": "Thợ điện xử lý sập nguồn"
+          },
+          {
+            "type": "restore_computer",
+            "amount": 35
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bật lại, cầu may",
+        "label": "Tự bật lại, cầu may",
         "effects": [
-          { "type": "damage_computer", "amount": 30 },
-          { "type": "dirty_computer", "amount": 18 },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "damage_computer",
+            "amount": 30
+          },
+          {
+            "type": "dirty_computer",
+            "amount": 18
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -40,35 +60,61 @@
     "weight": 8,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "archetypes": ["troublemaker", "gamer"],
+    "archetypes": [
+      "troublemaker",
+      "gamer"
+    ],
     "dialog": {
-      "title": "Khách nói như loa",
-      "description": "{{name}} cười nói át cả phòng. Máy bên cạnh đã ngoái nhìn. Dịu thì mất một phần nước, để vậy thì uy tín giảm."
+      "title": "Khách nói át cả phòng",
+      "description": "{{name}} nói như không có tai nghe. Máy bên cạnh ngoái nhìn. Mời ly nước rồi nhắc nhẹ thì êm; la to thì mất mặt."
     },
     "choices": [
       {
         "id": "calm",
-        "label": "Mời nước, nhắc nhỏ (15.000đ)",
+        "label": "Mời ly nước, nhắc nhỏ (15.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 15000, "category": "event", "label": "Nước mời {{name}}" },
-          { "type": "adjust_satisfaction", "amount": 8 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "subtract_money",
+            "amount": 15000,
+            "category": "event",
+            "label": "Nước mời {{name}}"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 8
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "warn",
-        "label": "Nhắc to giữa quán",
+        "label": "Nhắc to cho cả quán nghe",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -12 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -12
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Kệ, ai chơi nấy chịu",
+        "label": "Kệ, ai ngồi nấy chịu",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -6 },
-          { "type": "add_reputation", "amount": -3 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -6
+          },
+          {
+            "type": "add_reputation",
+            "amount": -3
+          }
         ]
       }
     ]
@@ -82,19 +128,33 @@
     "cooldownDays": 2,
     "needsCustomers": 2,
     "needsComputer": true,
-    "periods": ["evening", "night"],
+    "periods": [
+      "evening",
+      "night"
+    ],
     "dialog": {
-      "title": "Hai khách lao vào nhau",
-      "description": "{{name}} và {{name2}} đứng dậy vì một mạng đấu. Ghế kênh, ly nước đổ. Cả quán đang nhìn bạn."
+      "title": "Hai đứa xô nhau",
+      "description": "{{name}} với {{name2}} đứng phắt dậy vì một mạng đấu. Ghế kênh, nước đổ. Cả quán nhìn về phía bạn."
     },
     "choices": [
       {
         "id": "separate",
-        "label": "Xông vào can, đền 30.000đ",
+        "label": "Xông vào can, đền đồ vỡ (30.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 30000, "category": "event", "label": "Đền đồ vỡ sau vụ xô xát" },
-          { "type": "adjust_satisfaction", "amount": -4 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "subtract_money",
+            "amount": 30000,
+            "category": "event",
+            "label": "Đền đồ vỡ sau vụ xô xát"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -4
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
@@ -102,16 +162,28 @@
         "label": "Nhờ bảo vệ tách ra",
         "requires": "guard",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -2 },
-          { "type": "add_reputation", "amount": 3 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 3
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Đứng nhìn cho đến khi mệt",
+        "label": "Đứng nhìn cho chúng mệt",
         "effects": [
-          { "type": "damage_computer", "amount": 22 },
-          { "type": "add_reputation", "amount": -6 }
+          {
+            "type": "damage_computer",
+            "amount": 22
+          },
+          {
+            "type": "add_reputation",
+            "amount": -6
+          }
         ]
       }
     ]
@@ -125,36 +197,67 @@
     "cooldownDays": 2,
     "needsCustomers": 1,
     "needsComputer": true,
-    "archetypes": ["gamer", "troublemaker"],
+    "archetypes": [
+      "gamer",
+      "troublemaker"
+    ],
     "dialog": {
       "title": "Phím gãy giữa trận",
-      "description": "{{name}} đập bàn, một phím văng xuống đất. Khách nhận lỗi nhưng chưa móc ví."
+      "description": "{{name}} đập bàn, một cái phím văng xuống đất. Nhận lỗi rồi, nhưng ví vẫn im re."
     },
     "choices": [
       {
         "id": "bill",
-        "label": "Bắt đền 55.000đ",
+        "label": "Bắt đền phím (55.000đ)",
         "effects": [
-          { "type": "add_money", "amount": 55000, "category": "repair", "label": "{{name}} đền phím" },
-          { "type": "adjust_satisfaction", "amount": -8 },
-          { "type": "restore_computer", "amount": 10 }
+          {
+            "type": "add_money",
+            "amount": 55000,
+            "category": "repair",
+            "label": "{{name}} đền phím"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -8
+          },
+          {
+            "type": "restore_computer",
+            "amount": 10
+          }
         ]
       },
       {
         "id": "absorb",
-        "label": "Tiệm chịu, 45.000đ",
+        "label": "Tiệm chịu, thay phím (45.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 45000, "category": "repair", "label": "Thay phím cho máy khách đập" },
-          { "type": "restore_computer", "amount": 20 },
-          { "type": "adjust_satisfaction", "amount": 6 }
+          {
+            "type": "subtract_money",
+            "amount": 45000,
+            "category": "repair",
+            "label": "Thay phím cho máy khách đập"
+          },
+          {
+            "type": "restore_computer",
+            "amount": 20
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 6
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Cắm tạm phím cũ",
+        "label": "Cắm tạm phím kho",
         "effects": [
-          { "type": "damage_computer", "amount": 20 },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "damage_computer",
+            "amount": 20
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -169,32 +272,55 @@
     "needsCustomers": 2,
     "dialog": {
       "title": "Tranh một chỗ ngồi",
-      "description": "{{name}} vừa đứng dậy lấy nước thì {{name2}} đặt balo lên ghế. Cả hai nhìn bạn, chờ một câu dứt khoát."
+      "description": "{{name}} vừa đứng lấy nước thì {{name2}} phủi balo lên ghế. Hai đứa nhìn bạn, chờ một câu cho xong."
     },
     "choices": [
       {
         "id": "discount",
-        "label": "Nhường và bù 20.000đ",
+        "label": "Nhường chỗ, bù 20.000đ",
         "effects": [
-          { "type": "subtract_money", "amount": 20000, "category": "event", "label": "Bù giờ vì tranh chỗ" },
-          { "type": "adjust_satisfaction", "amount": 6 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "subtract_money",
+            "amount": 20000,
+            "category": "event",
+            "label": "Bù giờ vì tranh chỗ"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 6
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "refuse",
-        "label": "Giữ đúng người đến trước",
+        "label": "Ghế của ai đến trước",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -8 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -8
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo tự thương lượng",
+        "label": "Bảo hai đứa tự nói chuyện",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -10 },
-          { "type": "add_reputation", "amount": -3 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -10
+          },
+          {
+            "type": "add_reputation",
+            "amount": -3
+          }
         ]
       }
     ]
@@ -208,35 +334,60 @@
     "cooldownDays": 1,
     "needsCustomers": 1,
     "minSession": 30,
-    "amountRange": [15000, 40000],
+    "amountRange": [
+      15000,
+      40000
+    ],
     "dialog": {
-      "title": "Ngồi quá giờ đã hẹn",
-      "description": "{{name}} vẫn cắm mắt vào màn hình dù đã quá phần đã tính. Hàng chờ đang có người đứng."
+      "title": "Ngồi quá giờ rồi",
+      "description": "{{name}} vẫn dán mắt vào màn, giờ đã tính xong từ nãy. Ngoài cửa có người đứng chờ."
     },
     "choices": [
       {
         "id": "charge",
-        "label": "Tính phụ thu {{amount}}",
+        "label": "Phụ thu thêm {{amount}}",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "computer_usage", "label": "Phụ thu quá giờ {{name}}" },
-          { "type": "adjust_satisfaction", "amount": -6 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "computer_usage",
+            "label": "Phụ thu quá giờ {{name}}"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -6
+          }
         ]
       },
       {
         "id": "settle",
-        "label": "Chốt giờ, mời trả máy",
+        "label": "Chốt giờ, mời nhường máy",
         "effects": [
-          { "type": "end_session" },
-          { "type": "adjust_satisfaction", "amount": -4 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -4
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Cho ngồi thêm một lúc",
+        "label": "Cho ngồi thêm một lúc nữa",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": 8 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": 8
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       }
     ]
@@ -249,37 +400,71 @@
     "weight": 7,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "archetypes": ["office", "student", "troublemaker"],
-    "amountRange": [20000, 60000],
+    "archetypes": [
+      "office",
+      "student",
+      "troublemaker"
+    ],
+    "amountRange": [
+      20000,
+      60000
+    ],
     "dialog": {
       "title": "Khách bảo đã chuyển khoản",
-      "description": "{{name}} giơ màn hình một ảnh chuyển khoản {{amount}}. Ảnh mờ, tên người nhận không phải tiệm."
+      "description": "{{name}} giơ ảnh chuyển {{amount}}. Ảnh mờ, tên người nhận cũng không phải tiệm."
     },
     "choices": [
       {
         "id": "cash",
         "label": "Đòi tiền mặt {{amount}}",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "computer_usage", "label": "{{name}} trả tiền mặt" },
-          { "type": "adjust_satisfaction", "amount": -6 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "computer_usage",
+            "label": "{{name}} trả tiền mặt"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -6
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "trust",
-        "label": "Tin và cho chơi tiếp",
+        "label": "Tin, cho chơi tiếp",
         "effects": [
-          { "type": "mark_skip" },
-          { "type": "set_flag", "key": "fake_transfer_trusted", "value": true },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "mark_skip"
+          },
+          {
+            "type": "set_flag",
+            "key": "fake_transfer_trusted",
+            "value": true
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Xóa nợ cho xong chuyện",
+        "label": "Thôi, xóa cho xong chuyện",
         "effects": [
-          { "type": "set_flag", "key": "fake_transfer_waived", "value": true },
-          { "type": "add_reputation", "amount": -3 }
+          {
+            "type": "set_flag",
+            "key": "fake_transfer_waived",
+            "value": true
+          },
+          {
+            "type": "add_reputation",
+            "amount": -3
+          }
         ]
       }
     ]
@@ -292,35 +477,61 @@
     "weight": 5,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "archetypes": ["student", "troublemaker"],
+    "archetypes": [
+      "student",
+      "troublemaker"
+    ],
     "dialog": {
-      "title": "Mì gói biến mất",
-      "description": "Kệ quầy thiếu một gói. {{name}} đang ăn đúng loại đó, hơi thở còn mùi tôm."
+      "title": "Mì trên quầy biến mất",
+      "description": "Kệ quầy thiếu một gói. {{name}} đang ăn đúng loại đó, hơi thở còn thơm mùi tôm."
     },
     "choices": [
       {
         "id": "pay",
-        "label": "Bảo trả 18.000đ",
+        "label": "Bảo trả tiền mì (18.000đ)",
         "effects": [
-          { "type": "add_money", "amount": 18000, "category": "food", "label": "{{name}} trả mì" },
-          { "type": "adjust_satisfaction", "amount": -5 }
+          {
+            "type": "add_money",
+            "amount": 18000,
+            "category": "food",
+            "label": "{{name}} trả mì"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -5
+          }
         ]
       },
       {
         "id": "kick",
-        "label": "Cho về, cấm phần mì",
+        "label": "Mời về, lần sau khỏi mua mì",
         "effects": [
-          { "type": "end_session" },
-          { "type": "adjust_satisfaction", "amount": -12 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -12
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Coi như mời",
+        "label": "Thôi, coi như mời",
         "effects": [
-          { "type": "set_flag", "key": "snack_theft", "value": true },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "set_flag",
+            "key": "snack_theft",
+            "value": true
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -336,35 +547,66 @@
     "needsComputer": true,
     "dialog": {
       "title": "Máy dính popup lạ",
-      "description": "Màn hình của {{name}} đầy cửa sổ đòi tiền chuộc file. Khách không dám tắt, sợ mất nick."
+      "description": "Máy của {{name}} đầy popup đòi chuộc file. Khách không dám tắt, sợ mất nick."
     },
     "choices": [
       {
         "id": "cleanup",
-        "label": "Thuê người dọn, 80.000đ",
+        "label": "Thuê người dọn máy (80.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 80000, "category": "repair", "label": "Dọn máy dính popup" },
-          { "type": "restore_computer", "amount": 30 },
-          { "type": "adjust_satisfaction", "amount": 4 }
+          {
+            "type": "subtract_money",
+            "amount": 80000,
+            "category": "repair",
+            "label": "Dọn máy dính popup"
+          },
+          {
+            "type": "restore_computer",
+            "amount": 30
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 4
+          }
         ]
       },
       {
         "id": "wipe",
-        "label": "Cúp điện, cài lại sau",
+        "label": "Cúp điện, lát cài lại",
         "effects": [
-          { "type": "end_session" },
-          { "type": "damage_computer", "amount": 16 },
-          { "type": "adjust_satisfaction", "amount": -8 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "end_session"
+          },
+          {
+            "type": "damage_computer",
+            "amount": 16
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -8
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo khách đừng bấm nữa",
+        "label": "Bảo đừng bấm lung tung",
         "effects": [
-          { "type": "damage_computer", "amount": 28 },
-          { "type": "dirty_computer", "amount": 20 },
-          { "type": "add_reputation", "amount": -3 }
+          {
+            "type": "damage_computer",
+            "amount": 28
+          },
+          {
+            "type": "dirty_computer",
+            "amount": 20
+          },
+          {
+            "type": "add_reputation",
+            "amount": -3
+          }
         ]
       }
     ]
@@ -376,35 +618,64 @@
     "priority": "high",
     "weight": 4,
     "cooldownDays": 3,
-    "periods": ["morning", "midday"],
+    "periods": [
+      "morning",
+      "midday"
+    ],
     "dialog": {
-      "title": "Đoàn kiểm tra ghé sớm",
-      "description": "Hai người cầm sổ đứng ở cửa, hỏi giấy phép và lối thoát hiểm. Họ nói có thể quay lại chiều nếu hôm nay chưa xuôi."
+      "title": "Có người đến kiểm tra",
+      "description": "Hai người cầm sổ đứng cửa, hỏi giấy phép với lối thoát hiểm. Họ bảo chiều quay lại nếu hôm nay chưa xong."
     },
     "choices": [
       {
         "id": "pay",
-        "label": "Đóng lệ phí 120.000đ",
+        "label": "Đóng cho xong (120.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 120000, "category": "fine", "label": "Lệ phí kiểm tra cửa hàng" },
-          { "type": "add_reputation", "amount": 3 },
-          { "type": "set_flag", "key": "inspection_paid", "value": true }
+          {
+            "type": "subtract_money",
+            "amount": 120000,
+            "category": "fine",
+            "label": "Lệ phí kiểm tra cửa hàng"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 3
+          },
+          {
+            "type": "set_flag",
+            "key": "inspection_paid",
+            "value": true
+          }
         ]
       },
       {
         "id": "argue",
-        "label": "Cãi đúng quy định",
+        "label": "Cãi, quán làm đúng luật",
         "effects": [
-          { "type": "add_reputation", "amount": -6 },
-          { "type": "set_flag", "key": "inspection_failed", "value": true }
+          {
+            "type": "add_reputation",
+            "amount": -6
+          },
+          {
+            "type": "set_flag",
+            "key": "inspection_failed",
+            "value": true
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Hẹn hôm khác",
+        "label": "Hẹn hôm khác được không",
         "effects": [
-          { "type": "add_reputation", "amount": -4 },
-          { "type": "set_flag", "key": "inspection_delayed", "value": true }
+          {
+            "type": "add_reputation",
+            "amount": -4
+          },
+          {
+            "type": "set_flag",
+            "key": "inspection_delayed",
+            "value": true
+          }
         ]
       }
     ]
@@ -418,30 +689,50 @@
     "cooldownDays": 3,
     "dialog": {
       "title": "Chủ nhà gõ cửa giữa ngày",
-      "description": "Chủ mặt bằng muốn ứng trước một phần tiền thuê. Ông đứng ở quầy, không vội nhưng cũng không ngồi."
+      "description": "Chủ nhà muốn ứng một ít tiền thuê. Ông đứng quầy, không hối nhưng cũng không ngồi."
     },
     "choices": [
       {
         "id": "pay",
         "label": "Đưa 100.000đ cho xong",
         "effects": [
-          { "type": "subtract_money", "amount": 100000, "category": "rent", "label": "Ứng tiền thuê giữa ngày" }
+          {
+            "type": "subtract_money",
+            "amount": 100000,
+            "category": "rent",
+            "label": "Ứng tiền thuê giữa ngày"
+          }
         ]
       },
       {
         "id": "borrow",
         "label": "Khất, ghi nợ 120.000đ",
         "effects": [
-          { "type": "add_debt", "amount": 120000, "label": "Khất tiền thuê với chủ nhà" },
-          { "type": "set_flag", "key": "rent_delayed", "value": true }
+          {
+            "type": "add_debt",
+            "amount": 120000,
+            "label": "Khất tiền thuê với chủ nhà"
+          },
+          {
+            "type": "set_flag",
+            "key": "rent_delayed",
+            "value": true
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Hẹn tối tính",
+        "label": "Hẹn tối tính sau",
         "effects": [
-          { "type": "add_reputation", "amount": -2 },
-          { "type": "set_flag", "key": "rent_ignored", "value": true }
+          {
+            "type": "add_reputation",
+            "amount": -2
+          },
+          {
+            "type": "set_flag",
+            "key": "rent_ignored",
+            "value": true
+          }
         ]
       }
     ]
@@ -456,31 +747,55 @@
     "memberId": "child",
     "dialog": {
       "title": "Trường gọi đóng học phí",
-      "description": "Cô giáo nhắn {{child}} còn thiếu học phí. Bạn có thể đóng ngay, vay nóng, hoặc để con về nói lại với cô."
+      "description": "Cô giáo nhắn {{child}} còn thiếu học phí. Đóng ngay thì xong, vay nóng cũng được, hoặc bảo con về nói với cô."
     },
     "choices": [
       {
         "id": "pay",
-        "label": "Đóng 90.000đ",
+        "label": "Đóng học phí (90.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 90000, "category": "family", "label": "Học phí của {{child}}" },
-          { "type": "set_flag", "key": "child_school_paid", "value": true }
+          {
+            "type": "subtract_money",
+            "amount": 90000,
+            "category": "family",
+            "label": "Học phí của {{child}}"
+          },
+          {
+            "type": "set_flag",
+            "key": "child_school_paid",
+            "value": true
+          }
         ]
       },
       {
         "id": "borrow",
-        "label": "Vay đóng, nợ 110.000đ",
+        "label": "Vay đóng, ghi nợ 110.000đ",
         "effects": [
-          { "type": "add_debt", "amount": 110000, "label": "Nợ vay đóng học phí" },
-          { "type": "set_flag", "key": "child_school_borrowed", "value": true }
+          {
+            "type": "add_debt",
+            "amount": 110000,
+            "label": "Nợ vay đóng học phí"
+          },
+          {
+            "type": "set_flag",
+            "key": "child_school_borrowed",
+            "value": true
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo cô chờ",
+        "label": "Bảo cô chờ thêm",
         "effects": [
-          { "type": "set_flag", "key": "child_school_unpaid", "value": true },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "set_flag",
+            "key": "child_school_unpaid",
+            "value": true
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       }
     ]
@@ -494,30 +809,48 @@
     "cooldownDays": 2,
     "memberId": "wife",
     "dialog": {
-      "title": "Phòng khám gửi hóa đơn",
-      "description": "{{wife}} khám sáng nay. Quầy thu ngân gọi, hỏi bạn lấy thuốc luôn hay chỉ trả công khám."
+      "title": "Phòng khám gọi hỏi tiền",
+      "description": "{{wife}} khám sáng nay. Quầy gọi hỏi lấy thuốc luôn hay chỉ trả công khám."
     },
     "choices": [
       {
         "id": "pay",
-        "label": "Trả 70.000đ, lấy thêm thuốc",
+        "label": "Trả 70.000đ, lấy thuốc luôn",
         "effects": [
-          { "type": "subtract_money", "amount": 70000, "category": "medicine", "label": "Khám và thuốc cho {{wife}}" },
-          { "type": "add_resource", "resource": "medicine", "amount": 1 }
+          {
+            "type": "subtract_money",
+            "amount": 70000,
+            "category": "medicine",
+            "label": "Khám và thuốc cho {{wife}}"
+          },
+          {
+            "type": "add_resource",
+            "resource": "medicine",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "visit",
-        "label": "Chỉ trả khám 40.000đ",
+        "label": "Chỉ trả công khám (40.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 40000, "category": "medicine", "label": "Công khám của {{wife}}" }
+          {
+            "type": "subtract_money",
+            "amount": 40000,
+            "category": "medicine",
+            "label": "Công khám của {{wife}}"
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Để đó đã",
+        "label": "Để lát tính",
         "effects": [
-          { "type": "set_flag", "key": "clinic_skipped", "value": true }
+          {
+            "type": "set_flag",
+            "key": "clinic_skipped",
+            "value": true
+          }
         ]
       }
     ]
@@ -531,29 +864,53 @@
     "cooldownDays": 1,
     "needsCustomers": 1,
     "needsComputer": true,
-    "archetypes": ["gamer", "troublemaker"],
-    "periods": ["night"],
+    "archetypes": [
+      "gamer",
+      "troublemaker"
+    ],
+    "periods": [
+      "night"
+    ],
     "dialog": {
-      "title": "Đêm xuống vẫn có người hét",
-      "description": "{{name}} đeo tai nghe nhưng mic thì không. Hàng xóm gõ cửa kính. Máy trước mặt rung vì đập tay."
+      "title": "Đêm rồi còn hét",
+      "description": "{{name}} đeo tai nghe, mic thì quên tắt. Hàng xóm gõ kính. Bàn phím trước mặt rung vì đập tay."
     },
     "choices": [
       {
         "id": "quiet",
         "label": "Mời nước, xin nhỏ tiếng (10.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 10000, "category": "event", "label": "Nước mời khách đêm" },
-          { "type": "adjust_satisfaction", "amount": 5 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "subtract_money",
+            "amount": 10000,
+            "category": "event",
+            "label": "Nước mời khách đêm"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 5
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "kick",
-        "label": "Mời ra khỏi tiệm",
+        "label": "Mời ra ngoài",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -8 },
-          { "type": "release_customer" },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -8
+          },
+          {
+            "type": "release_customer"
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       },
       {
@@ -561,16 +918,28 @@
         "label": "Gọi bảo vệ xuống",
         "requires": "guard",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -3 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -3
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Đêm rồi, kệ",
+        "label": "Đêm rồi, kệ một hôm",
         "effects": [
-          { "type": "damage_computer", "amount": 12 },
-          { "type": "add_reputation", "amount": -4 }
+          {
+            "type": "damage_computer",
+            "amount": 12
+          },
+          {
+            "type": "add_reputation",
+            "amount": -4
+          }
         ]
       }
     ]
@@ -584,37 +953,71 @@
     "cooldownDays": 2,
     "needsCustomers": 1,
     "needsRole": "cashier",
-    "amountRange": [10000, 40000],
+    "amountRange": [
+      10000,
+      40000
+    ],
     "dialog": {
-      "title": "Thu ngân tính nhầm",
-      "description": "Hóa đơn của {{name}} bị cộng thừa {{amount}}. Khách đặt tờ giấy lên quầy, im, chờ bạn gật hoặc lắc."
+      "title": "Thu ngân tính nhầm hóa đơn",
+      "description": "Hóa đơn của {{name}} bị cộng thừa {{amount}}. Khách đặt tờ giấy lên quầy, im, chờ bạn gật hay lắc."
     },
     "choices": [
       {
         "id": "refund",
-        "label": "Trả lại {{amount}}",
+        "label": "Xin lỗi, trả lại {{amount}}",
         "effects": [
-          { "type": "subtract_money", "amount": "rolled", "category": "event", "label": "Hoàn tiền tính nhầm cho {{name}}" },
-          { "type": "adjust_satisfaction", "amount": 10 },
-          { "type": "adjust_loyalty", "amount": 2 },
-          { "type": "add_reputation", "amount": 3 }
+          {
+            "type": "subtract_money",
+            "amount": "rolled",
+            "category": "event",
+            "label": "Hoàn tiền tính nhầm cho {{name}}"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 10
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 3
+          }
         ]
       },
       {
         "id": "keep",
-        "label": "Giữ phần tính dư",
+        "label": "Lờ đi, giữ phần dư",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "event", "label": "Giữ tiền tính nhầm" },
-          { "type": "adjust_satisfaction", "amount": -14 },
-          { "type": "add_reputation", "amount": -4 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "event",
+            "label": "Giữ tiền tính nhầm"
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": -14
+          },
+          {
+            "type": "add_reputation",
+            "amount": -4
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo thu ngân tự xử",
+        "label": "Bảo thu ngân tự nói với khách",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -6 },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -6
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -627,36 +1030,66 @@
     "weight": 8,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "archetypes": ["wealthy", "gamer"],
-    "amountRange": [30000, 90000],
+    "archetypes": [
+      "wealthy",
+      "gamer"
+    ],
+    "amountRange": [
+      30000,
+      90000
+    ],
     "dialog": {
       "title": "Khách để tiền boa",
-      "description": "{{name}} nhét {{amount}} dưới bàn phím. Bảo máy mượt, không cần thối."
+      "description": "{{name}} nhét {{amount}} dưới bàn phím. Bảo máy mượt, khỏi thối."
     },
     "choices": [
       {
         "id": "take",
-        "label": "Cất {{amount}}",
+        "label": "Cất {{amount}} vào quỹ",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "event", "label": "Boa từ {{name}}" },
-          { "type": "adjust_loyalty", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "event",
+            "label": "Boa từ {{name}}"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "return",
-        "label": "Trả lại, cảm ơn",
+        "label": "Trả lại, cảm ơn đã khen",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": 8 },
-          { "type": "adjust_loyalty", "amount": 1 },
-          { "type": "add_reputation", "amount": 3 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": 8
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 1
+          },
+          {
+            "type": "add_reputation",
+            "amount": 3
+          }
         ]
       },
       {
         "id": "ignore",
         "label": "Lắc đầu, không nhận",
         "effects": [
-          { "type": "set_flag", "key": "tip_refused", "value": true },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "set_flag",
+            "key": "tip_refused",
+            "value": true
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       }
     ]
@@ -669,36 +1102,67 @@
     "weight": 5,
     "cooldownDays": 3,
     "needsCustomers": 1,
-    "archetypes": ["gamer"],
-    "periods": ["afternoon", "evening", "night"],
+    "archetypes": [
+      "gamer"
+    ],
+    "periods": [
+      "afternoon",
+      "evening",
+      "night"
+    ],
     "dialog": {
-      "title": "Streamer bật live trong quán",
-      "description": "{{name}} đang live, chat khen {{cafe}}. Họ hỏi được ngồi miễn một tiếng để gắn tên tiệm lên góc màn hình không."
+      "title": "Có streamer live trong quán",
+      "description": "{{name}} đang live, chat khen {{cafe}}. Họ hỏi ngồi miễn một tiếng, gắn tên tiệm góc màn hình được không."
     },
     "choices": [
       {
         "id": "host",
-        "label": "Miễn một giờ, lấy tiếng",
+        "label": "Miễn một giờ, lấy tiếng quán",
         "effects": [
-          { "type": "subtract_money", "amount": 20000, "category": "event", "label": "Nước đãi streamer" },
-          { "type": "adjust_loyalty", "amount": 3 },
-          { "type": "add_reputation", "amount": 8 }
+          {
+            "type": "subtract_money",
+            "amount": 20000,
+            "category": "event",
+            "label": "Nước đãi streamer"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 3
+          },
+          {
+            "type": "add_reputation",
+            "amount": 8
+          }
         ]
       },
       {
         "id": "charge",
-        "label": "Vẫn tính 60.000đ",
+        "label": "Vẫn tính giờ (60.000đ)",
         "effects": [
-          { "type": "add_money", "amount": 60000, "category": "computer_usage", "label": "Streamer trả giờ" },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": 60000,
+            "category": "computer_usage",
+            "label": "Streamer trả giờ"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo tắt mic",
+        "label": "Bảo tắt live, ngồi chơi thôi",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -4 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -4
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       }
     ]
@@ -711,36 +1175,67 @@
     "weight": 7,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "archetypes": ["regular", "student"],
-    "amountRange": [40000, 110000],
+    "archetypes": [
+      "regular",
+      "student"
+    ],
+    "amountRange": [
+      40000,
+      110000
+    ],
     "dialog": {
-      "title": "Khách dắt cả hội vào",
-      "description": "{{name}} đứng ở cửa với ba người nữa. Hội trả trước {{amount}} nếu có chỗ ngồi liền."
+      "title": "Có hội muốn vào hết",
+      "description": "{{name}} đứng cửa, sau lưng ba đứa nữa. Chúng nói trả trước {{amount}} nếu xếp được chỗ liền."
     },
     "choices": [
       {
         "id": "welcome",
-        "label": "Nhận {{amount}}, xếp chỗ",
+        "label": "Được, xếp chỗ cho cả hội ({{amount}})",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "computer_usage", "label": "Hội của {{name}} trả trước" },
-          { "type": "adjust_loyalty", "amount": 2 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "computer_usage",
+            "label": "Hội của {{name}} trả trước"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "partial",
-        "label": "Chỉ nhận 25.000đ, giữ một chỗ",
+        "label": "Chỉ giữ một chỗ (25.000đ)",
         "effects": [
-          { "type": "add_money", "amount": 25000, "category": "computer_usage", "label": "Giữ chỗ cho hội {{name}}" },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "add_money",
+            "amount": 25000,
+            "category": "computer_usage",
+            "label": "Giữ chỗ cho hội {{name}}"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo hôm nay kín",
+        "label": "Xin lỗi, hôm nay hết máy",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -8 },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -8
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -753,29 +1248,55 @@
     "weight": 5,
     "cooldownDays": 2,
     "needsCustomers": 1,
-    "archetypes": ["student"],
-    "periods": ["morning", "afternoon"],
-    "amountRange": [30000, 80000],
+    "archetypes": [
+      "student"
+    ],
+    "periods": [
+      "morning",
+      "afternoon"
+    ],
+    "amountRange": [
+      30000,
+      80000
+    ],
     "dialog": {
       "title": "Nhóm học muốn giữ máy",
-      "description": "{{name}} hỏi giữ cụm máy đến chiều để cả nhóm làm bài. Họ đặt cọc {{amount}}."
+      "description": "{{name}} hỏi giữ cụm máy đến chiều cho cả nhóm làm bài. Chúng đặt cọc {{amount}}."
     },
     "choices": [
       {
         "id": "book",
-        "label": "Nhận cọc {{amount}}",
+        "label": "Nhận cọc, giữ máy ({{amount}})",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "computer_usage", "label": "Cọc nhóm học của {{name}}" },
-          { "type": "adjust_loyalty", "amount": 1 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "computer_usage",
+            "label": "Cọc nhóm học của {{name}}"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 1
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Không giữ chỗ",
+        "label": "Không giữ chỗ sẵn",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -3 },
-          { "type": "set_flag", "key": "study_group_declined", "value": true }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -3
+          },
+          {
+            "type": "set_flag",
+            "key": "study_group_declined",
+            "value": true
+          }
         ]
       }
     ]
@@ -788,28 +1309,51 @@
     "weight": 5,
     "cooldownDays": 1,
     "needsCustomers": 1,
-    "amountRange": [10000, 35000],
+    "amountRange": [
+      10000,
+      35000
+    ],
     "dialog": {
       "title": "Khách đưa nhầm tờ to",
-      "description": "{{name}} đưa thừa {{amount}} rồi đã quay lại màn hình. Có thể giữ, hoặc gọi lại ngay."
+      "description": "{{name}} đưa thừa {{amount}} rồi quay lại màn hình. Giữ thì được tiền, gọi lại thì được tiếng."
     },
     "choices": [
       {
         "id": "keep",
-        "label": "Giữ {{amount}}",
+        "label": "Kệ, giữ {{amount}}",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "event", "label": "Tiền thừa của {{name}}" },
-          { "type": "adjust_loyalty", "amount": -1 },
-          { "type": "add_reputation", "amount": -2 }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "event",
+            "label": "Tiền thừa của {{name}}"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": -1
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          }
         ]
       },
       {
         "id": "ignore",
         "label": "Gọi lại, trả phần thừa",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": 6 },
-          { "type": "adjust_loyalty", "amount": 2 },
-          { "type": "add_reputation", "amount": 4 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": 6
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 4
+          }
         ]
       }
     ]
@@ -823,23 +1367,38 @@
     "cooldownDays": 3,
     "dialog": {
       "title": "Quán nước muốn dán banner",
-      "description": "Quán bên cạnh trả 160.000đ để dán một tấm banner lên cửa kính tuần này. Tiệm sẽ đông hơn một chút, và cũng giống bảng quảng cáo hơn."
+      "description": "Quán bên cạnh trả 160.000đ để dán banner lên cửa kính tuần này. Đông thêm chút, nhưng cửa giống bảng quảng cáo."
     },
     "choices": [
       {
         "id": "accept",
-        "label": "Dán, nhận 160.000đ",
+        "label": "Dán đi, lấy 160.000đ",
         "effects": [
-          { "type": "add_money", "amount": 160000, "category": "event", "label": "Tiền banner cửa kính" },
-          { "type": "add_reputation", "amount": -2 },
-          { "type": "set_flag", "key": "sponsor_banner", "value": true }
+          {
+            "type": "add_money",
+            "amount": 160000,
+            "category": "event",
+            "label": "Tiền banner cửa kính"
+          },
+          {
+            "type": "add_reputation",
+            "amount": -2
+          },
+          {
+            "type": "set_flag",
+            "key": "sponsor_banner",
+            "value": true
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Giữ cửa kính trống",
+        "label": "Thôi, để cửa kính trống",
         "effects": [
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       }
     ]
@@ -853,21 +1412,30 @@
     "cooldownDays": 3,
     "dialog": {
       "title": "Người thu mua đồ cũ",
-      "description": "Một người đẩy xe hỏi mua chuột hỏng và vỏ máy để góc kho. Ông trả 75.000đ, lấy ngay."
+      "description": "Có người đẩy xe hỏi mua đống chuột hỏng với vỏ máy góc kho. Ông trả 75.000đ, lấy ngay."
     },
     "choices": [
       {
         "id": "sell",
         "label": "Bán, lấy 75.000đ",
         "effects": [
-          { "type": "add_money", "amount": 75000, "category": "event", "label": "Bán linh kiện cũ" }
+          {
+            "type": "add_money",
+            "amount": 75000,
+            "category": "event",
+            "label": "Bán linh kiện cũ"
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Để dành sửa",
+        "label": "Để dành, lát sửa",
         "effects": [
-          { "type": "set_flag", "key": "scrap_kept", "value": true }
+          {
+            "type": "set_flag",
+            "key": "scrap_kept",
+            "value": true
+          }
         ]
       }
     ]
@@ -881,29 +1449,43 @@
     "cooldownDays": 2,
     "dialog": {
       "title": "Bài review đang lan",
-      "description": "Một bài viết khen máy lạnh và giá giờ của tiệm vừa được chia sẻ. Bạn có thể cảm ơn suông, hoặc đãi một vòng nước cho người đang ngồi."
+      "description": "Có bài khen máy lạnh với giá giờ tiệm đang được share. Cảm ơn suông cũng được, hoặc đãi một vòng nước cho người đang ngồi."
     },
     "choices": [
       {
         "id": "thank",
-        "label": "Để bài tự chạy",
+        "label": "Cứ để bài tự chạy",
         "effects": [
-          { "type": "add_reputation", "amount": 7 }
+          {
+            "type": "add_reputation",
+            "amount": 7
+          }
         ]
       },
       {
         "id": "comp",
-        "label": "Đãi nước 25.000đ, kéo thêm",
+        "label": "Đãi một vòng nước (25.000đ)",
         "effects": [
-          { "type": "subtract_money", "amount": 25000, "category": "event", "label": "Đãi nước theo bài review" },
-          { "type": "add_reputation", "amount": 9 }
+          {
+            "type": "subtract_money",
+            "amount": 25000,
+            "category": "event",
+            "label": "Đãi nước theo bài review"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 9
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Không đăng lại",
+        "label": "Không rep, không share",
         "effects": [
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       }
     ]
@@ -917,35 +1499,61 @@
     "cooldownDays": 2,
     "needsCustomers": 1,
     "needsComputer": true,
-    "archetypes": ["office", "regular"],
+    "archetypes": [
+      "office",
+      "regular"
+    ],
     "dialog": {
       "title": "Khách biết sửa máy",
-      "description": "{{name}} nhìn quạt kêu, bảo có thể vệ sinh giúp. Không lấy tiền, chỉ xin được ngồi đúng máy đó lần sau."
+      "description": "{{name}} nghe quạt kêu, bảo vệ sinh giúp được. Không lấy tiền, chỉ xin lần sau được ngồi đúng máy này."
     },
     "choices": [
       {
         "id": "accept",
-        "label": "Để họ sửa giúp",
+        "label": "Để họ sửa giúp luôn",
         "effects": [
-          { "type": "restore_computer", "amount": 30 },
-          { "type": "adjust_loyalty", "amount": 2 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "restore_computer",
+            "amount": 30
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "pay",
-        "label": "Trả công 35.000đ",
+        "label": "Trả công 35.000đ cho có",
         "effects": [
-          { "type": "subtract_money", "amount": 35000, "category": "repair", "label": "Công {{name}} sửa máy" },
-          { "type": "restore_computer", "amount": 45 },
-          { "type": "adjust_satisfaction", "amount": 6 }
+          {
+            "type": "subtract_money",
+            "amount": 35000,
+            "category": "repair",
+            "label": "Công {{name}} sửa máy"
+          },
+          {
+            "type": "restore_computer",
+            "amount": 45
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 6
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Cảm ơn, tự lo",
+        "label": "Cảm ơn, quán tự lo",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -2 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -2
+          }
         ]
       }
     ]
@@ -958,35 +1566,64 @@
     "weight": 5,
     "cooldownDays": 2,
     "needsCustomers": 1,
-    "periods": ["evening", "night"],
+    "periods": [
+      "evening",
+      "night"
+    ],
     "dialog": {
       "title": "Có người muốn mở giải",
-      "description": "{{name}} rủ mở một giải nhỏ tối nay. Vé vào 130.000đ nộp trước, quán đông và ồn hơn hẳn."
+      "description": "{{name}} rủ mở giải nhỏ tối nay. Vé 130.000đ nộp trước. Quán sẽ đông, cũng ồn hơn."
     },
     "choices": [
       {
         "id": "host",
-        "label": "Mở giải, nhận 130.000đ",
+        "label": "Mở, nhận 130.000đ vé",
         "effects": [
-          { "type": "add_money", "amount": 130000, "category": "event", "label": "Vé giải đấu tại tiệm" },
-          { "type": "add_reputation", "amount": 4 },
-          { "type": "set_flag", "key": "tournament_hosted", "value": true }
+          {
+            "type": "add_money",
+            "amount": 130000,
+            "category": "event",
+            "label": "Vé giải đấu tại tiệm"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 4
+          },
+          {
+            "type": "set_flag",
+            "key": "tournament_hosted",
+            "value": true
+          }
         ]
       },
       {
         "id": "small",
-        "label": "Chỉ cho đấu giao hữu",
+        "label": "Cho đấu giao hữu thôi",
         "effects": [
-          { "type": "add_money", "amount": 40000, "category": "event", "label": "Giao hữu tại tiệm" },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": 40000,
+            "category": "event",
+            "label": "Giao hữu tại tiệm"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Tối nay không tổ chức",
+        "label": "Tối nay nghỉ, không tổ chức",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -3 },
-          { "type": "add_reputation", "amount": -1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -3
+          },
+          {
+            "type": "add_reputation",
+            "amount": -1
+          }
         ]
       }
     ]
@@ -1000,29 +1637,47 @@
     "cooldownDays": 2,
     "dialog": {
       "title": "Họ gửi tiền về",
-      "description": "Người thân chuyển 120.000đ, nhắn để {{child}} có sữa và tiệm đỡ một buổi. Bạn có thể giữ hết hoặc chia một phần ra chợ."
+      "description": "Người thân chuyển 120.000đ, nhắn để {{child}} có sữa, tiệm đỡ một buổi. Giữ hết cũng được, hoặc xách một phần ra chợ."
     },
     "choices": [
       {
         "id": "take",
-        "label": "Cất 120.000đ vào quỹ",
+        "label": "Cất hết 120.000đ vào quỹ",
         "effects": [
-          { "type": "add_money", "amount": 120000, "category": "event", "label": "Tiền họ hàng gửi" }
+          {
+            "type": "add_money",
+            "amount": 120000,
+            "category": "event",
+            "label": "Tiền họ hàng gửi"
+          }
         ]
       },
       {
         "id": "share",
-        "label": "Giữ 40.000đ, mua đồ ăn",
+        "label": "Giữ 40.000đ, còn lại mua đồ ăn",
         "effects": [
-          { "type": "add_money", "amount": 40000, "category": "event", "label": "Phần tiền họ hàng giữ lại" },
-          { "type": "add_resource", "resource": "food", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": 40000,
+            "category": "event",
+            "label": "Phần tiền họ hàng giữ lại"
+          },
+          {
+            "type": "add_resource",
+            "resource": "food",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Bảo họ giữ lấy",
+        "label": "Bảo họ giữ, nhà chưa cần",
         "effects": [
-          { "type": "set_flag", "key": "gift_returned", "value": true }
+          {
+            "type": "set_flag",
+            "key": "gift_returned",
+            "value": true
+          }
         ]
       }
     ]
@@ -1036,29 +1691,46 @@
     "cooldownDays": 2,
     "dialog": {
       "title": "Hàng xóm cho thuốc",
-      "description": "Nhà bên dư một vỉ thuốc còn hạn. Họ bảo đưa cho gia đình, hoặc đổi lấy 45.000đ nếu tiệm đang cần tiền mặt hơn."
+      "description": "Nhà bên dư một vỉ thuốc còn hạn. Họ bảo đưa cho nhà, không thì đổi 45.000đ nếu quán đang cần tiền."
     },
     "choices": [
       {
         "id": "medicine",
-        "label": "Nhận một liều thuốc",
+        "label": "Nhận thuốc về nhà",
         "effects": [
-          { "type": "add_resource", "resource": "medicine", "amount": 1 },
-          { "type": "set_flag", "key": "neighbor_medicine", "value": true }
+          {
+            "type": "add_resource",
+            "resource": "medicine",
+            "amount": 1
+          },
+          {
+            "type": "set_flag",
+            "key": "neighbor_medicine",
+            "value": true
+          }
         ]
       },
       {
         "id": "cash",
         "label": "Đổi lấy 45.000đ",
         "effects": [
-          { "type": "add_money", "amount": 45000, "category": "event", "label": "Hàng xóm đổi thuốc lấy tiền" }
+          {
+            "type": "add_money",
+            "amount": 45000,
+            "category": "event",
+            "label": "Hàng xóm đổi thuốc lấy tiền"
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Cảm ơn, không nhận",
+        "label": "Cảm ơn, khỏi nhận",
         "effects": [
-          { "type": "set_flag", "key": "neighbor_help_declined", "value": true }
+          {
+            "type": "set_flag",
+            "key": "neighbor_help_declined",
+            "value": true
+          }
         ]
       }
     ]
@@ -1070,24 +1742,36 @@
     "priority": "normal",
     "weight": 5,
     "cooldownDays": 3,
-    "amountRange": [30000, 80000],
+    "amountRange": [
+      30000,
+      80000
+    ],
     "dialog": {
-      "title": "Điện lực trả tiền ghi nhầm",
-      "description": "Hóa đơn tháng trước tính dư. Họ hoàn {{amount}} nếu bạn xác nhận hôm nay."
+      "title": "Điện lực hoàn tiền ghi nhầm",
+      "description": "Hóa đơn tháng trước tính dư. Họ hoàn {{amount}} nếu xác nhận hôm nay."
     },
     "choices": [
       {
         "id": "take",
-        "label": "Nhận {{amount}}",
+        "label": "Nhận luôn {{amount}}",
         "effects": [
-          { "type": "add_money", "amount": "rolled", "category": "event", "label": "Điện lực hoàn tiền" }
+          {
+            "type": "add_money",
+            "amount": "rolled",
+            "category": "event",
+            "label": "Điện lực hoàn tiền"
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Để kỳ sau khấu trừ",
+        "label": "Để kỳ sau trừ vào hóa đơn",
         "effects": [
-          { "type": "set_flag", "key": "power_refund_deferred", "value": true }
+          {
+            "type": "set_flag",
+            "key": "power_refund_deferred",
+            "value": true
+          }
         ]
       }
     ]
@@ -1100,28 +1784,51 @@
     "weight": 6,
     "cooldownDays": 2,
     "needsCustomers": 1,
-    "archetypes": ["regular", "wealthy"],
+    "archetypes": [
+      "regular",
+      "wealthy"
+    ],
     "dialog": {
       "title": "Khách quen khao cả bàn",
-      "description": "{{name}} trả thêm 40.000đ để cả cụm máy được một vòng nước. Bảo lần sau vẫn ngồi đây."
+      "description": "{{name}} rút thêm 40.000đ khao cả cụm một vòng nước. Bảo lần sau vẫn ngồi đây."
     },
     "choices": [
       {
         "id": "treat",
-        "label": "Nhận 40.000đ, rót nước",
+        "label": "Nhận 40.000đ, mang nước ra",
         "effects": [
-          { "type": "add_money", "amount": 40000, "category": "food", "label": "{{name}} khao cả bàn" },
-          { "type": "adjust_loyalty", "amount": 2 },
-          { "type": "adjust_satisfaction", "amount": 6 },
-          { "type": "add_reputation", "amount": 2 }
+          {
+            "type": "add_money",
+            "amount": 40000,
+            "category": "food",
+            "label": "{{name}} khao cả bàn"
+          },
+          {
+            "type": "adjust_loyalty",
+            "amount": 2
+          },
+          {
+            "type": "adjust_satisfaction",
+            "amount": 6
+          },
+          {
+            "type": "add_reputation",
+            "amount": 2
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Chỉ cảm ơn, không nhận",
+        "label": "Cảm ơn, khỏi nhận tiền",
         "effects": [
-          { "type": "adjust_satisfaction", "amount": -2 },
-          { "type": "add_reputation", "amount": 1 }
+          {
+            "type": "adjust_satisfaction",
+            "amount": -2
+          },
+          {
+            "type": "add_reputation",
+            "amount": 1
+          }
         ]
       }
     ]
@@ -1133,26 +1840,43 @@
     "priority": "normal",
     "weight": 4,
     "cooldownDays": 3,
-    "periods": ["morning"],
+    "periods": [
+      "morning"
+    ],
     "dialog": {
-      "title": "Tờ địa phương muốn viết về tiệm",
-      "description": "Một cộng tác viên hỏi chuyện buổi sáng vắng. Bài viết có thể kéo học sinh đến, nếu bạn cho ngồi và trả lời thật."
+      "title": "Báo địa phương muốn viết về quán",
+      "description": "Buổi sáng vắng, có người hỏi chuyện quán. Bài viết có thể kéo học sinh tới, nếu cho ngồi và nói thật."
     },
     "choices": [
       {
         "id": "feature",
-        "label": "Kể chuyện, nhận 20.000đ cafe",
+        "label": "Kể chuyện, nhận 20.000đ cà phê",
         "effects": [
-          { "type": "add_money", "amount": 20000, "category": "event", "label": "Báo địa phương trả cafe" },
-          { "type": "add_reputation", "amount": 5 }
+          {
+            "type": "add_money",
+            "amount": 20000,
+            "category": "event",
+            "label": "Báo địa phương trả cafe"
+          },
+          {
+            "type": "add_reputation",
+            "amount": 5
+          }
         ]
       },
       {
         "id": "ignore",
-        "label": "Đang bận, hẹn lần sau",
+        "label": "Đang bận, hẹn lần khác",
         "effects": [
-          { "type": "add_reputation", "amount": 1 },
-          { "type": "set_flag", "key": "press_declined", "value": true }
+          {
+            "type": "add_reputation",
+            "amount": 1
+          },
+          {
+            "type": "set_flag",
+            "key": "press_declined",
+            "value": true
+          }
         ]
       }
     ]

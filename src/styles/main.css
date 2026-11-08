@@ -47,8 +47,8 @@ html, body, #app {
 
 #game-root {
   top: 52px;
-  right: 336px;
-  bottom: 132px;
+  right: 328px;
+  bottom: 58px;
   left: 8px;
 }
 
@@ -91,7 +91,7 @@ html, body, #app {
   border-top-color: #3a2a1c;
 }
 
-button, label, input, .panel, .menu, .modal, .guidebar {
+button, label, input, .drawer, .menu, .modal, .guidebar {
   pointer-events: auto;
 }
 
@@ -290,9 +290,11 @@ button.dock-btn svg { display: block; }
 .drawer-body {
   flex: 1;
   min-height: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 0 6px 2px 2px;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .drawer-body::-webkit-scrollbar {
@@ -461,6 +463,50 @@ button.nav-item.has-alert::after {
 
 .sheet { width: min(460px, calc(100% - 32px)); }
 
+.save-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+
+.save-slot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 2px solid color-mix(in srgb, var(--gold-deep) 70%, #000 30%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--card) 88%, #000 12%);
+}
+
+.save-slot.empty {
+  opacity: 0.7;
+}
+
+.save-slot-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.save-slot-title {
+  font-size: 14px;
+}
+
+.save-slot-sub,
+.save-slot-time {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.save-slot-time {
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+
 .pixel-title {
   display: flex;
   align-items: center;
@@ -597,6 +643,14 @@ button.chip { border-radius: 999px; padding: 6px 12px; font-size: 12px; }
   border-left-width: 8px;
   padding: 7px 8px;
   font-size: 13px;
+  animation: toast-life 4.2s ease forwards;
+}
+
+@keyframes toast-life {
+  0% { opacity: 0; transform: translateY(-8px); }
+  10% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-4px); }
 }
 
 .toast-pip {
@@ -821,6 +875,7 @@ button.guide-close {
     transform: none;
   }
   .btn-pop { animation: none; display: none; }
+  .toast { animation: toast-life 4.2s linear forwards; }
 }
 
 /* ===== MOBILE RESPONSIVE (< 1024px) ===== */

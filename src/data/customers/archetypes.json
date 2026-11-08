@@ -27,15 +27,15 @@
     },
     {
       "id": "office",
-      "label": "Nhân viên văn phòng",
+      "label": "Chạy deadline",
       "preferredTiers": ["standard", "basic"],
-      "priceSensitivity": 0.4,
-      "patience": 12,
-      "session": [20, 45],
-      "wallet": [20000, 80000],
-      "foodChance": 0.15,
+      "priceSensitivity": 0.35,
+      "patience": 16,
+      "session": [50, 140],
+      "wallet": [30000, 120000],
+      "foodChance": 0.28,
       "skipChance": 0,
-      "spawn": { "morning": 3, "midday": 4, "afternoon": 2, "evening": 1, "night": 0 }
+      "spawn": { "morning": 4, "midday": 5, "afternoon": 4, "evening": 2, "night": 1 }
     },
     {
       "id": "regular",

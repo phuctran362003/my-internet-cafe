@@ -20,6 +20,7 @@ export const GameEvents = {
   SESSION_RESET: 'session:reset',
   NOTICE: 'ui:notice',
   AUDIO_CHANGED: 'audio:changed',
+  VIEW_SCALE_CHANGED: 'view:scale:changed',
   ROOM_UNLOCKED: 'room:unlocked',
   DOOR_TOGGLED: 'door:toggled',
   FURNITURE_CHANGED: 'furniture:changed'

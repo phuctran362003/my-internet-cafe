@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GameEvents } from '../core/EventBus.js';
 import { DOOR_FRAMES, EFFECT_FRAMES, TILE_SIZE } from '../assets/layout.js';
 import { analyzeRoom, doorFrameName } from '../assets/roomLayout.js';
 import { isRoomUnlocked } from '../systems/business/RoomSystem.js';
@@ -26,12 +27,38 @@ export class CafeScene extends Phaser.Scene {
     this.roomShade = this.add.graphics().setDepth(58);
     this.light = this.add.rectangle(this.mapWidth / 2, this.mapHeight / 2, this.mapWidth, this.mapHeight, 0x0b1020, 0);
     this.light.setDepth(80);
-    this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
-    this.cameras.main.setZoom(1);
-    this.cameras.main.centerOn(this.mapWidth / 2, this.mapHeight / 2);
     this.cameras.main.roundPixels = true;
+    this.fitCamera();
+    this.scale.on('resize', () => this.fitCamera());
+    this.session.bus.on(GameEvents.VIEW_SCALE_CHANGED, () => this.fitCamera());
     this.input.on('pointerup', (pointer) => this.handleClick(pointer));
     this.resetListener = this.session.bus.on('session:reset', () => this.rebuildDynamic());
+  }
+
+  fitCamera() {
+    const cam = this.cameras.main;
+    if (!this.mapWidth || !this.mapHeight) return;
+    const fit = Math.min(cam.width / this.mapWidth, cam.height / this.mapHeight);
+    const cover = Math.max(cam.width / this.mapWidth, cam.height / this.mapHeight);
+    const userScale = this.session.ui.viewScale || 1;
+    const zoom = Math.max(0.35, Math.min(cover, fit * 1.22) * userScale);
+    cam.setZoom(zoom);
+    const viewW = cam.width / zoom;
+    const viewH = cam.height / zoom;
+    const slackX = viewW - this.mapWidth;
+    const slackY = viewH - this.mapHeight;
+    if (slackX > 0 || slackY > 0) {
+      const padLeft = Math.max(0, slackX);
+      const padTop = Math.max(0, slackY) / 2;
+      cam.setBounds(-padLeft, -padTop, this.mapWidth + padLeft, this.mapHeight + padTop * 2);
+      cam.setScroll(-padLeft, -padTop);
+      return;
+    }
+    cam.setBounds(0, 0, this.mapWidth, this.mapHeight);
+    cam.setScroll(
+      Math.max(0, (this.mapWidth - viewW) / 2),
+      Math.max(0, (this.mapHeight - viewH) / 2)
+    );
   }
 
   buildMap() {
@@ -136,8 +163,7 @@ export class CafeScene extends Phaser.Scene {
       sprite.x = employee.post.x * TILE_SIZE + TILE_SIZE / 2;
       sprite.y = employee.post.y * TILE_SIZE + TILE_SIZE / 2;
     }
-    this.cameras.main.setZoom(1);
-    this.cameras.main.centerOn(this.mapWidth / 2, this.mapHeight / 2);
+    this.fitCamera();
     const covered = this.session.ui.screen === 'menu' || this.session.ui.screen === 'naming';
     const periodLight = covered ? 0.45 : getLight(this.session);
     this.light.setAlpha(periodLight);

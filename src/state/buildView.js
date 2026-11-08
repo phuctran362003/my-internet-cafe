@@ -214,8 +214,19 @@ export function buildView(session) {
     statusLabel: STATUS_LABEL,
     newComputerCost: formatMoney(data.economy.newComputerCost),
     nextSlot: (() => {
-      const slot = state.cafe.computers.find((pc) => pc.status === 'disabled');
-      return slot ? { id: slot.id, cost: formatMoney(slotBuyCost(data, slot)), console: slot.tier === 'console' } : null;
+      const slot = state.cafe.computers.find((pc) => pc.status === 'disabled' && pc.tier !== 'console');
+      return slot ? { id: slot.id, cost: formatMoney(slotBuyCost(data, slot)), console: false } : null;
+    })(),
+    nextConsole: (() => {
+      const slots = state.cafe.computers.filter((pc) => pc.tier === 'console');
+      const slot = slots.find((pc) => pc.status === 'disabled');
+      if (!slot) return null;
+      return {
+        id: slot.id,
+        cost: formatMoney(slotBuyCost(data, slot)),
+        owned: slots.length - slots.filter((pc) => pc.status === 'disabled').length,
+        total: slots.length
+      };
     })()
   };
 }

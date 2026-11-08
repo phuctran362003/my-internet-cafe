@@ -66,8 +66,8 @@
     { "id": "pc14", "x": 9, "y": 3, "seatX": 9, "seatY": 2, "facing": "down", "tier": "basic", "status": "disabled" },
     { "id": "pc15", "x": 16, "y": 4, "seatX": 16, "seatY": 5, "tier": "basic", "status": "disabled" },
     { "id": "pc16", "x": 16, "y": 3, "seatX": 16, "seatY": 2, "facing": "down", "tier": "basic", "status": "disabled" },
-    { "id": "console1", "x": 8, "y": 12, "seatX": 8, "seatY": 13, "tier": "console", "status": "disabled" },
-    { "id": "console2", "x": 9, "y": 12, "seatX": 9, "seatY": 13, "tier": "console", "status": "disabled" },
+    { "id": "console1", "x": 9, "y": 12, "seatX": 9, "seatY": 13, "tier": "console", "status": "disabled" },
+    { "id": "console2", "x": 10, "y": 12, "seatX": 10, "seatY": 13, "tier": "console", "status": "disabled" },
     { "id": "vip1", "x": 17, "y": 10, "seatX": 17, "seatY": 9, "facing": "down", "tier": "premium", "status": "locked", "room": "vip" },
     { "id": "vip2", "x": 17, "y": 11, "seatX": 17, "seatY": 12, "tier": "premium", "status": "locked", "room": "vip" }
   ],

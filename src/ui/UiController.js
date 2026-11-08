@@ -570,13 +570,12 @@ function overview(view, session) {
   if (view.debt > 0) box.append(button('Trả 500.000đ', () => session.repay(500000)));
   box.append(moneyBreakdown(view.report.breakdown, { compact: true }));
   if (view.nextSlot) {
-    box.append(el('p', 'muted', view.nextSlot.console
-      ? 'Console đặt ở góc giữa dưới quán.'
-      : 'Máy mới nằm ở hàng bàn còn trống phía trên.'));
-    box.append(button(
-      `${view.nextSlot.console ? 'Mua console' : 'Mua máy mới'} (${view.nextSlot.cost})`,
-      () => session.buyComputer(view.nextSlot.id)
-    ));
+    box.append(el('p', 'muted', 'Máy mới nằm ở hàng bàn còn trống phía trên.'));
+    box.append(button(`Mua máy mới (${view.nextSlot.cost})`, () => session.buyComputer(view.nextSlot.id)));
+  }
+  if (view.nextConsole) {
+    box.append(el('p', 'muted', `Console đặt ở khoảng trống dưới thảm, cạnh phòng VIP (${view.nextConsole.owned}/${view.nextConsole.total}).`));
+    box.append(button(`Mua console (${view.nextConsole.cost})`, () => session.buyComputer(view.nextConsole.id)));
   }
   const locked = view.rooms.filter((room) => !room.unlocked);
   if (locked.length) {

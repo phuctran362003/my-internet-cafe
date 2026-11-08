@@ -5,6 +5,7 @@ export const GameEvents = {
   PAYMENT_RECEIVED: 'payment:received',
   PAYMENT_FAILED: 'payment:failed',
   COMPUTER_BROKEN: 'computer:broken',
+  COMPUTER_BOUGHT: 'computer:bought',
   COMPUTER_UPGRADED: 'computer:upgraded',
   INCIDENT_CREATED: 'incident:created',
   INCIDENT_RESOLVED: 'incident:resolved',

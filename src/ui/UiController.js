@@ -419,6 +419,8 @@ function textField(placeholder, maxLength) {
 }
 
 function paintDrawer(node, view, session) {
+  const prevBody = node.querySelector('.drawer-body');
+  const scrollTop = prevBody?.scrollTop ?? 0;
   node.replaceChildren();
   const head = el('div', 'drawer-head');
   const close = button('Đóng', () => session.closeDrawer());
@@ -450,6 +452,7 @@ function paintDrawer(node, view, session) {
   if (view.panel === 'family') body.append(familyPanel(view, session));
   if (view.panel === 'journal') body.append(journalPanel(view));
   node.append(head, nav, body);
+  body.scrollTop = scrollTop;
 }
 
 function navButton(label, svg, onClick, active) {
@@ -467,13 +470,18 @@ function overview(view, session) {
   const box = el('div');
   box.append(el('h2', '', view.cafeName));
   box.append(el('p', 'muted', `${view.playerName} · ${view.open ? 'Cửa đang mở' : 'Cửa đang đóng'}`));
-  box.append(row('Máy hoạt động', `${view.activeComputers}`));
-  box.append(row('Máy trống', `${view.freeComputers}`));
+  box.append(row('Máy đã có', `${view.activeComputers}`));
+  box.append(row('Máy trống', `${view.freeComputers}/${view.activeComputers}`));
+  if (view.buyableSlots > 0) box.append(row('Chỗ chưa mua', `${view.buyableSlots}`));
   box.append(row('Doanh thu hôm nay', view.report.revenueLabel));
   box.append(row('Chi phí hôm nay', view.report.expenseLabel));
   box.append(row('Nợ', view.debtLabel));
   if (view.debt > 0) box.append(button('Trả 500.000đ', () => session.repay(500000)));
-  if (view.nextSlot) box.append(button(`Mua máy mới (${view.newComputerCost})`, () => session.buyComputer()));
+  box.append(moneyBreakdown(view.report.breakdown, { compact: true }));
+  if (view.nextSlot) {
+    box.append(el('p', 'muted', 'Máy mới hiện ở hàng bàn còn trống bên phải.'));
+    box.append(button(`Mua máy mới (${view.newComputerCost})`, () => session.buyComputer(view.nextSlot)));
+  }
   const locked = view.rooms.filter((room) => !room.unlocked);
   if (locked.length) {
     box.append(el('p', 'muted', `Chưa mở: ${locked.map((room) => `${room.name} ${room.costLabel}`).join(' · ')}. Bấm ô xám trên sàn để xem giá.`));
@@ -500,7 +508,9 @@ function computerPanel(view, session) {
     actions.append(button(room ? `Mở ${room.name} (${room.costLabel})` : 'Mở phòng', () => {
       if (room) session.unlockRoom(room.id);
     }));
-  } else if (selected.status === 'disabled') actions.append(button('Mua máy này', () => session.buyComputer()));
+  } else if (selected.status === 'disabled') {
+    actions.append(button(`Mua máy này (${view.newComputerCost})`, () => session.buyComputer(selected.id)));
+  }
   else {
     const tierIndex = view.tiers.findIndex((tier) => tier.id === selected.tier);
     const next = view.tiers[tierIndex + 1];
@@ -572,7 +582,7 @@ function shopPanel(view, session) {
 function staffPanel(view, session) {
   const box = el('div');
   box.append(el('h2', '', 'Nhân viên'));
-  box.append(el('p', 'muted', 'Lương 25.000đ/giờ khi quán mở. Có nhân viên thì tự mở máy cho khách, không cần bấm chấm than.'));
+  box.append(el('p', 'muted', 'Lương theo ngày, trừ cuối ngày. Có nhân viên thì tự mở máy cho khách, không cần bấm chấm than.'));
   for (const member of view.staff) {
     const line = el('div', 'block');
     line.append(row(member.name, member.wageLabel || formatMoney(member.salary)));
@@ -587,7 +597,7 @@ function staffPanel(view, session) {
     guard.append(el('p', 'muted', 'Lương 80.000đ mỗi ngày. Khách toan chuồn thì ông giữ lại.'));
     guard.append(button('Thuê bảo vệ', () => session.hireGuard()));
   } else {
-    guard.append(row('Lương', formatMoney(view.guard.salary)));
+    guard.append(row('Lương', `${formatMoney(view.guard.salary)}/ngày`));
     guard.append(button('Cho nghỉ', () => session.fireGuard()));
   }
   box.append(guard);
@@ -731,7 +741,8 @@ function journalPanel(view) {
   box.append(el('h2', '', 'Nhật ký'));
   if (!view.journal.length) box.append(el('p', 'muted', 'Chưa có quyết định nào.'));
   for (const entry of view.journal) {
-    const line = el('div', 'block');
+    const toneClass = entry.tone === 'beneficial' || entry.tone === 'adverse' ? ` tone-${entry.tone}` : '';
+    const line = el('div', `block journal-entry${toneClass}`);
     const tone = entry.tone === 'beneficial' ? 'Tin vui' : entry.tone === 'adverse' ? 'Rắc rối' : '';
     line.append(row(`Ngày ${entry.day}${tone ? ` · ${tone}` : ''}`, entry.title || entry.id));
     line.append(el('p', 'muted', entry.choiceLabel || entry.choiceId));
@@ -790,14 +801,7 @@ function paintModal(node, view, session) {
     if (view.dayEvents.adverse || view.dayEvents.beneficial) {
       sheet.append(row('Trong ngày', `${view.dayEvents.adverse} rắc rối · ${view.dayEvents.beneficial} tin vui`));
     }
-    const ledger = el('div', 'ledger');
-    for (const line of view.report.lines.slice(-8)) {
-      const tone = line.type === 'revenue' ? 'earn' : line.type === 'debt' ? 'alert' : 'spend';
-      const entry = row(line.description, `${line.type === 'revenue' ? '+' : '−'}${formatMoney(line.amount)}`);
-      entry.classList.add(tone);
-      ledger.append(entry);
-    }
-    sheet.append(ledger);
+    sheet.append(moneyBreakdown(view.report.breakdown, { compact: false }));
     if (view.ending === 'balanced') {
       sheet.append(el('p', 'muted', 'Tiệm với nhà đang đứng được. Có thể chơi tiếp, không hạn ngày.'));
       sheet.append(button('Chơi tiếp', () => session.continueDay()));
@@ -885,6 +889,7 @@ function drawerSignature(view) {
     selection: view.selection,
     open: view.open,
     computers: view.computers.map((pc) => [pc.id, pc.status, pc.tier, Math.round(pc.condition), pc.occupantId]),
+    buyableSlots: view.buyableSlots,
     guard: Boolean(view.guard),
     staff: view.staff.map((member) => member.hired).join(''),
     facilities: view.facilities.map((facility) => facility.level).join(''),
@@ -949,6 +954,39 @@ function stat(label, value, tone = 'calm', icon = '') {
   return node;
 }
 
+function moneyBreakdown(sections, { compact = false } = {}) {
+  const box = el('div', `money-breakdown${compact ? ' compact' : ''}`);
+  if (!sections?.length) {
+    box.append(el('p', 'muted', 'Chưa có giao dịch hôm nay.'));
+    return box;
+  }
+
+  for (const section of sections) {
+    const block = el('div', `money-section ${section.tone}`);
+    const heading = row(section.title, `${section.tone === 'earn' ? '+' : '−'}${section.totalLabel}`);
+    heading.classList.add('money-section-title', section.tone);
+    block.append(heading);
+
+    for (const item of section.items) {
+      const sign = section.tone === 'earn' ? '+' : '−';
+      const count = item.count > 1 ? ` · ${item.count} lần` : '';
+      const line = row(item.label + count, `${sign}${item.amountLabel}`);
+      line.classList.add(section.tone);
+      block.append(line);
+
+      if (!compact) {
+        for (const entry of item.entries) {
+          const detail = row(entry.description, `${sign}${entry.amountLabel}`);
+          detail.classList.add('money-detail', section.tone);
+          block.append(detail);
+        }
+      }
+    }
+    box.append(block);
+  }
+  return box;
+}
+
 function row(label, value) {
   const node = el('div', 'row');
   node.append(el('span', '', label), el('span', '', value));
@@ -959,7 +997,8 @@ function attachUiHold(root) {
   let held = false;
   const arm = (event) => {
     if (event.button != null && event.button !== 0) return;
-    if (!event.target?.closest?.('button, input, select, textarea, label')) return;
+    // Keep drawer scroll/click stable while the pointer is down on the panel body.
+    if (!event.target?.closest?.('button, input, select, textarea, label, .drawer-body')) return;
     held = true;
   };
   const release = () => {

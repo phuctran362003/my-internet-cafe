@@ -71,12 +71,121 @@ export function createEconomySystem({ state, bus }) {
   };
 }
 
+const CATEGORY_LABEL = {
+  computer_usage: 'Giờ chơi',
+  food: 'Đồ ăn và nước',
+  rent: 'Thuê mặt bằng',
+  internet: 'Internet',
+  electricity: 'Tiền điện',
+  wages: 'Lương nhân viên',
+  upgrade: 'Nâng cấp / mở rộng',
+  repair: 'Sửa chữa',
+  cleaning: 'Vệ sinh',
+  computer: 'Mua máy',
+  stock: 'Nhập hàng',
+  furniture: 'Nội thất',
+  family_food: 'Thức ăn gia đình',
+  family_heat: 'Tiền sưởi',
+  medicine: 'Thuốc men',
+  debt: 'Ghi nợ',
+  debt_payment: 'Trả nợ',
+  event: 'Sự kiện',
+  fine: 'Phạt'
+};
+
+const EXPENSE_GROUP = {
+  rent: 'ops',
+  internet: 'ops',
+  electricity: 'ops',
+  wages: 'ops',
+  upgrade: 'invest',
+  repair: 'invest',
+  cleaning: 'invest',
+  computer: 'invest',
+  stock: 'invest',
+  furniture: 'invest',
+  family_food: 'family',
+  family_heat: 'family',
+  medicine: 'family',
+  debt_payment: 'other',
+  event: 'other',
+  fine: 'other'
+};
+
+const GROUP_LABEL = {
+  income: 'Khoản thu',
+  ops: 'Chi vận hành tiệm',
+  invest: 'Chi đầu tư / mua sắm',
+  family: 'Chi gia đình',
+  other: 'Chi khác',
+  debt: 'Thiếu, ghi nợ'
+};
+
+const GROUP_ORDER = ['income', 'ops', 'invest', 'family', 'other', 'debt'];
+
+export function categoryLabel(category) {
+  return CATEGORY_LABEL[category] || 'Khác';
+}
+
 export function dailyReport(state) {
   const lines = state.economy.transactions.filter((row) => row.day === state.meta.currentDay);
   const revenue = lines.filter((row) => row.type === 'revenue').reduce((sum, row) => sum + row.amount, 0);
   const expenses = lines.filter((row) => row.type === 'expense').reduce((sum, row) => sum + row.amount, 0);
   const shortfall = lines.filter((row) => row.type === 'debt').reduce((sum, row) => sum + row.amount, 0);
-  return { revenue, expenses, profit: revenue - expenses, shortfall, lines };
+  return {
+    revenue,
+    expenses,
+    profit: revenue - expenses,
+    shortfall,
+    lines,
+    breakdown: buildBreakdown(lines)
+  };
+}
+
+function buildBreakdown(lines) {
+  const buckets = new Map();
+
+  for (const row of lines) {
+    const group = row.type === 'revenue'
+      ? 'income'
+      : row.type === 'debt'
+        ? 'debt'
+        : (EXPENSE_GROUP[row.category] || 'other');
+    if (!buckets.has(group)) buckets.set(group, new Map());
+    const cats = buckets.get(group);
+    if (!cats.has(row.category)) {
+      cats.set(row.category, {
+        category: row.category,
+        label: categoryLabel(row.category),
+        amount: 0,
+        count: 0,
+        entries: []
+      });
+    }
+    const bucket = cats.get(row.category);
+    bucket.amount += row.amount;
+    bucket.count += 1;
+    bucket.entries.push({
+      description: row.description,
+      amount: row.amount,
+      type: row.type
+    });
+  }
+
+  const sections = [];
+  for (const group of GROUP_ORDER) {
+    const cats = buckets.get(group);
+    if (!cats || cats.size === 0) continue;
+    const items = [...cats.values()].sort((a, b) => b.amount - a.amount);
+    sections.push({
+      id: group,
+      title: GROUP_LABEL[group],
+      tone: group === 'income' ? 'earn' : group === 'debt' ? 'alert' : 'spend',
+      total: items.reduce((sum, item) => sum + item.amount, 0),
+      items
+    });
+  }
+  return sections;
 }
 
 export function addReputation(state, amount) {

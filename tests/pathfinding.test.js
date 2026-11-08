@@ -12,6 +12,10 @@ describe('pathfinding', () => {
     const grid = buildWalkGrid(data.map, state);
     expect(grid[0][0]).toBe(1);
     for (const pc of state.cafe.computers) {
+      if (pc.status === 'disabled') {
+        expect(grid[pc.y][pc.x]).toBe(0);
+        continue;
+      }
       expect(grid[pc.y][pc.x]).toBe(1);
       const path = findPath(grid, data.map.entrance, { x: pc.seatX, y: pc.seatY });
       if (pc.room && !isRoomUnlocked(state, pc.room)) {

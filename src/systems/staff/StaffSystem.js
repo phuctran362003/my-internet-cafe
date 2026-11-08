@@ -20,8 +20,7 @@ export function hireStaff(ctx, role) {
     name: spec.name,
     role: spec.role,
     look: spec.look,
-    wagePerHour: spec.wagePerHour ?? ctx.data.economy.wagePerHour ?? 25000,
-    workedMinutes: 0,
+    salary: staffDailySalary(ctx, spec),
     post: { ...spec.post }
   });
   return { ok: true };
@@ -35,25 +34,7 @@ export function fireStaff(ctx, role) {
 
 export function tickStaff(ctx, minutes) {
   if (minutes <= 0) return;
-  if (ctx.state.cafe.open) accrueWorkTime(ctx, minutes);
   assistWaitingCustomers(ctx, minutes);
-}
-
-export function settleHourlyWages(ctx) {
-  const rate = ctx.data.economy.wagePerHour ?? 25000;
-  for (const employee of ctx.state.cafe.employees) {
-    if (!FLOOR_ROLES.includes(employee.role)) continue;
-    const worked = employee.workedMinutes ?? 0;
-    const hours = worked > 0 ? Math.ceil(worked / 60) : 0;
-    if (hours > 0) {
-      ctx.economy.payObligation(
-        hours * (employee.wagePerHour ?? rate),
-        'wages',
-        `Lương ${employee.name} (${hours} giờ)`
-      );
-    }
-    employee.workedMinutes = 0;
-  }
 }
 
 export function applyCleaner(state) {
@@ -64,11 +45,12 @@ export function applyCleaner(state) {
   }
 }
 
-function accrueWorkTime(ctx, minutes) {
-  for (const employee of ctx.state.cafe.employees) {
-    if (!FLOOR_ROLES.includes(employee.role)) continue;
-    employee.workedMinutes = (employee.workedMinutes ?? 0) + minutes;
-  }
+/** Flat daily pay for floor staff (legacy hourly saves fall back to economy rate). */
+export function staffDailySalary(ctx, spec = null) {
+  return spec?.salary
+    ?? ctx.data.economy.staffDailyWage
+    ?? ctx.data.economy.wagePerHour
+    ?? 150000;
 }
 
 function assistWaitingCustomers(ctx, minutes) {

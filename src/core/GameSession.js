@@ -62,6 +62,13 @@ export function createGameSession({ data, storage, seed = 1 }) {
     pushNote(ui, payload?.slot === 0 ? 'Đã tự lưu' : 'Đã lưu game', 'save');
   });
   bus.on(GameEvents.COMPUTER_BROKEN, (payload) => pushNote(ui, `${payload?.id || 'Máy'} hỏng`, 'alert'));
+  bus.on(GameEvents.COMPUTER_BOUGHT, (payload) => {
+    if (!payload?.id) return;
+    ui.selection = { type: 'computer', id: payload.id };
+    ui.panel = 'computer';
+    ui.drawerOpen = true;
+    pushNote(ui, `Đã mua máy ${payload.id.toUpperCase()}`, 'earn');
+  });
   bus.on(GameEvents.DAY_ENDED, () => queueSave(0));
 
   function queueSave(slot, options = {}) {
@@ -229,21 +236,34 @@ export function createGameSession({ data, storage, seed = 1 }) {
       return toastPlace(ui, placeFurniture(ctx, ui.buildType, x, y));
     },
     stashFurniture() {
-      if (ui.selection?.type !== 'furniture') return { ok: false, reason: 'missing' };
-      const result = stashPiece(ctx, ui.selection.id);
-      if (result.ok) {
-        ui.selection = null;
-        ui.lastError = '';
+      if (ui.selection?.type !== 'furniture') {
+        return failAction(ui, { ok: false, reason: 'missing' }, {
+          missing: 'Chưa chọn đồ để cất',
+          default: 'Không cất được đồ'
+        });
       }
+      const result = stashPiece(ctx, ui.selection.id);
+      if (!result.ok) {
+        return failAction(ui, result, {
+          missing: 'Không tìm thấy món đang chọn',
+          default: 'Không cất được đồ'
+        });
+      }
+      ui.selection = null;
+      clearFail(ui);
       return result;
     },
     unlockRoom(id) {
       const result = unlockRoomSystem(ctx, id);
       if (!result.ok) {
-        ui.lastError = result.reason === 'money' ? 'Không đủ tiền mở phòng này' : 'Không mở được phòng';
-        return result;
+        return failAction(ui, result, {
+          money: 'Không đủ tiền mở phòng này',
+          open: 'Phòng này đã mở rồi',
+          unknown: 'Không tìm thấy phòng',
+          default: 'Không mở được phòng'
+        });
       }
-      ui.lastError = '';
+      clearFail(ui);
       pushNote(ui, `Đã mở ${result.name}`, 'earn');
       return result;
     },
@@ -277,8 +297,8 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     startMachine(customerId) {
       const result = openCustomerMachine(ctx, customerId);
-      if (!result.ok) ui.lastError = 'Khách chưa ngồi chờ mở máy';
-      else ui.lastError = '';
+      if (!result.ok) return failAction(ui, result, { default: 'Khách chưa ngồi chờ mở máy' });
+      clearFail(ui);
       return result;
     },
     select(selection) {
@@ -292,14 +312,24 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     setPrice(tierId, price) {
       const result = setPrice(state, data, tierId, price);
-      if (!result.ok) ui.lastError = 'Giá giờ chơi từ 2.000đ đến 40.000đ';
-      else ui.lastError = '';
+      if (!result.ok) {
+        return failAction(ui, result, {
+          range: 'Giá giờ chơi từ 2.000đ đến 40.000đ',
+          default: 'Không đổi được giá giờ'
+        });
+      }
+      clearFail(ui);
       return result;
     },
     setItemPrice(itemId, price) {
       const result = setItemPrice(state, data, itemId, price);
-      if (!result.ok) ui.lastError = 'Giá món phải từ giá nhập đến gấp 5 lần';
-      else ui.lastError = '';
+      if (!result.ok) {
+        return failAction(ui, result, {
+          range: 'Giá món phải từ giá nhập đến gấp 5 lần',
+          default: 'Không đổi được giá món'
+        });
+      }
+      clearFail(ui);
       return result;
     },
     openGuide() {
@@ -318,57 +348,105 @@ export function createGameSession({ data, storage, seed = 1 }) {
       ui.lastError = '';
     },
     upgradeFacility(id) {
-      return toastResult(ui, upgradeFacility(ctx, id), 'Không nâng cấp được');
+      return toastResult(ui, upgradeFacility(ctx, id), {
+        money: 'Không đủ tiền nâng cấp thiết bị',
+        max: 'Thiết bị đã ở mức cao nhất',
+        unknown: 'Không tìm thấy thiết bị',
+        default: 'Không nâng cấp được thiết bị'
+      });
     },
     hireStaff(role) {
-      return toastResult(ui, hireStaff(ctx, role), 'Đã thuê người này');
+      return toastResult(ui, hireStaff(ctx, role), {
+        hired: 'Đã thuê người này rồi',
+        role: 'Không thuê được vị trí này',
+        default: 'Không thuê được nhân viên'
+      });
     },
     fireStaff(role) {
       return fireStaff(ctx, role);
     },
     upgrade(id) {
-      return toastResult(ui, upgradeComputer(ctx, id), 'Không nâng cấp được');
+      return toastResult(ui, upgradeComputer(ctx, id), {
+        money: 'Không đủ tiền nâng cấp máy',
+        unavailable: 'Máy này đang hỏng hoặc không dùng được',
+        max: 'Máy đã ở cấu hình cao nhất',
+        default: 'Không nâng cấp được máy'
+      });
     },
     repair(id) {
-      return toastResult(ui, repairComputer(ctx, id), 'Không sửa được');
+      return toastResult(ui, repairComputer(ctx, id), {
+        money: 'Không đủ tiền sửa máy',
+        unavailable: 'Máy này không sửa được lúc này',
+        default: 'Không sửa được máy'
+      });
     },
     clean(id) {
-      return toastResult(ui, cleanComputer(ctx, id), 'Không đủ tiền vệ sinh');
+      return toastResult(ui, cleanComputer(ctx, id), {
+        money: 'Không đủ tiền vệ sinh máy',
+        unavailable: 'Máy này không vệ sinh được lúc này',
+        default: 'Không vệ sinh được máy'
+      });
     },
-    buyComputer() {
-      return toastResult(ui, buyComputerSlot(ctx), 'Không mua thêm máy được');
+    buyComputer(id = null) {
+      return toastResult(ui, buyComputerSlot(ctx, id), {
+        money: 'Không đủ tiền mua máy mới',
+        full: 'Không còn chỗ để thêm máy',
+        missing: 'Không tìm thấy máy này',
+        default: 'Không mua thêm máy được'
+      });
     },
     buyItem(id) {
-      const result = buyCafeItem(ctx, id, 1);
-      if (!result.ok && result.reason === 'full') {
-        ui.lastError = 'Kho đầy. Mở phòng kho để chứa thêm.';
-        return result;
-      }
-      return toastResult(ui, result, 'Không nhập được hàng');
+      return toastResult(ui, buyCafeItem(ctx, id, 1), {
+        money: 'Không đủ tiền nhập hàng',
+        full: 'Kho đầy. Mở phòng kho để xếp thêm.',
+        item: 'Không tìm thấy món hàng',
+        default: 'Không nhập được hàng'
+      });
     },
     buyFood() {
-      return toastResult(ui, { ok: buyFoodPack(ctx) }, 'Không đủ tiền mua thức ăn');
+      return toastResult(ui, { ok: buyFoodPack(ctx), reason: 'money' }, {
+        money: 'Không đủ tiền mua thức ăn',
+        default: 'Không mua được thức ăn'
+      });
     },
     buyMedicine(qty = 1) {
-      return toastResult(ui, { ok: buyMedicine(ctx, qty) }, 'Không đủ tiền mua thuốc');
+      return toastResult(ui, { ok: buyMedicine(ctx, qty), reason: 'money' }, {
+        money: 'Không đủ tiền mua thuốc',
+        default: 'Không mua được thuốc'
+      });
     },
     setAutoPay(kind, value) {
       if (kind === 'food') state.family.autoPayFood = Boolean(value);
       if (kind === 'heat') state.family.autoPayHeat = Boolean(value);
     },
     hireGuard() {
-      return toastResult(ui, hireGuard(ctx), 'Đã có bảo vệ');
+      return toastResult(ui, hireGuard(ctx), {
+        hired: 'Đã có bảo vệ rồi',
+        default: 'Không thuê được bảo vệ'
+      });
     },
     fireGuard() {
       return fireGuard(ctx);
     },
     repay(amount) {
-      return toastResult(ui, ctx.economy.repayDebt(amount), 'Không trả được nợ');
+      return toastResult(ui, ctx.economy.repayDebt(amount), {
+        money: 'Không đủ tiền trả nợ',
+        none: 'Không còn nợ để trả',
+        default: 'Không trả được nợ'
+      });
     },
     choose(choiceId, instanceId) {
       const result = ctx.events.choose(choiceId, instanceId);
-      if (!result.ok) ui.lastError = reasonText(result.reason);
-      else ui.lastError = '';
+      if (!result.ok) {
+        return failAction(ui, result, {
+          money: 'Không đủ tiền cho lựa chọn này',
+          medicine: 'Không đủ tiền hoặc thuốc',
+          guard: 'Chưa có bảo vệ',
+          resource: 'Không đủ vật tư cần thiết',
+          default: 'Chưa thực hiện được lựa chọn'
+        });
+      }
+      clearFail(ui);
       return result;
     }
   };
@@ -401,25 +479,46 @@ function clampViewScale(value) {
 }
 
 function toastPlace(ui, result) {
-  if (result?.ok) ui.lastError = '';
-  else if (result?.reason === 'money') ui.lastError = 'Không đủ tiền mua món này';
-  else if (result?.reason === 'tile') ui.lastError = 'Ô này không đặt được. Chừa lối đi tới máy và cửa.';
-  else ui.lastError = 'Không đặt được';
-  return result;
+  if (result?.ok) {
+    clearFail(ui);
+    return result;
+  }
+  return failAction(ui, result, {
+    money: 'Không đủ tiền mua đồ này',
+    tile: 'Ô này không đặt được. Chừa lối đi tới máy và cửa.',
+    type: 'Không tìm thấy đồ nội thất',
+    missing: 'Không tìm thấy món đang chọn',
+    default: 'Không đặt được'
+  });
 }
 
 function cleanName(value) {
   return String(value ?? '').trim().replace(/\s+/g, ' ');
 }
 
-function toastResult(ui, result, message) {
-  if (!result?.ok) ui.lastError = message;
-  else ui.lastError = '';
+function toastResult(ui, result, messages) {
+  if (result?.ok) {
+    clearFail(ui);
+    return result;
+  }
+  return failAction(ui, result, messages);
+}
+
+function failAction(ui, result, messages = {}) {
+  const message = failMessage(result?.reason, messages);
+  ui.lastError = message;
+  pushNote(ui, message, 'alert');
   return result;
 }
 
-function reasonText(reason) {
-  if (reason === 'money' || reason === 'medicine') return 'Không đủ tiền hoặc thuốc';
-  if (reason === 'guard') return 'Chưa có bảo vệ';
-  return 'Chưa thực hiện được lựa chọn';
+function clearFail(ui) {
+  ui.lastError = '';
+}
+
+function failMessage(reason, messages = {}) {
+  if (typeof messages === 'string') return messages;
+  if (reason && messages[reason]) return messages[reason];
+  if (messages.default) return messages.default;
+  if (reason === 'money') return 'Không đủ tiền';
+  return 'Không thực hiện được';
 }

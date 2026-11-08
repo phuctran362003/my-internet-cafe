@@ -27,7 +27,11 @@ export function tileNameGrid(map) {
 export function buildWalkGrid(map, state) {
   const names = tileNameGrid(map);
   const grid = names.map((row) => row.map((name) => (BLOCKING.has(name) ? 1 : 0)));
-  for (const pc of state.cafe.computers) grid[pc.y][pc.x] = 1;
+  for (const pc of state.cafe.computers) {
+    // Unbought slots stay clear until purchased so the empty floor reads correctly.
+    if (pc.status === 'disabled') continue;
+    grid[pc.y][pc.x] = 1;
+  }
   for (const room of map.rooms ?? []) {
     if (isRoomUnlocked(state, room.id)) continue;
     for (const tile of roomTiles(room)) {

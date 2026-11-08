@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { tickCustomers } from '../src/systems/customer/CustomerAI.js';
-import { applyCleaner, hireStaff, settleHourlyWages, tickStaff } from '../src/systems/staff/StaffSystem.js';
+import { applyBusinessExpenses } from '../src/systems/business/ExpenseSystem.js';
+import { applyCleaner, hireStaff, tickStaff } from '../src/systems/staff/StaffSystem.js';
 import { migrateSave } from '../src/systems/save/SaveSerializer.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
 
@@ -67,7 +68,7 @@ describe('guide', () => {
     expect(ctx.state.cafe.computers[0].cleanliness).toBe(58);
   });
 
-  it('lets hired staff open machines and bills them by the hour', () => {
+  it('lets hired staff open machines and bills them by the day', () => {
     const ctx = bareContext(() => 0.5);
     const pc = ctx.state.cafe.computers[0];
     const customer = sampleCustomer({
@@ -85,11 +86,11 @@ describe('guide', () => {
     expect(customer.state).toBe('playing');
 
     const cashier = ctx.state.cafe.employees.find((employee) => employee.role === 'cashier');
-    cashier.workedMinutes = 125;
-    const before = ctx.state.player.money;
-    settleHourlyWages(ctx);
-    expect(ctx.state.player.money).toBe(before - 3 * 25000);
-    expect(cashier.workedMinutes).toBe(0);
+    expect(cashier.salary).toBe(150000);
+    applyBusinessExpenses(ctx);
+    const wage = ctx.state.economy.transactions.find((row) => row.category === 'wages');
+    expect(wage?.amount).toBe(150000);
+    expect(wage?.description).toContain('Thu ngân');
   });
 
   it('fills facilities onto an older save', () => {

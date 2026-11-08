@@ -68,6 +68,7 @@ export class CafeScene extends Phaser.Scene {
     this.mapWidth = map.rows[0].length * TILE_SIZE;
     this.mapHeight = map.rows.length * TILE_SIZE;
     this.computerSprites = new Map();
+    this.chairSprites = new Map();
     const chairFrames = [0, 3, 4, 5];
     this.session.state.cafe.computers.forEach((pc, index) => {
       const sprite = this.add.sprite(pc.x * TILE_SIZE + TILE_SIZE / 2, pc.y * TILE_SIZE + TILE_SIZE / 2, 'computers', 0);
@@ -81,6 +82,10 @@ export class CafeScene extends Phaser.Scene {
       );
       // The backrest hides a seated customer's body, so it sorts just above them.
       chair.setDepth(41 + pc.seatY * TILE_SIZE + TILE_SIZE / 2);
+      this.chairSprites.set(pc.id, chair);
+      const owned = pc.status !== 'disabled';
+      sprite.setVisible(owned);
+      chair.setVisible(owned);
     });
   }
 
@@ -103,7 +108,14 @@ export class CafeScene extends Phaser.Scene {
       sprite.setFrame(DOOR_FRAMES.indexOf(doorFrameName(door, open)));
     }
     for (const pc of state.cafe.computers) {
-      this.computerSprites.get(pc.id)?.setFrame(computerFrame(pc));
+      const owned = pc.status !== 'disabled';
+      const sprite = this.computerSprites.get(pc.id);
+      const chair = this.chairSprites.get(pc.id);
+      if (sprite) {
+        sprite.setVisible(owned);
+        if (owned) sprite.setFrame(computerFrame(pc));
+      }
+      chair?.setVisible(owned);
     }
     this.syncFurniture();
     this.syncRooms();

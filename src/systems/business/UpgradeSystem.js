@@ -34,9 +34,11 @@ export function cleanComputer(ctx, computerId) {
   return { ok: true };
 }
 
-export function buyComputerSlot(ctx) {
-  const slot = ctx.state.cafe.computers.find((pc) => pc.status === 'disabled');
-  if (!slot) return { ok: false, reason: 'full' };
+export function buyComputerSlot(ctx, computerId = null) {
+  const slot = computerId
+    ? ctx.state.cafe.computers.find((pc) => pc.id === computerId && pc.status === 'disabled')
+    : ctx.state.cafe.computers.find((pc) => pc.status === 'disabled');
+  if (!slot) return { ok: false, reason: computerId ? 'missing' : 'full' };
   const paid = ctx.economy.debit(ctx.data.economy.newComputerCost, 'computer', `Mua ${slot.id}`);
   if (!paid) return { ok: false, reason: 'money' };
   slot.status = 'available';
@@ -44,6 +46,7 @@ export function buyComputerSlot(ctx) {
   slot.condition = 100;
   slot.cleanliness = 100;
   slot.occupantId = null;
+  ctx.bus.emit(GameEvents.COMPUTER_BOUGHT, { id: slot.id });
   return { ok: true, id: slot.id };
 }
 

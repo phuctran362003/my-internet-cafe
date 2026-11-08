@@ -3,7 +3,7 @@ import { isSimulationPaused } from '../../state/createInitialState.js';
 import { applyBusinessExpenses } from '../business/ExpenseSystem.js';
 import { priceOf } from '../business/PricingSystem.js';
 import { applyComputerWear } from '../business/UpgradeSystem.js';
-import { applyCleaner, settleHourlyWages, tickStaff } from '../staff/StaffSystem.js';
+import { applyCleaner, tickStaff } from '../staff/StaffSystem.js';
 import { tickCustomers } from '../customer/CustomerAI.js';
 import { tickBanter } from '../customer/CustomerBanterSystem.js';
 import { tickSpawn } from '../customer/CustomerSpawnSystem.js';
@@ -70,7 +70,6 @@ export function finishDay(ctx) {
   if (state.meta.dayEnded || state.meta.processedDay === state.meta.currentDay) return { ok: false };
   state.meta.processedDay = state.meta.currentDay;
   closeCustomers(ctx);
-  settleHourlyWages(ctx);
   applyBusinessExpenses(ctx);
   const family = settleFamilyDay(ctx);
   evaluateFamilyEvents(ctx, family.before);

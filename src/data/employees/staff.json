@@ -15,26 +15,26 @@
     "name": "Lao công",
     "role": "cleaner",
     "look": "office",
-    "wagePerHour": 25000,
+    "salary": 150000,
     "post": { "x": 8, "y": 8 },
-    "blurb": "25.000đ/giờ. Tự mở máy cho khách (không cần bấm chấm than), cuối ngày còn lau máy."
+    "blurb": "150.000đ/ngày. Tự mở máy cho khách (không cần bấm chấm than), cuối ngày còn lau máy."
   },
   "cashier": {
     "id": "cashier-basic",
     "name": "Thu ngân",
     "role": "cashier",
     "look": "regular",
-    "wagePerHour": 25000,
+    "salary": 150000,
     "post": { "x": 3, "y": 10 },
-    "blurb": "25.000đ/giờ. Tự bấm giờ mở máy cho khách, khách khó chuồn hơn."
+    "blurb": "150.000đ/ngày. Tự bấm giờ mở máy cho khách, khách khó chuồn hơn."
   },
   "server": {
     "id": "server-basic",
     "name": "Phục vụ",
     "role": "server",
     "look": "student",
-    "wagePerHour": 25000,
+    "salary": 150000,
     "post": { "x": 5, "y": 10 },
-    "blurb": "25.000đ/giờ. Tự mở máy giúp bạn, mang nước với mì khi khách đang chơi."
+    "blurb": "150.000đ/ngày. Tự mở máy giúp bạn, mang nước với mì khi khách đang chơi."
   }
 }

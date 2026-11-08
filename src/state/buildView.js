@@ -69,6 +69,7 @@ export function buildView(session) {
     customerCount: customers.length,
     freeComputers: computers.filter((pc) => pc.status === 'available' && !pc.occupantId).length,
     activeComputers: computers.filter((pc) => pc.status !== 'disabled' && pc.status !== 'locked').length,
+    buyableSlots: computers.filter((pc) => pc.status === 'disabled').length,
     incidents: state.cafe.incidents.filter((incident) => !incident.resolved).length,
     mood: guide.hot ? 'Nóng' : 'Mát',
     networkLabel: String(guide.network),
@@ -113,12 +114,12 @@ export function buildView(session) {
     staff: ['cleaner', 'cashier', 'server'].map((role) => {
       const spec = data.staff[role];
       const hired = state.cafe.employees.find((employee) => employee.role === role) ?? null;
-      const wage = spec.wagePerHour ?? data.economy.wagePerHour ?? 25000;
+      const wage = spec.salary ?? data.economy.staffDailyWage ?? 150000;
       return {
         role,
         name: spec.name,
         salary: wage,
-        wageLabel: `${formatMoney(wage)}/giờ`,
+        wageLabel: `${formatMoney(wage)}/ngày`,
         blurb: spec.blurb,
         hired: Boolean(hired)
       };
@@ -183,7 +184,19 @@ export function buildView(session) {
       revenueLabel: formatMoney(report.revenue),
       expenseLabel: formatMoney(report.expenses),
       profitLabel: formatMoney(report.profit),
-      shortfallLabel: formatMoney(report.shortfall)
+      shortfallLabel: formatMoney(report.shortfall),
+      breakdown: (report.breakdown || []).map((section) => ({
+        ...section,
+        totalLabel: formatMoney(section.total),
+        items: section.items.map((item) => ({
+          ...item,
+          amountLabel: formatMoney(item.amount),
+          entries: item.entries.map((entry) => ({
+            ...entry,
+            amountLabel: formatMoney(entry.amount)
+          }))
+        }))
+      }))
     },
     ending: state.meta.ending,
     dayEnded: state.meta.dayEnded,
@@ -195,7 +208,7 @@ export function buildView(session) {
     },
     statusLabel: STATUS_LABEL,
     newComputerCost: formatMoney(data.economy.newComputerCost),
-    nextSlot: state.cafe.computers.some((pc) => pc.status === 'disabled')
+    nextSlot: state.cafe.computers.find((pc) => pc.status === 'disabled')?.id ?? null
   };
 }
 

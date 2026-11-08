@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { bareContext, sampleCustomer } from './helpers.js';
 import { beginPayment } from '../src/systems/customer/CustomerAI.js';
 import { dailyReport } from '../src/systems/economy/EconomySystem.js';
+import { buyComputerSlot } from '../src/systems/business/UpgradeSystem.js';
+import { buildView } from '../src/state/buildView.js';
+import { GameEvents } from '../src/core/EventBus.js';
 
 describe('economy', () => {
   it('credits and debits through the ledger once', () => {
@@ -17,6 +20,46 @@ describe('economy', () => {
     expect(report.revenue).toBe(5000);
     expect(report.expenses).toBe(5000);
     expect(report.lines).toHaveLength(2);
+  });
+
+  it('groups daily money by category so thu/chi stay transparent', () => {
+    const ctx = bareContext();
+    ctx.economy.credit(12000, 'computer_usage', 'An trả giờ chơi');
+    ctx.economy.credit(8000, 'computer_usage', 'Bình trả giờ chơi');
+    ctx.economy.credit(15000, 'food', 'An mua mì');
+    ctx.economy.debit(100000, 'rent', 'Tiền thuê mặt bằng');
+    ctx.economy.debit(30000, 'internet', 'Tiền mạng');
+    ctx.economy.debit(25000, 'family_food', 'Mua thức ăn cho gia đình');
+    ctx.state.player.money = 500;
+    ctx.economy.payObligation(5000, 'electricity', 'Tiền điện');
+
+    const report = dailyReport(ctx.state);
+    expect(report.revenue).toBe(35000);
+    expect(report.expenses).toBe(155500);
+    expect(report.shortfall).toBe(4500);
+
+    const income = report.breakdown.find((section) => section.id === 'income');
+    expect(income.title).toBe('Khoản thu');
+    expect(income.total).toBe(35000);
+    expect(income.items.map((item) => [item.label, item.amount, item.count])).toEqual([
+      ['Giờ chơi', 20000, 2],
+      ['Đồ ăn và nước', 15000, 1]
+    ]);
+    expect(income.items[0].entries.map((entry) => entry.description)).toEqual([
+      'An trả giờ chơi',
+      'Bình trả giờ chơi'
+    ]);
+
+    const ops = report.breakdown.find((section) => section.id === 'ops');
+    expect(ops.title).toBe('Chi vận hành tiệm');
+    expect(ops.items.map((item) => item.label)).toEqual(['Thuê mặt bằng', 'Internet', 'Tiền điện']);
+
+    const family = report.breakdown.find((section) => section.id === 'family');
+    expect(family.items[0]).toMatchObject({ label: 'Thức ăn gia đình', amount: 25000 });
+
+    const debt = report.breakdown.find((section) => section.id === 'debt');
+    expect(debt).toMatchObject({ title: 'Thiếu, ghi nợ', total: 4500 });
+    expect(debt.items[0].entries[0].description).toBe('Tiền điện');
   });
 
   it('turns an unpaid obligation into debt without negative cash', () => {
@@ -42,5 +85,29 @@ describe('economy', () => {
     expect(ctx.state.player.money).toBe(money);
     expect(ctx.state.economy.transactions.length).toBe(count);
     expect(customer.paid).toBe(true);
+  });
+
+  it('buys a disabled floor slot and counts only owned machines', () => {
+    const ctx = bareContext();
+    const session = { state: ctx.state, ui: ctx.ui, data: ctx.data };
+    const before = buildView(session);
+    expect(before.activeComputers).toBe(5);
+    expect(before.freeComputers).toBe(5);
+    expect(before.buyableSlots).toBe(2);
+    expect(before.nextSlot).toBe('pc6');
+
+    const bought = [];
+    ctx.bus.on(GameEvents.COMPUTER_BOUGHT, (payload) => bought.push(payload.id));
+    const money = ctx.state.player.money;
+    expect(buyComputerSlot(ctx, 'pc7').ok).toBe(true);
+    expect(ctx.state.player.money).toBe(money - ctx.data.economy.newComputerCost);
+    expect(ctx.state.cafe.computers.find((pc) => pc.id === 'pc7').status).toBe('available');
+    expect(bought).toEqual(['pc7']);
+
+    const after = buildView(session);
+    expect(after.activeComputers).toBe(6);
+    expect(after.freeComputers).toBe(6);
+    expect(after.buyableSlots).toBe(1);
+    expect(after.nextSlot).toBe('pc6');
   });
 });

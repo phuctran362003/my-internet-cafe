@@ -1,4 +1,4 @@
-import { RAMPS } from './palette.js';
+import { RAMPS, shiftColor } from './palette.js';
 import {
   C,
   bevel,
@@ -38,6 +38,7 @@ const VIOLET = RAMPS.violet;
 const CYAN = RAMPS.cyan;
 const LIME = RAMPS.lime;
 const CHALK = RAMPS.chalk;
+const WINE = RAMPS.wine;
 
 /** Draws a sprite into a padded canvas, outlines it, and returns it with its offset. */
 function sprite(w, h, draw, { edge = true, fixed = null } = {}) {
@@ -82,14 +83,20 @@ const FLOOR_DECOR = {
   toilet: { draw: toiletSide, x: 1, y: 5 },
   sink: { draw: sinkSide, x: 14, y: 3 },
   wetSign: { draw: wetSign, x: 11, y: 12 },
-  doormat: { draw: doormat, x: 2, y: 3 }
+  doormat: { draw: doormat, x: 2, y: 3 },
+  rug: { draw: rug, x: 2, y: 4 }
 };
 
 /** Paints every entry of `map.decor` that the painter knows. */
 export function paintDecor(buffer, info, decor) {
   info.cells.forEach((row, y) => row.forEach((cell, x) => {
-    if (cell.name === 'window' && cell.face) place(buffer, windowDecor({}), x * CELL + 3, y * CELL + CAP + 1);
+    if (cell.name !== 'window' || !cell.face) return;
+    sunlight(buffer, info, x * CELL + 4, (y + 1) * CELL);
+    place(buffer, windowDecor({}), x * CELL + 3, y * CELL + CAP + 1);
   }));
+  for (const item of decor) {
+    if (item.type === 'window') sunlight(buffer, info, item.x * CELL + 4, (item.y + 1) * CELL);
+  }
   for (const item of decor) {
     const spec = WALL_DECOR[item.type] ?? FLOOR_DECOR[item.type];
     if (!spec) continue;
@@ -98,6 +105,28 @@ export function paintDecor(buffer, info, decor) {
       ? item.x * CELL + Math.floor((CELL - made.art.width) / 2) - made.ox
       : item.x * CELL + spec.x;
     place(buffer, made, x, item.y * CELL + spec.y);
+  }
+}
+
+/** A slanted patch of window light: open floor one ramp step lighter, dithered at the edges. */
+function sunlight(buffer, info, x0, y0) {
+  const width = 22;
+  const height = 44;
+  for (let r = 0; r < height; r += 1) {
+    const shift = Math.floor(r * 0.45);
+    for (let c = 0; c < width; c += 1) {
+      const x = x0 + c + shift;
+      const y = y0 + r;
+      if (!info.cell(Math.floor(x / CELL), Math.floor(y / CELL))?.open) continue;
+      const edge = c < 2 || c >= width - 2 || r >= height - 6;
+      if (edge && (x + y) % 2 === 0) continue;
+      if (r >= height - 3 && (x + y) % 4 !== 1) continue;
+      const i = (y * buffer.width + x) * 4;
+      const lit = shiftColor([buffer.pixels[i], buffer.pixels[i + 1], buffer.pixels[i + 2]], -1);
+      buffer.pixels[i] = lit[0];
+      buffer.pixels[i + 1] = lit[1];
+      buffer.pixels[i + 2] = lit[2];
+    }
   }
 }
 
@@ -453,13 +482,73 @@ function wetSign() {
 
 function doormat() {
   return sprite(12, 26, (s) => {
-    rect(s, 0, 0, 12, 26, RAMPS.wine[3]);
+    rect(s, 0, 0, 12, 26, WINE[3]);
     rect(s, 1, 1, 10, 24, BOX[2]);
     for (let y = 2; y < 24; y += 1) {
       for (let x = 2; x < 10; x += 1) if ((x + y) % 3 === 0) px(s, x, y, BOX[3]);
     }
     hline(s, 1, 1, 10, BOX[1]);
-    hline(s, 0, 25, 12, RAMPS.wine[4]);
+    hline(s, 0, 25, 12, WINE[4]);
+  }, { edge: false });
+}
+
+function diamond(s, cx, cy, rx, ry, color) {
+  for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y += 1) {
+    for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x += 1) {
+      if (Math.abs(x - cx) / rx + Math.abs(y - cy) / ry <= 1) px(s, x, y, color);
+    }
+  }
+}
+
+/** Flat rug spanning `w` x `h` cells, with tassels on the short ends. */
+function rug(item) {
+  const NAVY = RAMPS.navy;
+  const w = item.w * CELL - 8;
+  const h = item.h * CELL - 8;
+  return sprite(w + 4, h, (s) => {
+    for (let y = 1; y < h - 1; y += 2) {
+      px(s, 0, y, CREAM[2]);
+      px(s, 1, y, CREAM[1]);
+      px(s, w + 2, y, CREAM[1]);
+      px(s, w + 3, y, CREAM[2]);
+    }
+    const x0 = 2;
+    rect(s, x0, 0, w, h, NAVY[4]);
+    rect(s, x0 + 1, 1, w - 2, h - 2, NAVY[3]);
+    rect(s, x0 + 3, 3, w - 6, h - 6, GOLD[3]);
+    rect(s, x0 + 4, 4, w - 8, h - 8, NAVY[3]);
+    for (let x = x0 + 5; x < x0 + w - 5; x += 3) {
+      px(s, x, 2, CREAM[2]);
+      px(s, x, h - 3, CREAM[2]);
+    }
+    const fx = x0 + 6;
+    const fy = 6;
+    const fw = w - 12;
+    const fh = h - 12;
+    rect(s, fx, fy, fw, fh, NAVY[2]);
+    for (let y = 0; y < fh; y += 1) {
+      for (let x = 0; x < fw; x += 1) {
+        const u = (x + y) % 12;
+        const v = (x - y + 1200) % 12;
+        if (u === 0 || v === 0) px(s, fx + x, fy + y, NAVY[3]);
+        else if (u === 6 && v === 6) px(s, fx + x, fy + y, CREAM[2]);
+        else if (hash(fx + x, fy + y, 81) < 0.03) px(s, fx + x, fy + y, NAVY[1]);
+      }
+    }
+    const cx = x0 + Math.floor(w / 2) - 0.5;
+    const cy = Math.floor(h / 2) - 0.5;
+    diamond(s, cx, cy, 22, 15, GOLD[3]);
+    diamond(s, cx, cy, 20, 13, NAVY[4]);
+    diamond(s, cx, cy, 17, 11, WINE[3]);
+    diamond(s, cx, cy, 12, 8, GOLD[2]);
+    diamond(s, cx, cy, 10, 6.5, WINE[2]);
+    diamond(s, cx, cy, 4, 2.5, CREAM[1]);
+    for (const [dx, dy] of [[-14, 0], [14, 0], [0, -9], [0, 9]]) diamond(s, cx + dx, cy + dy, 2, 1.5, CREAM[2]);
+    for (const [ax, ay, sx, sy] of [[fx, fy, 1, 1], [fx + fw - 1, fy, -1, 1], [fx, fy + fh - 1, 1, -1], [fx + fw - 1, fy + fh - 1, -1, -1]]) {
+      for (let i = 0; i < 6; i += 1) {
+        for (let j = 0; j < 6 - i; j += 1) px(s, ax + sx * i, ay + sy * j, (i + j) % 2 ? GOLD[3] : WINE[3]);
+      }
+    }
   }, { edge: false });
 }
 

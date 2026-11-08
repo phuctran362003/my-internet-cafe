@@ -65,6 +65,7 @@
     { "type": "plant", "x": 8, "y": 11 }
   ],
   "decor": [
+    { "type": "rug", "x": 7, "y": 7, "w": 5, "h": 4 },
     { "type": "window", "x": 6, "y": 0 },
     { "type": "poster", "variant": 0, "x": 8, "y": 0 },
     { "type": "clock", "x": 10, "y": 0 },

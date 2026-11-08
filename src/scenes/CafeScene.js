@@ -37,7 +37,8 @@ export class CafeScene extends Phaser.Scene {
   buildMap() {
     const map = this.session.data.map;
     this.add.image(0, 0, 'room-cafe').setOrigin(0).setDepth(0);
-    this.doorSprites = analyzeRoom(map).doors.map((door) => ({
+    this.layout = analyzeRoom(map);
+    this.doorSprites = this.layout.doors.map((door) => ({
       door,
       sprite: this.add.sprite(door.x * TILE_SIZE, door.y * TILE_SIZE, 'doors', 0)
         .setOrigin(0)
@@ -176,7 +177,10 @@ export class CafeScene extends Phaser.Scene {
       if (isRoomUnlocked(state, room.id)) continue;
       locked.add(room.id);
       const area = room.area;
-      this.roomShade.fillRect(area.x * TILE_SIZE, area.y * TILE_SIZE, area.w * TILE_SIZE, area.h * TILE_SIZE);
+      const wallFace = Array.from({ length: area.w }, (_, i) => this.layout.cell(area.x + i, area.y - 1))
+        .every((cell) => cell?.face);
+      const top = area.y - (wallFace ? 1 : 0);
+      this.roomShade.fillRect(area.x * TILE_SIZE, top * TILE_SIZE, area.w * TILE_SIZE, (area.y + area.h - top) * TILE_SIZE);
       if (room.gate) {
         this.roomShade.fillRect(room.gate.x * TILE_SIZE, room.gate.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
       }

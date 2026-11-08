@@ -148,13 +148,15 @@ export class CafeScene extends Phaser.Scene {
     if (guard) {
       const spec = this.session.data.staff.guard;
       const post = spec?.post ?? guard.post;
+      const door = this.session.data.map.door;
       this.guardSprite.setVisible(true);
       this.guardSprite.setFrame(characterFrame({
         archetype: 'guard',
         facing: spec?.facing || 'down',
         state: 'searching'
       }, 0));
-      this.guardSprite.x = post.x * TILE_SIZE + TILE_SIZE / 2;
+      const towardDoorX = Math.sign(door.x - post.x);
+      this.guardSprite.x = post.x * TILE_SIZE + TILE_SIZE / 2 + towardDoorX * (TILE_SIZE / 2);
       this.guardSprite.y = post.y * TILE_SIZE + TILE_SIZE / 2;
       this.guardSprite.setDepth(40 + this.guardSprite.y);
     } else {

@@ -93,8 +93,8 @@ describe('economy', () => {
     const before = buildView(session);
     expect(before.activeComputers).toBe(5);
     expect(before.freeComputers).toBe(5);
-    expect(before.buyableSlots).toBe(2);
-    expect(before.nextSlot).toBe('pc6');
+    expect(before.buyableSlots).toBe(12);
+    expect(before.nextSlot).toEqual({ id: 'pc6', cost: expect.any(String), console: false });
 
     const bought = [];
     ctx.bus.on(GameEvents.COMPUTER_BOUGHT, (payload) => bought.push(payload.id));
@@ -107,7 +107,16 @@ describe('economy', () => {
     const after = buildView(session);
     expect(after.activeComputers).toBe(6);
     expect(after.freeComputers).toBe(6);
-    expect(after.buyableSlots).toBe(1);
-    expect(after.nextSlot).toBe('pc6');
+    expect(after.buyableSlots).toBe(11);
+    expect(after.nextSlot.id).toBe('pc6');
+
+    ctx.state.player.money = Math.max(ctx.state.player.money, ctx.data.economy.newConsoleCost);
+    const consoleMoney = ctx.state.player.money;
+    expect(buyComputerSlot(ctx, 'console1').ok).toBe(true);
+    expect(ctx.state.player.money).toBe(consoleMoney - ctx.data.economy.newConsoleCost);
+    expect(ctx.state.cafe.computers.find((pc) => pc.id === 'console1')).toMatchObject({
+      status: 'available',
+      tier: 'console'
+    });
   });
 });

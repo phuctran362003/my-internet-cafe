@@ -479,8 +479,13 @@ function overview(view, session) {
   if (view.debt > 0) box.append(button('Trả 500.000đ', () => session.repay(500000)));
   box.append(moneyBreakdown(view.report.breakdown, { compact: true }));
   if (view.nextSlot) {
-    box.append(el('p', 'muted', 'Máy mới hiện ở hàng bàn còn trống bên phải.'));
-    box.append(button(`Mua máy mới (${view.newComputerCost})`, () => session.buyComputer(view.nextSlot)));
+    box.append(el('p', 'muted', view.nextSlot.console
+      ? 'Console đặt ở góc giữa dưới quán.'
+      : 'Máy mới nằm ở hàng bàn còn trống phía trên.'));
+    box.append(button(
+      `${view.nextSlot.console ? 'Mua console' : 'Mua máy mới'} (${view.nextSlot.cost})`,
+      () => session.buyComputer(view.nextSlot.id)
+    ));
   }
   const locked = view.rooms.filter((room) => !room.unlocked);
   if (locked.length) {
@@ -509,11 +514,11 @@ function computerPanel(view, session) {
       if (room) session.unlockRoom(room.id);
     }));
   } else if (selected.status === 'disabled') {
-    actions.append(button(`Mua máy này (${view.newComputerCost})`, () => session.buyComputer(selected.id)));
+    const label = selected.tier === 'console' ? 'Mua console này' : 'Mua máy này';
+    actions.append(button(`${label} (${selected.buyCost})`, () => session.buyComputer(selected.id)));
   }
   else {
-    const tierIndex = view.tiers.findIndex((tier) => tier.id === selected.tier);
-    const next = view.tiers[tierIndex + 1];
+    const next = selected.nextUpgrade;
     if (next) actions.append(button(`Nâng lên ${next.name} (${formatMoney(next.upgradeCost)})`, () => session.upgrade(selected.id)));
     actions.append(button('Sửa', () => session.repair(selected.id)));
     actions.append(button('Vệ sinh', () => session.clean(selected.id)));

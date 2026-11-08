@@ -2,6 +2,7 @@
   {
     "id": "basic",
     "name": "Basic PC",
+    "family": "pc",
     "basePrice": 5000,
     "cpu": 20,
     "gpu": 10,
@@ -13,6 +14,7 @@
   {
     "id": "standard",
     "name": "Standard PC",
+    "family": "pc",
     "basePrice": 8000,
     "cpu": 40,
     "gpu": 25,
@@ -24,6 +26,7 @@
   {
     "id": "gaming",
     "name": "Gaming PC",
+    "family": "pc",
     "basePrice": 12000,
     "cpu": 70,
     "gpu": 75,
@@ -35,6 +38,7 @@
   {
     "id": "highend",
     "name": "High-end PC",
+    "family": "pc",
     "basePrice": 16000,
     "cpu": 85,
     "gpu": 90,
@@ -46,6 +50,7 @@
   {
     "id": "premium",
     "name": "Premium PC",
+    "family": "pc",
     "basePrice": 20000,
     "cpu": 95,
     "gpu": 98,
@@ -53,5 +58,17 @@
     "watts": 480,
     "upgradeCost": 10000000,
     "comfort": 20
+  },
+  {
+    "id": "console",
+    "name": "Máy console",
+    "family": "console",
+    "basePrice": 10000,
+    "cpu": 45,
+    "gpu": 70,
+    "ram": 8,
+    "watts": 150,
+    "upgradeCost": 0,
+    "comfort": 10
   }
 ]

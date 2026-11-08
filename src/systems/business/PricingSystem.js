@@ -4,8 +4,17 @@ export function tierById(data, id) {
 
 export function nextTier(data, id) {
   const index = data.tiers.findIndex((tier) => tier.id === id);
-  if (index < 0 || index >= data.tiers.length - 1) return null;
-  return data.tiers[index + 1];
+  if (index < 0) return null;
+  const family = data.tiers[index].family ?? 'pc';
+  for (let i = index + 1; i < data.tiers.length; i += 1) {
+    if ((data.tiers[i].family ?? 'pc') === family) return data.tiers[i];
+  }
+  return null;
+}
+
+export function slotBuyCost(data, pc) {
+  if (pc?.tier === 'console') return data.economy.newConsoleCost ?? data.economy.newComputerCost;
+  return data.economy.newComputerCost;
 }
 
 export function setPrice(state, data, tierId, price) {

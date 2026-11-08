@@ -5,6 +5,7 @@
   "staffDailyWage": 150000,
   "pricePerKwh": 3500,
   "newComputerCost": 3500000,
+  "newConsoleCost": 2800000,
   "repairCost": 80000,
   "cleanCost": 10000,
   "debtInterest": 0.02,

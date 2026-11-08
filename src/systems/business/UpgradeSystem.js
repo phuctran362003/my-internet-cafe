@@ -1,7 +1,7 @@
 import { GameEvents } from '../../core/EventBus.js';
 import { isOutOfService } from './computerStatus.js';
 import { markComputerBroken } from './ComputerCareSystem.js';
-import { nextTier } from './PricingSystem.js';
+import { nextTier, slotBuyCost } from './PricingSystem.js';
 
 export function upgradeComputer(ctx, computerId) {
   const pc = ctx.state.cafe.computers.find((item) => item.id === computerId);
@@ -40,10 +40,14 @@ export function buyComputerSlot(ctx, computerId = null) {
     ? ctx.state.cafe.computers.find((pc) => pc.id === computerId && pc.status === 'disabled')
     : ctx.state.cafe.computers.find((pc) => pc.status === 'disabled');
   if (!slot) return { ok: false, reason: computerId ? 'missing' : 'full' };
-  const paid = ctx.economy.debit(ctx.data.economy.newComputerCost, 'computer', `Mua ${slot.id}`);
+  const spec = ctx.data.map.computers.find((pc) => pc.id === slot.id);
+  const tier = spec?.tier ?? slot.tier ?? 'basic';
+  const cost = slotBuyCost(ctx.data, { tier });
+  const label = tier === 'console' ? `Mua console ${slot.id}` : `Mua ${slot.id}`;
+  const paid = ctx.economy.debit(cost, 'computer', label);
   if (!paid) return { ok: false, reason: 'money' };
   slot.status = 'available';
-  slot.tier = 'basic';
+  slot.tier = tier;
   slot.condition = 100;
   slot.cleanliness = 100;
   slot.occupantId = null;

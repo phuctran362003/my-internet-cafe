@@ -42,7 +42,8 @@ const DESKS = {
   standard: { top: [TEAK[3], TEAK[2], TEAK[1]], grain: TEAK[3], front: [TEAK[5], TEAK[4], TEAK[5]] },
   gaming: { top: [STEEL[6], STEEL[5], STEEL[4]], grain: STEEL[6], front: [STEEL[7], STEEL[6], STEEL[7]], rgb: true },
   highend: { top: [STEEL[2], STEEL[1], STEEL[0]], grain: STEEL[2], front: [STEEL[4], STEEL[3], STEEL[4]] },
-  premium: { top: [NAVY[4], NAVY[3], GOLD[2]], grain: NAVY[4], front: [GOLD[3], NAVY[4], NAVY[5]] }
+  premium: { top: [NAVY[4], NAVY[3], GOLD[2]], grain: NAVY[4], front: [GOLD[3], NAVY[4], NAVY[5]] },
+  console: { top: [STEEL[5], STEEL[4], STEEL[3]], grain: STEEL[6], front: [STEEL[7], STEEL[5], STEEL[6]] }
 };
 
 /** Frames in COMPUTER_TIERS x COMPUTER_STATES order. */
@@ -91,7 +92,14 @@ function screen(b, x, y, w, h, tier, state, side = 0) {
   return desktop(b, x, y, w, h, tier);
 }
 
-const GAME_BY_TIER = { basic: 'field', standard: 'field', gaming: 'arena', highend: 'race', premium: 'arena' };
+const GAME_BY_TIER = {
+  basic: 'field',
+  standard: 'field',
+  gaming: 'arena',
+  highend: 'race',
+  premium: 'arena',
+  console: 'arena'
+};
 
 function desktop(b, x, y, w, h, tier) {
   const bar = y + h - 1;
@@ -111,7 +119,8 @@ function desktop(b, x, y, w, h, tier) {
     standard: [SKY[4], SKY[3], STEEL[6]],
     gaming: [VIOLET[4], VIOLET[3], STEEL[7]],
     highend: [NAVY[3], NAVY[2], STEEL[6]],
-    premium: [WINE[5], WINE[4], STEEL[7]]
+    premium: [WINE[5], WINE[4], STEEL[7]],
+    console: [NAVY[4], NAVY[3], STEEL[6]]
   }[tier];
   for (let r = 0; r < h - 1; r += 1) hline(b, x, y + r, w, r < (h - 1) / 2 ? look[0] : look[1]);
   hline(b, x, bar, w, look[2]);
@@ -320,6 +329,24 @@ const RIGS = {
     rect(b, 3, 18, 3, 3, CREAM[0]);
     px(b, 4, 18, TEAK[4]);
     hline(b, 3, 20, 3, GOLD[2]);
+  },
+  console(b, state) {
+    rect(b, 5, 2, 22, 14, STEEL[7]);
+    hline(b, 5, 2, 22, STEEL[5]);
+    vline(b, 5, 2, 14, STEEL[6]);
+    vline(b, 26, 2, 14, STEEL[6]);
+    screen(b, 7, 4, 18, 10, 'console', state);
+    led(b, 24, 14, state);
+    rect(b, 13, 16, 6, 2, STEEL[6]);
+    hline(b, 13, 16, 6, STEEL[4]);
+    rect(b, 11, 18, 10, 3, STEEL[7]);
+    hline(b, 12, 19, 8, STEEL[5]);
+    px(b, 13, 19, state === 'broken' ? RED[1] : CYAN[1]);
+    px(b, 18, 19, state === 'broken' ? RED[1] : LIME[1]);
+    rect(b, 7, 19, 3, 2, STEEL[6]);
+    rect(b, 22, 19, 3, 2, STEEL[6]);
+    px(b, 8, 19, CYAN[2]);
+    px(b, 23, 19, PINK[1]);
   }
 };
 

@@ -12,13 +12,17 @@ describe('pathfinding', () => {
     const grid = buildWalkGrid(data.map, state);
     expect(grid[0][0]).toBe(1);
     for (const pc of state.cafe.computers) {
+      const locked = Boolean(pc.room && !isRoomUnlocked(state, pc.room));
       if (pc.status === 'disabled') {
         expect(grid[pc.y][pc.x]).toBe(0);
+        const path = findPath(grid, data.map.entrance, { x: pc.seatX, y: pc.seatY });
+        expect(path?.length).toBeGreaterThan(1);
         continue;
       }
-      expect(grid[pc.y][pc.x]).toBe(1);
+      // Locked rooms block desks; open available desks stay walkable until occupied/broken.
+      expect(grid[pc.y][pc.x]).toBe(locked ? 1 : 0);
       const path = findPath(grid, data.map.entrance, { x: pc.seatX, y: pc.seatY });
-      if (pc.room && !isRoomUnlocked(state, pc.room)) {
+      if (locked) {
         expect(path).toBeNull();
         continue;
       }

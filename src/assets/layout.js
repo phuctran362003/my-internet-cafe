@@ -62,7 +62,7 @@ export function looksForKind(kind) {
   return CHARACTER_VARIANTS.filter((variant) => variant.kind === kind).map((variant) => variant.id);
 }
 
-export const COMPUTER_TIERS = ['basic', 'standard', 'gaming', 'highend', 'premium'];
+export const COMPUTER_TIERS = ['basic', 'standard', 'gaming', 'highend', 'premium', 'console'];
 export const COMPUTER_STATES = ['available', 'occupied', 'broken', 'maintenance'];
 
 export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray', 'lamp'];

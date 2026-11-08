@@ -1,7 +1,7 @@
 import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
 import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
-import { itemPrice, tierById, usageBill } from '../systems/business/PricingSystem.js';
+import { itemPrice, nextTier, slotBuyCost, tierById, usageBill } from '../systems/business/PricingSystem.js';
 import { stockLimit } from '../systems/inventory/InventorySystem.js';
 import { visibleChoices } from '../systems/event/EventSystem.js';
 import { dailyReport } from '../systems/economy/EconomySystem.js';
@@ -31,12 +31,17 @@ export function buildView(session) {
   const computers = state.cafe.computers.map((pc) => {
     const tier = tierById(data, pc.tier);
     const occupant = customers.find((customer) => customer.id === pc.occupantId);
+    const next = nextTier(data, pc.tier);
     return {
       ...pc,
       tierName: tier?.name ?? pc.tier,
       price: state.cafe.prices[pc.tier],
       occupantName: occupant?.name ?? '',
-      specs: tier ? `CPU ${tier.cpu} · GPU ${tier.gpu} · RAM ${tier.ram}GB` : ''
+      specs: tier?.family === 'console'
+        ? `TV · Tay cầm · ${tier.watts}W`
+        : tier ? `CPU ${tier.cpu} · GPU ${tier.gpu} · RAM ${tier.ram}GB` : '',
+      buyCost: formatMoney(slotBuyCost(data, pc)),
+      nextUpgrade: next ? { name: next.name, upgradeCost: next.upgradeCost } : null
     };
   });
   const active = state.narrative.queue.find((event) => !event.resolved) ?? null;
@@ -208,7 +213,10 @@ export function buildView(session) {
     },
     statusLabel: STATUS_LABEL,
     newComputerCost: formatMoney(data.economy.newComputerCost),
-    nextSlot: state.cafe.computers.find((pc) => pc.status === 'disabled')?.id ?? null
+    nextSlot: (() => {
+      const slot = state.cafe.computers.find((pc) => pc.status === 'disabled');
+      return slot ? { id: slot.id, cost: formatMoney(slotBuyCost(data, slot)), console: slot.tier === 'console' } : null;
+    })()
   };
 }
 

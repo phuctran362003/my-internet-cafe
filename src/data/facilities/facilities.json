@@ -1,8 +1,8 @@
 {
   "cooling": [
     { "level": 1, "name": "Quạt trần", "seats": 3, "dailyKwh": 1, "cost": 0 },
-    { "level": 2, "name": "Máy lạnh cửa sổ", "seats": 6, "dailyKwh": 8, "cost": 480000 },
-    { "level": 3, "name": "Máy lạnh cả quán", "seats": 12, "dailyKwh": 14, "cost": 1400000 }
+    { "level": 2, "name": "Máy lạnh cửa sổ", "seats": 9, "dailyKwh": 8, "cost": 480000 },
+    { "level": 3, "name": "Máy lạnh cả quán", "seats": 18, "dailyKwh": 14, "cost": 1400000 }
   ],
   "network": [
     { "level": 1, "name": "Mạng 4 chữ", "quality": 62, "billMultiplier": 1, "cost": 0 },

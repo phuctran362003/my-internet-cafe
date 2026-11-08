@@ -63,5 +63,29 @@
   "props": [
     { "type": "plant", "x": 9, "y": 6 },
     { "type": "plant", "x": 8, "y": 11 }
+  ],
+  "decor": [
+    { "type": "window", "x": 6, "y": 0 },
+    { "type": "poster", "variant": 0, "x": 8, "y": 0 },
+    { "type": "clock", "x": 10, "y": 0 },
+    { "type": "window", "x": 12, "y": 0, "plant": false },
+    { "type": "poster", "variant": 1, "x": 14, "y": 0 },
+    { "type": "board", "x": 16, "y": 0 },
+    { "type": "poster", "variant": 2, "x": 18, "y": 0 },
+    { "type": "window", "x": 20, "y": 0 },
+    { "type": "bulletin", "x": 1, "y": 4 },
+    { "type": "sign", "text": "KHO", "x": 3, "y": 4 },
+    { "type": "extinguisher", "x": 5, "y": 4 },
+    { "type": "sconce", "x": 15, "y": 7 },
+    { "type": "neon", "x": 17, "y": 7 },
+    { "type": "sconce", "x": 19, "y": 7 },
+    { "type": "shelf", "x": 1, "y": 1 },
+    { "type": "boxes", "x": 3, "y": 1 },
+    { "type": "crates", "x": 4, "y": 1 },
+    { "type": "sacks", "x": 1, "y": 3 },
+    { "type": "toilet", "x": 1, "y": 13 },
+    { "type": "sink", "x": 4, "y": 13 },
+    { "type": "wetSign", "x": 3, "y": 14 },
+    { "type": "doormat", "x": 1, "y": 8 }
   ]
 }

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { EFFECT_FRAMES, TILE_ORDER, TILE_SIZE } from '../assets/layout.js';
+import { DOOR_FRAMES, EFFECT_FRAMES, TILE_SIZE } from '../assets/layout.js';
+import { analyzeRoom, doorFrameName } from '../assets/roomLayout.js';
 import { isRoomUnlocked } from '../systems/business/RoomSystem.js';
 import { tileNameGrid } from '../systems/movement/Pathfinding.js';
 import { characterFrame, computerFrame } from '../render/frames.js';
@@ -35,11 +36,14 @@ export class CafeScene extends Phaser.Scene {
 
   buildMap() {
     const map = this.session.data.map;
-    const names = tileNameGrid(map);
-    const grid = names.map((row) => row.map((name) => TILE_ORDER.indexOf(name)));
-    this.tilemap = this.make.tilemap({ data: grid, tileWidth: TILE_SIZE, tileHeight: TILE_SIZE });
-    const tiles = this.tilemap.addTilesetImage('tileset-cafe');
-    this.ground = this.tilemap.createLayer(0, tiles, 0, 0);
+    this.add.image(0, 0, 'room-cafe').setOrigin(0).setDepth(0);
+    this.doorSprites = analyzeRoom(map).doors.map((door) => ({
+      door,
+      sprite: this.add.sprite(door.x * TILE_SIZE, door.y * TILE_SIZE, 'doors', 0)
+        .setOrigin(0)
+        .setDepth(5)
+        .setFlipX(door.flip)
+    }));
     this.mapWidth = map.rows[0].length * TILE_SIZE;
     this.mapHeight = map.rows.length * TILE_SIZE;
     this.computerSprites = new Map();
@@ -50,11 +54,12 @@ export class CafeScene extends Phaser.Scene {
       this.computerSprites.set(pc.id, sprite);
       const chair = this.add.sprite(
         pc.seatX * TILE_SIZE + TILE_SIZE / 2,
-        pc.seatY * TILE_SIZE + TILE_SIZE / 2 - 8,
+        pc.seatY * TILE_SIZE + TILE_SIZE / 2,
         'furniture',
         chairFrames[index % chairFrames.length]
       );
-      chair.setDepth(9 + pc.seatY);
+      // The backrest hides a seated customer's body, so it sorts just above them.
+      chair.setDepth(41 + pc.seatY * TILE_SIZE + TILE_SIZE / 2);
     });
   }
 
@@ -72,13 +77,9 @@ export class CafeScene extends Phaser.Scene {
 
   sync() {
     const state = this.session.state;
-    const map = this.session.data.map;
-    const doorIndex = TILE_ORDER.indexOf(state.cafe.open ? 'door' : 'doorClosed');
-    this.ground.putTileAt(doorIndex, map.door.x, map.door.y);
-    for (const room of map.rooms ?? []) {
-      if (!room.gate) continue;
-      const open = isRoomUnlocked(state, room.id);
-      this.ground.putTileAt(TILE_ORDER.indexOf(open ? 'door' : 'gate'), room.gate.x, room.gate.y);
+    for (const { door, sprite } of this.doorSprites) {
+      const open = door.kind === 'main' ? state.cafe.open : isRoomUnlocked(state, door.roomId);
+      sprite.setFrame(DOOR_FRAMES.indexOf(doorFrameName(door, open)));
     }
     for (const pc of state.cafe.computers) {
       this.computerSprites.get(pc.id)?.setFrame(computerFrame(pc));
@@ -104,7 +105,7 @@ export class CafeScene extends Phaser.Scene {
       sprite.x = customer.x * TILE_SIZE + TILE_SIZE / 2;
       sprite.y = customer.y * TILE_SIZE + TILE_SIZE / 2;
       sprite.setDepth(40 + sprite.y);
-      this.syncMarker(customer, sprite);
+      this.syncMarker(customer);
     }
     this.drawSessionRings();
     const guard = state.cafe.employees.find((employee) => employee.role === 'guard');
@@ -193,44 +194,45 @@ export class CafeScene extends Phaser.Scene {
     }
   }
 
-  syncMarker(customer, sprite) {
-    const show = customer.state === 'incident' || customer.state === 'waiting';
-    let marker = this.markers.get(customer.id);
-    if (!show) {
-      marker?.setVisible(false);
-      return;
-    }
-    if (!marker) {
-      marker = this.add.sprite(0, 0, 'effects', 0);
-      this.markers.set(customer.id, marker);
-    }
-    marker.setVisible(true);
-    marker.setDepth(2000);
-    marker.x = sprite.x;
-    marker.y = sprite.y - TILE_SIZE * 0.78 + Math.sin(this.time.now / 180) * 3;
+  syncMarker(customer) {
+    this.markers.get(customer.id)?.setVisible(false);
   }
 
   drawSessionRings() {
     const rings = this.sessionRings;
     rings.clear();
+    const bob = Math.sin(this.time.now / 180) * 3;
     for (const customer of this.session.state.cafe.customers) {
-      if (customer.state !== 'playing' || !(customer.plannedMinutes > 0)) continue;
       const sprite = this.customerSprites.get(customer.id);
       if (!sprite) continue;
       const x = sprite.x;
-      const y = sprite.y - TILE_SIZE * 0.78;
+      const y = sprite.y - 34 + (customer.state === 'playing' ? 0 : bob);
+      if (customer.state === 'waiting' || customer.state === 'incident') {
+        rings.fillStyle(0xffe14a, 1);
+        rings.fillCircle(x, y, 13);
+        rings.lineStyle(2, 0x1b1420, 1);
+        rings.strokeCircle(x, y, 13);
+        rings.fillStyle(0xc23b32, 1);
+        rings.fillRect(x - 2, y - 7, 4, 9);
+        rings.fillRect(x - 2, y + 4, 4, 3);
+        continue;
+      }
+      if (customer.state !== 'playing' || !(customer.plannedMinutes > 0)) continue;
       const progress = Math.max(0, Math.min(1, customer.sessionMinutes / customer.plannedMinutes));
-      rings.fillStyle(0x1b1420, 0.82);
-      rings.fillCircle(x, y, 14);
-      rings.lineStyle(4, 0x6d6458, 1);
-      rings.beginPath();
-      rings.arc(x, y, 11, 0, Math.PI * 2, false);
-      rings.strokePath();
-      if (progress <= 0) continue;
-      rings.lineStyle(4, 0x2fbf5a, 1);
-      rings.beginPath();
-      rings.arc(x, y, 11, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2, false);
-      rings.strokePath();
+      rings.fillStyle(0xffe14a, 1);
+      rings.fillCircle(x, y, 16);
+      rings.fillStyle(0x1b1420, 1);
+      rings.fillCircle(x, y, 13);
+      if (progress > 0) {
+        rings.fillStyle(0x3ddc6a, 1);
+        rings.beginPath();
+        rings.moveTo(x, y);
+        rings.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2, false);
+        rings.closePath();
+        rings.fillPath();
+      }
+      rings.fillStyle(0xfff8ea, 1);
+      rings.fillCircle(x, y, 6);
     }
   }
 
@@ -315,7 +317,7 @@ function nearestCustomer(customers, x, y) {
     const cy = customer.y * TILE_SIZE + TILE_SIZE / 2;
     const marks = [[cx, cy]];
     if (customer.state === 'waiting' || customer.state === 'playing' || customer.state === 'incident') {
-      marks.push([cx, cy - TILE_SIZE * 0.78]);
+      marks.push([cx, cy - 34]);
     }
     for (const [px, py] of marks) {
       const dist = Math.hypot(px - x, py - y);

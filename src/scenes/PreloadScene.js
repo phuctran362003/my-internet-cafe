@@ -12,7 +12,12 @@ export class PreloadScene extends Phaser.Scene {
   preload() {
     const base = import.meta.env.BASE_URL;
     for (const asset of fileTextures()) {
-      this.load.spritesheet(asset.key, `${base}${asset.file}`, {
+      const url = `${base}${asset.file}`;
+      if (asset.kind === 'image') {
+        this.load.image(asset.key, url);
+        continue;
+      }
+      this.load.spritesheet(asset.key, url, {
         frameWidth: asset.frameWidth,
         frameHeight: asset.frameHeight
       });
@@ -21,10 +26,11 @@ export class PreloadScene extends Phaser.Scene {
 
   create() {
     const session = this.game.registry.get('session');
+    const map = session?.data.map;
     const missing = fileTextures().filter((asset) => !this.textures.exists(asset.key));
     let generated = null;
     if (missing.length) {
-      generated = generateAllAssets();
+      generated = generateAllAssets({ map });
       const textures = Object.fromEntries(missing.map((asset) => [asset.key, generated.textures[asset.key]]));
       installGeneratedTextures(this, { textures });
     }
@@ -35,7 +41,7 @@ export class PreloadScene extends Phaser.Scene {
       if (this.textures.exists('portraits') && !missing.some((asset) => asset.key === 'portraits')) {
         session.ui.portraits = portraitUrlsFromTexture(this.textures.get('portraits'), PORTRAIT_IDS);
       } else {
-        generated = generated ?? generateAllAssets();
+        generated = generated ?? generateAllAssets({ map });
         session.ui.portraits = portraitDataUrls(generated.textures.portraits, PORTRAIT_IDS);
       }
       session.ui.assetsReady = true;

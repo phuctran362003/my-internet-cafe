@@ -28,5 +28,17 @@ export function createGame(parent, session) {
     scene: [BootScene, PreloadScene, CafeScene]
   });
   game.registry.set('session', session);
+  game.events.once(Phaser.Core.Events.READY, () => {
+    const sync = () => syncSmoothing(game);
+    sync();
+    game.scale.on(Phaser.Scale.Events.RESIZE, sync);
+  });
   return game;
+}
+
+/** Nearest-neighbour drops whole art pixels when the canvas is shown below 1:1, so smooth it there. */
+function syncSmoothing(game) {
+  if (!game.canvas) return;
+  const shown = game.scale.displaySize.width * (window.devicePixelRatio || 1);
+  game.canvas.style.imageRendering = shown < game.scale.width ? 'auto' : 'pixelated';
 }

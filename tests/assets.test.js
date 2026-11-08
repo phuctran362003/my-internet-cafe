@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import cafeMap from '../src/data/maps/cafe.json';
 import { generateAllAssets } from '../src/assets/generatePlaceholders.js';
 import { paletteRgbSet, STYLE_ID } from '../src/assets/palette.js';
 import { AssetRegistry, fileTextures, placeholderTextures } from '../src/assets/AssetRegistry.js';
@@ -9,7 +10,11 @@ import { encodePng } from '../scripts/png.js';
 
 describe('asset pipeline', () => {
   it('builds one style, shared frames, and palette-only pixels', () => {
-    const assets = generateAllAssets();
+    const assets = generateAllAssets({ map: cafeMap });
+    expect(Object.keys(assets.textures).sort()).toEqual(Object.keys(AssetRegistry.textures).sort());
+    const room = assets.textures['room-cafe'];
+    expect(room.width).toBe(cafeMap.rows[0].length * TILE_SIZE);
+    expect(room.height).toBe(cafeMap.rows.length * TILE_SIZE);
     expect(assets.styleId).toBe(STYLE_ID);
     expect(assets.final).toBe(true);
     expect(assets.placeholder).toBe(false);

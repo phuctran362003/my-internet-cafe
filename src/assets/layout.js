@@ -1,22 +1,22 @@
 /** Shared frame layout. Gameplay only uses these indexes. */
 
-export const DESIGN_PIXEL = 64;
-export const DISPLAY_SCALE = 1;
+export const DESIGN_PIXEL = 32;
+export const DISPLAY_SCALE = 2;
 export const TILE_SIZE = 64;
 
-export const TILE_ORDER = [
-  'floor',
-  'floorAlt',
-  'wall',
-  'door',
-  'doorClosed',
-  'window',
-  'counter',
-  'storage',
-  'toilet',
-  'rug',
-  'vip',
-  'gate'
+export const DOOR_FRAMES = [
+  'entranceOpenH',
+  'entranceClosedH',
+  'entranceOpenV',
+  'entranceClosedV',
+  'doorOpenH',
+  'doorLockedH',
+  'doorOpenV',
+  'doorLockedV',
+  'ropeOpenH',
+  'ropeLockedH',
+  'ropeOpenV',
+  'ropeLockedV'
 ];
 
 export const CHAR_COLUMNS = [
@@ -43,14 +43,6 @@ export const CHARACTER_VARIANTS = [
 
 export const COMPUTER_TIERS = ['basic', 'standard', 'gaming', 'highend', 'premium'];
 export const COMPUTER_STATES = ['available', 'occupied', 'broken', 'maintenance'];
-
-export const SCREEN_BY_TIER = {
-  basic: 'screenBasic',
-  standard: 'screenStandard',
-  gaming: 'screenGaming',
-  highend: 'screenHigh',
-  premium: 'screenPremium'
-};
 
 export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray', 'lamp'];
 export const ITEM_FRAMES = ['drink', 'noodle', 'medicine', 'foodPack'];

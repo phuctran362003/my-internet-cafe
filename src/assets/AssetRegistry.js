@@ -3,34 +3,41 @@ import {
   CHARACTER_VARIANTS,
   COMPUTER_STATES,
   COMPUTER_TIERS,
+  DOOR_FRAMES,
   EFFECT_FRAMES,
   FURNITURE_FRAMES,
   ITEM_FRAMES,
   PORTRAIT_IDS,
-  TILE_ORDER,
   TILE_SIZE
 } from './layout.js';
 import { STYLE_ID } from './palette.js';
 
 /**
  * Central asset registry.
- * mode `file` loads the shipped PNG sheet under public/.
- * `npm run art` exports those sheets from the cafe-pixel-v1 painter.
+ * mode `file` loads the shipped PNG under public/.
+ * `npm run art` exports those files from the cafe-pixel-v2 painters.
  * Frame layout must stay identical so gameplay code does not change.
+ * `room-cafe` is the whole map painted as one image, so it has no frames.
  */
 export const AssetRegistry = {
   styleId: STYLE_ID,
   tileSize: TILE_SIZE,
   groups: ['characters', 'computers', 'furniture', 'environment', 'items', 'ui', 'effects'],
   textures: {
-    'tileset-cafe': {
+    'room-cafe': {
+      group: 'environment',
+      kind: 'image',
+      mode: 'file',
+      file: 'assets/tilesets/cafe-room.png'
+    },
+    doors: {
       group: 'environment',
       kind: 'spritesheet',
       mode: 'file',
-      file: 'assets/tilesets/cafe.png',
+      file: 'assets/tilesets/doors.png',
       frameWidth: TILE_SIZE,
       frameHeight: TILE_SIZE,
-      frames: TILE_ORDER
+      frames: DOOR_FRAMES
     },
     characters: {
       group: 'characters',

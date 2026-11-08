@@ -13,10 +13,14 @@ export function installGeneratedTextures(scene, generated) {
   for (const [key, image] of Object.entries(generated.textures)) {
     if (scene.textures.exists(key)) scene.textures.remove(key);
     const canvas = pixelsToCanvas(image);
-    scene.textures.addSpriteSheet(key, canvas, {
-      frameWidth: image.frameWidth,
-      frameHeight: image.frameHeight
-    });
+    if (image.frameWidth) {
+      scene.textures.addSpriteSheet(key, canvas, {
+        frameWidth: image.frameWidth,
+        frameHeight: image.frameHeight
+      });
+    } else {
+      scene.textures.addCanvas(key, canvas);
+    }
     scene.textures.get(key).setFilter(1);
   }
 }

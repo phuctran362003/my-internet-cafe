@@ -3,53 +3,25 @@ import {
   CHAR_COLUMNS,
   CHARACTER_VARIANTS,
   COMPUTER_STATES,
-  COMPUTER_TIERS,
   DISPLAY_SCALE,
+  DOOR_FRAMES,
   EFFECT_FRAMES,
   FURNITURE_FRAMES,
   ITEM_FRAMES,
   PORTRAIT_IDS,
-  SCREEN_BY_TIER,
-  TILE_ORDER,
   TILE_SIZE
 } from './layout.js';
-import { composeSheet, mirror, scaleNearest } from './pixelBuffer.js';
+import { composeSheet, scaleNearest } from './pixelBuffer.js';
+import { paintCharacterFrames } from './characters.js';
+import { paintDoorFrames } from './doorPainter.js';
+import { paintRoom } from './roomPainter.js';
 import {
-  drawChair,
-  drawCharacterFrame,
-  drawComputer,
-  drawCounter,
-  drawCounterProp,
-  drawDoor,
-  drawEffect,
-  drawFloor,
-  drawGate,
-  drawItem,
-  drawLamp,
-  drawPlant,
-  drawPortrait,
-  drawRug,
-  drawStorage,
-  drawToilet,
-  drawVipFloor,
-  drawWall,
-  drawWindow
-} from './drawables.js';
-
-const TILE_DRAW = {
-  floor: () => drawFloor('base'),
-  floorAlt: () => drawFloor('alt'),
-  wall: () => drawWall(),
-  door: () => drawDoor(false),
-  doorClosed: () => drawDoor(true),
-  window: () => drawWindow(),
-  counter: () => drawCounter(),
-  storage: () => drawStorage(),
-  toilet: () => drawToilet(),
-  rug: () => drawRug(),
-  vip: () => drawVipFloor(),
-  gate: () => drawGate()
-};
+  paintComputerFrames,
+  paintEffectFrames,
+  paintFurnitureFrames,
+  paintItemFrames,
+  paintPortraitFrames
+} from './sprites.js';
 
 function sheet(frames, columns) {
   const scaled = frames.map((frame) => scaleNearest(frame, DISPLAY_SCALE));
@@ -60,51 +32,24 @@ function sheet(frames, columns) {
   return image;
 }
 
-function characterFrames(variant) {
-  const downIdle = drawCharacterFrame('downIdle', variant);
-  const downWalk = drawCharacterFrame('downWalk', variant);
-  const upIdle = drawCharacterFrame('upIdle', variant);
-  const upWalk = drawCharacterFrame('upWalk', variant);
-  const sit = drawCharacterFrame('sit', variant);
-  const leftIdle = mirror(downIdle);
-  const leftWalk = mirror(downWalk);
-  const rightIdle = mirror(leftIdle);
-  const rightWalk = mirror(leftWalk);
-  return [downIdle, downWalk, leftIdle, leftWalk, rightIdle, rightWalk, upIdle, upWalk, sit];
-}
-
-export function generateAllAssets() {
-  const tiles = sheet(TILE_ORDER.map((name) => TILE_DRAW[name]()), TILE_ORDER.length);
-  const characters = sheet(
-    CHARACTER_VARIANTS.flatMap((variant) => characterFrames(variant)),
-    CHAR_COLUMNS.length
-  );
-  const computers = sheet(
-    COMPUTER_TIERS.flatMap((tier) => COMPUTER_STATES.map((state) => drawComputer(SCREEN_BY_TIER[tier], state))),
-    COMPUTER_STATES.length
-  );
-  const furniture = sheet(
-    [
-      drawChair('shirtRed', 'rug'),
-      drawPlant(),
-      drawCounterProp(),
-      drawChair('white', 'shirtGray'),
-      drawChair('pantsNavy', 'panel'),
-      drawChair('shirtGray', 'bezel'),
-      drawLamp()
-    ],
-    FURNITURE_FRAMES.length
-  );
-  const items = sheet(ITEM_FRAMES.map((kind) => drawItem(kind)), ITEM_FRAMES.length);
-  const effects = sheet(EFFECT_FRAMES.map((kind) => drawEffect(kind)), EFFECT_FRAMES.length);
-  const portraits = sheet(PORTRAIT_IDS.map((id) => drawPortrait(id)), PORTRAIT_IDS.length);
+/** `map` is required for `room-cafe`, which paints the whole map as one image. */
+export function generateAllAssets({ map } = {}) {
+  const doors = sheet(paintDoorFrames(), DOOR_FRAMES.length);
+  const characters = sheet(CHARACTER_VARIANTS.flatMap((variant) => paintCharacterFrames(variant)), CHAR_COLUMNS.length);
+  const computers = sheet(paintComputerFrames(), COMPUTER_STATES.length);
+  const furniture = sheet(paintFurnitureFrames(), FURNITURE_FRAMES.length);
+  const items = sheet(paintItemFrames(), ITEM_FRAMES.length);
+  const effects = sheet(paintEffectFrames(), EFFECT_FRAMES.length);
+  const portraits = sheet(paintPortraitFrames(), PORTRAIT_IDS.length);
+  const room = map ? { 'room-cafe': scaleNearest(paintRoom(map), DISPLAY_SCALE) } : {};
 
   return {
     styleId: STYLE_ID,
     placeholder: false,
     final: true,
     textures: {
-      'tileset-cafe': tiles,
+      ...room,
+      doors,
       characters,
       computers,
       furniture,

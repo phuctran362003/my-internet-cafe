@@ -2,13 +2,25 @@ export function blank(width, height) {
   return { width, height, pixels: new Uint8ClampedArray(width * height * 4) };
 }
 
-export function setPixel(buffer, x, y, rgb) {
+export function setPixel(buffer, x, y, rgb, alpha = 255) {
   if (x < 0 || y < 0 || x >= buffer.width || y >= buffer.height) return;
   const i = (y * buffer.width + x) * 4;
   buffer.pixels[i] = rgb[0];
   buffer.pixels[i + 1] = rgb[1];
   buffer.pixels[i + 2] = rgb[2];
-  buffer.pixels[i + 3] = 255;
+  buffer.pixels[i + 3] = alpha;
+}
+
+export function getPixel(buffer, x, y) {
+  if (x < 0 || y < 0 || x >= buffer.width || y >= buffer.height) return null;
+  const i = (y * buffer.width + x) * 4;
+  if (buffer.pixels[i + 3] === 0) return null;
+  return [buffer.pixels[i], buffer.pixels[i + 1], buffer.pixels[i + 2]];
+}
+
+export function alphaAt(buffer, x, y) {
+  if (x < 0 || y < 0 || x >= buffer.width || y >= buffer.height) return 0;
+  return buffer.pixels[(y * buffer.width + x) * 4 + 3];
 }
 
 export function fillRect(buffer, x, y, w, h, rgb) {
@@ -17,6 +29,7 @@ export function fillRect(buffer, x, y, w, h, rgb) {
   }
 }
 
+/** Copies every visible source pixel, alpha included. */
 export function blit(dest, src, dx, dy) {
   for (let y = 0; y < src.height; y += 1) {
     for (let x = 0; x < src.width; x += 1) {
@@ -29,25 +42,25 @@ export function blit(dest, src, dx, dy) {
       dest.pixels[di] = src.pixels[si];
       dest.pixels[di + 1] = src.pixels[si + 1];
       dest.pixels[di + 2] = src.pixels[si + 2];
-      dest.pixels[di + 3] = 255;
+      dest.pixels[di + 3] = src.pixels[si + 3];
     }
   }
 }
 
 export function scaleNearest(buffer, factor) {
+  if (factor === 1) return buffer;
   const width = buffer.width * factor;
   const height = buffer.height * factor;
   const out = blank(width, height);
-  for (let y = 0; y < buffer.height; y += 1) {
-    for (let x = 0; x < buffer.width; x += 1) {
-      const si = (y * buffer.width + x) * 4;
-      if (buffer.pixels[si + 3] === 0) continue;
-      const rgb = [buffer.pixels[si], buffer.pixels[si + 1], buffer.pixels[si + 2]];
-      for (let dy = 0; dy < factor; dy += 1) {
-        for (let dx = 0; dx < factor; dx += 1) {
-          setPixel(out, x * factor + dx, y * factor + dy, rgb);
-        }
-      }
+  for (let y = 0; y < height; y += 1) {
+    const sy = Math.floor(y / factor);
+    for (let x = 0; x < width; x += 1) {
+      const si = (sy * buffer.width + Math.floor(x / factor)) * 4;
+      const di = (y * width + x) * 4;
+      out.pixels[di] = buffer.pixels[si];
+      out.pixels[di + 1] = buffer.pixels[si + 1];
+      out.pixels[di + 2] = buffer.pixels[si + 2];
+      out.pixels[di + 3] = buffer.pixels[si + 3];
     }
   }
   return out;
@@ -88,13 +101,13 @@ function applyOutline(buffer, outline) {
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const i = (y * width + x) * 4;
-      if (src[i + 3] !== 0) continue;
+      if (src[i + 3] === 255) continue;
       let touch = false;
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
         const nx = x + dx;
         const ny = y + dy;
         if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-        if (src[(ny * width + nx) * 4 + 3] !== 0) touch = true;
+        if (src[(ny * width + nx) * 4 + 3] === 255) touch = true;
       }
       if (touch) setPixel(buffer, x, y, outline);
     }
@@ -119,12 +132,11 @@ export function mirror(buffer) {
   for (let y = 0; y < buffer.height; y += 1) {
     for (let x = 0; x < buffer.width; x += 1) {
       const si = (y * buffer.width + x) * 4;
-      if (buffer.pixels[si + 3] === 0) continue;
-      setPixel(out, buffer.width - 1 - x, y, [
-        buffer.pixels[si],
-        buffer.pixels[si + 1],
-        buffer.pixels[si + 2]
-      ]);
+      const di = (y * buffer.width + (buffer.width - 1 - x)) * 4;
+      out.pixels[di] = buffer.pixels[si];
+      out.pixels[di + 1] = buffer.pixels[si + 1];
+      out.pixels[di + 2] = buffer.pixels[si + 2];
+      out.pixels[di + 3] = buffer.pixels[si + 3];
     }
   }
   return out;

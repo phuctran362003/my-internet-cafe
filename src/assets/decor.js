@@ -81,7 +81,10 @@ const FLOOR_DECOR = {
   crates: { draw: crates, x: 4, y: 4 },
   sacks: { draw: sacks, x: 2, y: 9 },
   toilet: { draw: toiletSide, x: 1, y: 5 },
-  sink: { draw: sinkSide, x: 14, y: 3 },
+  sink: { draw: sinkSide, x: 13, y: 1 },
+  bathMat: { draw: bathMat, x: 26, y: 7 },
+  bin: { draw: pedalBin, x: 24, y: 14 },
+  fern: { draw: pottedFern, x: 2, y: 6 },
   wetSign: { draw: wetSign, x: 11, y: 12 },
   doormat: { draw: doormat, x: 2, y: 3 },
   rug: { draw: rug, x: 2, y: 4 }
@@ -426,43 +429,127 @@ function sacks() {
   });
 }
 
+/** Toilet against the left wall, facing right, with a blue seat and a paper roll on the wall. */
 function toiletSide() {
-  return sprite(18, 24, (s) => {
-    shadowEllipse(s, 10, 22.5, 7, 1.6);
-    rect(s, 0, 0, 8, 1, TILE[0]);
-    rect(s, 0, 1, 7, 13, TILE[1]);
-    vline(s, 0, 1, 13, TILE[0]);
-    vline(s, 6, 1, 13, TILE[3]);
-    hline(s, 0, 2, 7, TILE[2]);
-    px(s, 7, 3, STEEL[2]);
-    px(s, 8, 3, STEEL[3]);
-    rect(s, 5, 12, 12, 2, TILE[0]);
-    hline(s, 5, 13, 12, TILE[2]);
-    px(s, 16, 12, TILE[1]);
-    ellipse(s, 11, 15.5, 5.5, 3.2, TILE[1]);
-    hline(s, 7, 17, 8, TILE[3]);
-    rect(s, 8, 17, 5, 4, TILE[1]);
-    vline(s, 12, 17, 4, TILE[3]);
-    rect(s, 7, 20, 7, 2, TILE[2]);
+  return sprite(22, 26, (s) => {
+    shadowEllipse(s, 12, 23.5, 8, 2);
+    rect(s, 0, 0, 10, 2, TILE[1]);
+    hline(s, 0, 0, 10, TILE[0]);
+    hline(s, 0, 2, 10, TILE[4]);
+    rect(s, 0, 3, 9, 11, TILE[2]);
+    vline(s, 0, 3, 11, TILE[0]);
+    vline(s, 1, 3, 11, TILE[1]);
+    vline(s, 7, 3, 11, TILE[3]);
+    vline(s, 8, 3, 11, TILE[4]);
+    hline(s, 2, 5, 5, SKY[3]);
+    rect(s, 9, 5, 3, 1, STEEL[1]);
+    px(s, 9, 6, STEEL[3]);
+    px(s, 11, 6, STEEL[4]);
+    rect(s, 6, 13, 15, 3, SKY[3]);
+    hline(s, 6, 13, 15, SKY[2]);
+    hline(s, 7, 15, 13, SKY[4]);
+    px(s, 20, 14, SKY[4]);
+    ellipse(s, 13.5, 17.5, 7, 3.2, TILE[1]);
+    hline(s, 8, 16, 12, TILE[0]);
+    hline(s, 9, 19, 9, TILE[3]);
+    rect(s, 10, 19, 7, 3, TILE[1]);
+    vline(s, 10, 19, 3, TILE[0]);
+    vline(s, 16, 19, 3, TILE[3]);
+    rect(s, 9, 22, 9, 2, TILE[2]);
+    hline(s, 9, 23, 9, TILE[3]);
+    hline(s, 0, 16, 5, STEEL[3]);
+    rect(s, 0, 17, 4, 4, CREAM[1]);
+    vline(s, 0, 17, 4, CREAM[0]);
+    vline(s, 3, 17, 4, CREAM[3]);
+    rect(s, 1, 21, 2, 2, CREAM[1]);
   });
 }
 
+/** Pedestal sink against the right wall: oval mirror, chrome tap, soap and a hanging towel. */
 function sinkSide() {
-  return sprite(16, 26, (s) => {
-    shadowEllipse(s, 9, 24.5, 5.5, 1.5);
-    rect(s, 14, 0, 2, 9, STEEL[2]);
-    rect(s, 9, 2, 6, 2, STEEL[2]);
-    px(s, 9, 4, STEEL[3]);
-    hline(s, 9, 2, 6, STEEL[0]);
-    rect(s, 1, 8, 15, 2, TILE[0]);
-    ellipse(s, 8.5, 11, 7.5, 3, TILE[1]);
-    hline(s, 2, 12, 13, TILE[3]);
-    rect(s, 7, 13, 4, 9, TILE[1]);
-    vline(s, 10, 13, 9, TILE[3]);
-    vline(s, 7, 13, 9, TILE[0]);
-    rect(s, 6, 21, 6, 2, TILE[2]);
-    rect(s, 2, 6, 2, 2, PINK[1]);
-    px(s, 2, 5, PINK[3]);
+  return sprite(18, 38, (s) => {
+    shadowEllipse(s, 10, 36, 6, 1.6);
+    ellipse(s, 14.5, 6, 3.5, 6, GOLD[2]);
+    ellipse(s, 14.5, 6, 2.4, 4.8, SKY[2]);
+    vline(s, 14, 3, 5, SKY[1]);
+    px(s, 13, 4, SKY[0]);
+    px(s, 15, 9, SKY[3]);
+    px(s, 13, 0, GOLD[1]);
+    rect(s, 16, 13, 2, 8, STEEL[2]);
+    rect(s, 10, 14, 7, 2, STEEL[1]);
+    hline(s, 10, 14, 7, STEEL[0]);
+    px(s, 10, 16, STEEL[3]);
+    px(s, 13, 13, STEEL[3]);
+    rect(s, 1, 19, 17, 2, TILE[0]);
+    ellipse(s, 9.5, 22, 8.5, 3.2, TILE[1]);
+    hline(s, 3, 21, 13, TILE[2]);
+    hline(s, 2, 23, 15, TILE[3]);
+    rect(s, 7, 24, 5, 10, TILE[1]);
+    vline(s, 7, 24, 10, TILE[0]);
+    vline(s, 11, 24, 10, TILE[3]);
+    rect(s, 6, 33, 7, 2, TILE[2]);
+    rect(s, 2, 15, 3, 4, PINK[1]);
+    vline(s, 2, 15, 4, PINK[0]);
+    px(s, 3, 14, PINK[3]);
+    hline(s, 3, 13, 2, PINK[3]);
+    rect(s, 14, 24, 4, 9, PINK[1]);
+    vline(s, 14, 24, 9, PINK[0]);
+    vline(s, 17, 24, 9, PINK[2]);
+    hline(s, 14, 30, 4, CREAM[0]);
+    hline(s, 13, 23, 5, STEEL[2]);
+  });
+}
+
+function bathMat() {
+  return sprite(14, 24, (s) => {
+    roundRect(s, 0, 0, 14, 24, SKY[3]);
+    roundRect(s, 1, 1, 12, 22, SKY[2]);
+    for (let y = 3; y < 21; y += 1) {
+      for (let x = 3; x < 11; x += 1) {
+        if ((x + y) % 4 === 0) px(s, x, y, SKY[1]);
+        else if ((x - y + 40) % 4 === 0) px(s, x, y, SKY[3]);
+      }
+    }
+    for (let y = 2; y < 22; y += 3) {
+      px(s, 0, y, CREAM[0]);
+      px(s, 13, y, CREAM[0]);
+    }
+  }, { edge: false });
+}
+
+function pedalBin() {
+  return sprite(9, 13, (s) => {
+    shadowEllipse(s, 4.5, 12, 4.5, 1.2);
+    rect(s, 1, 3, 7, 8, STEEL[2]);
+    vline(s, 1, 3, 8, STEEL[1]);
+    vline(s, 2, 3, 8, STEEL[0]);
+    vline(s, 7, 3, 8, STEEL[4]);
+    rect(s, 0, 1, 9, 2, STEEL[1]);
+    hline(s, 0, 1, 9, STEEL[0]);
+    rect(s, 3, 0, 3, 1, STEEL[3]);
+    hline(s, 1, 10, 7, STEEL[4]);
+    rect(s, 3, 11, 3, 1, STEEL[5]);
+  });
+}
+
+function pottedFern() {
+  return sprite(14, 22, (s) => {
+    shadowEllipse(s, 7, 21, 6, 1.4);
+    rect(s, 3, 13, 8, 7, SKY[4]);
+    hline(s, 3, 13, 8, SKY[3]);
+    hline(s, 2, 12, 10, SKY[3]);
+    vline(s, 4, 14, 5, SKY[3]);
+    vline(s, 10, 14, 6, SKY[5]);
+    hline(s, 4, 19, 6, SKY[5]);
+    hline(s, 4, 16, 6, CREAM[0]);
+    const fronds = [[7, 11, 1, 1], [7, 11, 13, 2], [7, 11, 0, 7], [7, 11, 13, 8], [7, 11, 4, 0], [7, 11, 10, 0]];
+    for (const [x0, y0, x1, y1] of fronds) line(s, x0, y0, x1, y1, LEAF[3]);
+    for (const [x, y] of [[3, 2], [11, 3], [2, 7], [12, 8], [5, 1], [9, 1], [4, 5], [10, 5], [6, 3], [8, 4]]) {
+      px(s, x, y, LEAF[1]);
+      px(s, x + 1, y, LEAF[2]);
+    }
+    px(s, 7, 6, LEAF[1]);
+    px(s, 7, 9, LEAF[2]);
   });
 }
 

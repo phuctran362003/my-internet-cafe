@@ -84,8 +84,11 @@
     { "type": "boxes", "x": 3, "y": 1 },
     { "type": "crates", "x": 4, "y": 1 },
     { "type": "sacks", "x": 1, "y": 3 },
+    { "type": "bathMat", "x": 3, "y": 13 },
     { "type": "toilet", "x": 1, "y": 13 },
+    { "type": "bin", "x": 1, "y": 13 },
     { "type": "sink", "x": 4, "y": 13 },
+    { "type": "fern", "x": 1, "y": 14 },
     { "type": "wetSign", "x": 3, "y": 14 },
     { "type": "doormat", "x": 1, "y": 8 }
   ]

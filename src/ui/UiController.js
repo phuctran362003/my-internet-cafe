@@ -805,6 +805,16 @@ function paintModal(node, view, session) {
     } else {
       sheet.append(el('p', 'dialog-copy day-result', 'Ngày hôm nay hòa vốn.'));
     }
+    // Add detailed summary of revenue and expenses
+    const summary = el('div', 'day-summary');
+    summary.append(row('Khoản thu', view.report.revenueLabel));
+    summary.append(row('Chi phí', view.report.expenseLabel));
+    if (view.report.shortfall > 0) {
+      summary.append(row('Thiếu/Nợ', formatMoney(view.report.shortfall)));
+    }
+    sheet.append(summary);
+    // Add detailed breakdown of revenue and expenses
+    sheet.append(moneyBreakdown(view.report.breakdown, { compact: false }));
     if (view.ending === 'balanced') {
       sheet.append(el('p', 'muted', 'Tiệm với nhà đang đứng được. Có thể chơi tiếp, không hạn ngày.'));
       sheet.append(button('Chơi tiếp', () => session.continueDay()));

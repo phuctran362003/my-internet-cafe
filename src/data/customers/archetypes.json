@@ -1,5 +1,5 @@
 {
-  "names": ["An", "Bình", "Chi", "Dũng", "Hà", "Khoa", "Lan", "Minh", "Ngọc", "Phong", "Quân", "Trang", "Việt", "Hùng", "My", "Sơn", "Thảo", "Tuấn"],
+  "names": ["An", "Bình", "Chi", "Dũng", "Hà", "Khoa", "Lan", "Minh", "Ngọc", "Phong", "Quân", "Trang", "Việt", "Hùng", "My", "Sơn", "Thảo", "Tuấn", "Anh", "Bảo", "Cường", "Đạt", "Ế", "Giang", "Hòa", "Ido", "Jang", "Khánh", "Lâm", "Minh", "Nam", "Oanh", "Pháp", "Quốc", "Rami", "Sang", "Toàn", "Uyên", "Văn", "Widodo", "Xóm", "Yêu", "Zalo"],
   "archetypes": [
     {
       "id": "student",
@@ -78,6 +78,149 @@
       "foodChance": 0.88,
       "skipChance": 0,
       "spawn": { "morning": 0, "midday": 1, "afternoon": 1, "evening": 2, "night": 1 }
+    },
+    {
+      "id": "streamer",
+      "label": "Streamer",
+      "looks": ["gamer", "gamerNeon", "gamerVivid"],
+      "preferredTiers": ["highend", "premium", "gaming"],
+      "priceSensitivity": 0.3,
+      "patience": 22,
+      "session": [90, 180],
+      "wallet": [100000, 300000],
+      "foodChance": 0.72,
+      "skipChance": 0,
+      "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 4, "night": 3 }
+    },
+    {
+      "id": "couple",
+      "label": "Cặp đôi",
+      "looks": ["regular", "regularWarm"],
+      "preferredTiers": ["standard", "basic"],
+      "priceSensitivity": 0.55,
+      "patience": 35,
+      "session": [60, 120],
+      "wallet": [40000, 120000],
+      "foodChance": 0.85,
+      "skipChance": 0,
+      "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 3, "night": 2 }
+    },
+    {
+      "id": "freelancer",
+      "label": "Freelancer",
+      "looks": ["office", "officeSharp"],
+      "preferredTiers": ["standard", "gaming"],
+      "priceSensitivity": 0.4,
+      "patience": 28,
+      "session": [60, 150],
+      "wallet": [35000, 140000],
+      "foodChance": 0.65,
+      "skipChance": 0.05,
+      "spawn": { "morning": 3, "midday": 4, "afternoon": 3, "evening": 2, "night": 1 }
+    },
+    {
+      "id": "tourist",
+      "label": "Khách du lịch",
+      "looks": ["student", "studentBright"],
+      "preferredTiers": ["basic", "standard", "gaming"],
+      "priceSensitivity": 0.7,
+      "patience": 20,
+      "session": [30, 60],
+      "wallet": [20000, 80000],
+      "foodChance": 0.55,
+      "skipChance": 0.1,
+      "spawn": { "morning": 2, "midday": 3, "afternoon": 3, "evening": 2, "night": 1 }
+    },
+    {
+      "id": "youngpro",
+      "label": "Dân startup",
+      "looks": ["office", "officeSharp"],
+      "preferredTiers": ["gaming", "standard"],
+      "priceSensitivity": 0.25,
+      "patience": 24,
+      "session": [45, 100],
+      "wallet": [50000, 200000],
+      "foodChance": 0.7,
+      "skipChance": 0.02,
+      "spawn": { "morning": 2, "midday": 3, "afternoon": 3, "evening": 2, "night": 1 }
+    },
+    {
+      "id": "casual",
+      "label": "Khách casual",
+      "looks": ["regular", "regularCalm"],
+      "preferredTiers": ["basic", "standard"],
+      "priceSensitivity": 0.6,
+      "patience": 32,
+      "session": [20, 50],
+      "wallet": [15000, 60000],
+      "foodChance": 0.4,
+      "skipChance": 0.15,
+      "spawn": { "morning": 4, "midday": 3, "afternoon": 4, "evening": 3, "night": 2 }
+    },
+    {
+      "id": "esports",
+      "label": "Tuyển thủ e-sports",
+      "looks": ["gamer", "gamerAce", "gamerNeon"],
+      "preferredTiers": ["highend", "premium", "gaming"],
+      "priceSensitivity": 0.2,
+      "patience": 20,
+      "session": [80, 150],
+      "wallet": [70000, 250000],
+      "foodChance": 0.68,
+      "skipChance": 0,
+      "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 5, "night": 4 }
+    },
+    {
+      "id": "student_group",
+      "label": "Nhóm học sinh",
+      "looks": ["student", "studentCool"],
+      "preferredTiers": ["basic", "standard"],
+      "priceSensitivity": 0.9,
+      "patience": 20,
+      "session": [50, 100],
+      "wallet": [30000, 100000],
+      "foodChance": 0.55,
+      "skipChance": 0.05,
+      "spawn": { "morning": 2, "midday": 1, "afternoon": 5, "evening": 3, "night": 1 }
+    },
+    {
+      "id": "night_owl",
+      "label": "Cú đêm",
+      "looks": ["gamer", "troublemaker"],
+      "preferredTiers": ["standard", "gaming"],
+      "priceSensitivity": 0.4,
+      "patience": 15,
+      "session": [100, 200],
+      "wallet": [30000, 120000],
+      "foodChance": 0.5,
+      "skipChance": 0.3,
+      "spawn": { "morning": 0, "midday": 0, "afternoon": 1, "evening": 1, "night": 6 }
+    },
+    {
+      "id": "content_creator",
+      "label": "Creator nội dung",
+      "looks": ["gamer", "gamerNeon"],
+      "preferredTiers": ["premium", "gaming"],
+      "priceSensitivity": 0.25,
+      "patience": 25,
+      "session": [70, 140],
+      "wallet": [80000, 280000],
+      "foodChance": 0.75,
+      "skipChance": 0,
+      "spawn": { "morning": 1, "midday": 2, "afternoon": 3, "evening": 4, "night": 3 }
+    },
+    {
+      "id": "university",
+      "label": "Sinh viên",
+      "looks": ["student", "studentBright", "office"],
+      "preferredTiers": ["basic", "standard"],
+      "priceSensitivity": 0.8,
+      "patience": 28,
+      "session": [45, 120],
+      "wallet": [20000, 80000],
+      "foodChance": 0.45,
+      "skipChance": 0.08,
+      "spawn": { "morning": 1, "midday": 2, "afternoon": 4, "evening": 5, "night": 2 }
     }
   ]
 }

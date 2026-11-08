@@ -18,6 +18,7 @@ const WINE = RAMPS.wine;
 const GOLD = RAMPS.gold;
 const NAVY = RAMPS.navy;
 const STEEL = RAMPS.steel;
+const SKY = RAMPS.sky;
 
 const TRIM = [null, TEAK[5], TEAK[2], TEAK[3], TEAK[4]];
 const PLANK_TONES = [2, 2, 2, 2, 3, 2, 2, 1, 2, 3];
@@ -113,7 +114,7 @@ function paintCell(ctx, cx, cy, cell) {
 
 function floorColor(ctx, material, x, y, room) {
   if (material === 'storage') return concrete(x, y);
-  if (material === 'toilet') return ceramic(x, y);
+  if (material === 'toilet') return ceramic(x, y, room);
   if (material === 'vip') return carpet(x, y, room);
   return planks(ctx, x, y);
 }
@@ -179,11 +180,28 @@ function concrete(x, y) {
   return CONC[1];
 }
 
-function ceramic(x, y) {
+/** Checkered tiles framed by a ring of blue tiles, with a small blue inlay where four tiles meet. */
+function ceramic(x, y, room) {
   const lx = x % 8;
   const ly = y % 8;
+  const tx = Math.floor(x / 8);
+  const ty = Math.floor(y / 8);
+  if (room) {
+    const per = CELL / 8;
+    const rx = tx - room.x * per;
+    const ry = ty - room.y * per;
+    if (rx === 0 || ry === 0 || rx === room.w * per - 1 || ry === room.h * per - 1) {
+      if (lx === 0 || ly === 0) return SKY[6];
+      if (lx === 1 || ly === 1) return SKY[3];
+      if (lx === 7 || ly === 7) return SKY[5];
+      if (lx === ly && lx >= 3 && lx <= 5) return SKY[3];
+      return SKY[4];
+    }
+    const corner = (lx === 0 || lx === 7) && (ly === 0 || ly === 7);
+    if (corner && (rx + (lx === 7 ? 1 : 0)) % 2 === 0 && (ry + (ly === 7 ? 1 : 0)) % 2 === 0) return SKY[3];
+  }
   if (lx === 0 || ly === 0) return TILE[3];
-  const tone = (Math.floor(x / 8) + Math.floor(y / 8)) % 2 === 0 ? 1 : 2;
+  const tone = (tx + ty) % 2 === 0 ? 1 : 2;
   if ((ly === 1 && lx <= 3) || (lx === 1 && ly <= 3)) return TILE[tone - 1];
   if (lx === 7 || ly === 7) return TILE[tone + 1];
   return TILE[tone];

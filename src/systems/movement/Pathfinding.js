@@ -28,9 +28,10 @@ export function buildWalkGrid(map, state) {
   const names = tileNameGrid(map);
   const grid = names.map((row) => row.map((name) => (BLOCKING.has(name) ? 1 : 0)));
   for (const pc of state.cafe.computers) {
-    // Unbought slots stay clear until purchased so the empty floor reads correctly.
-    if (pc.status === 'disabled') continue;
-    grid[pc.y][pc.x] = 1;
+    // Only block occupied, broken, or maintenance computers. Available computers should stay clear.
+    if (pc.status === 'occupied' || pc.status === 'broken' || pc.status === 'maintenance') {
+      grid[pc.y][pc.x] = 1;
+    }
   }
   for (const room of map.rooms ?? []) {
     if (isRoomUnlocked(state, room.id)) continue;

@@ -7,6 +7,22 @@
 }
 .sheet.tone-beneficial .day-result { color: #146b34; }
 .sheet.tone-adverse .day-result { color: #8d241c; }
+.day-summary {
+  margin: 16px 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--paper) 92%, var(--ink));
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.day-summary .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0;
+  font-size: 14px;
+}
+.day-summary .row span:first-child { font-weight: 500; }
+.day-summary .row span:last-child { font-family: monospace; font-weight: 600; }
 .event-kicker {
   display: inline-block;
   margin: 0 0 8px;

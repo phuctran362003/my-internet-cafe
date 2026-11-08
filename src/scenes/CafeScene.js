@@ -3,6 +3,7 @@ import { GameEvents } from '../core/EventBus.js';
 import { DOOR_FRAMES, EFFECT_FRAMES, TILE_SIZE } from '../assets/layout.js';
 import { analyzeRoom, doorFrameName } from '../assets/roomLayout.js';
 import { isRoomUnlocked } from '../systems/business/RoomSystem.js';
+import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
 import { tileNameGrid } from '../systems/movement/Pathfinding.js';
 import { characterFrame, computerFrame } from '../render/frames.js';
 
@@ -45,20 +46,12 @@ export class CafeScene extends Phaser.Scene {
     cam.setZoom(zoom);
     const viewW = cam.width / zoom;
     const viewH = cam.height / zoom;
-    const slackX = viewW - this.mapWidth;
-    const slackY = viewH - this.mapHeight;
-    if (slackX > 0 || slackY > 0) {
-      const padLeft = Math.max(0, slackX);
-      const padTop = Math.max(0, slackY) / 2;
-      cam.setBounds(-padLeft, -padTop, this.mapWidth + padLeft, this.mapHeight + padTop * 2);
-      cam.setScroll(-padLeft, -padTop);
-      return;
-    }
-    cam.setBounds(0, 0, this.mapWidth, this.mapHeight);
-    cam.setScroll(
-      Math.max(0, (this.mapWidth - viewW) / 2),
-      Math.max(0, (this.mapHeight - viewH) / 2)
-    );
+    const padX = Math.max(0, viewW - this.mapWidth) / 2;
+    const padY = Math.max(0, viewH - this.mapHeight) / 2;
+    const scrollX = padX > 0 ? -padX : Math.max(0, (this.mapWidth - viewW) / 2);
+    const scrollY = padY > 0 ? -padY : Math.max(0, (this.mapHeight - viewH) / 2);
+    cam.setBounds(-padX, -padY, this.mapWidth + padX * 2, this.mapHeight + padY * 2);
+    cam.setScroll(scrollX, scrollY);
   }
 
   buildMap() {
@@ -237,7 +230,8 @@ export class CafeScene extends Phaser.Scene {
       if (!sprite) continue;
       const x = sprite.x;
       const y = sprite.y - 34 + (customer.state === 'playing' ? 0 : bob);
-      if (customer.state === 'waiting' || customer.state === 'incident') {
+      const staffHandlesWaiting = customer.state === 'waiting' && hasFloorStaff(this.session.state);
+      if ((customer.state === 'waiting' && !staffHandlesWaiting) || customer.state === 'incident') {
         rings.fillStyle(0xffe14a, 1);
         rings.fillCircle(x, y, 16);
         rings.lineStyle(2, 0x1b1420, 1);

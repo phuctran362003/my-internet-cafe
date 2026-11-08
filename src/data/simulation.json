@@ -1,5 +1,5 @@
 {
-  "gameMinutesPerRealSecond": 1,
+  "gameMinutesPerRealSecond": 1.25,
   "dayStartMinute": 420,
   "dayEndMinute": 1560,
   "tilesPerGameMinute": 1.6,

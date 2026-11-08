@@ -21,7 +21,8 @@ export function createGame(parent, session) {
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: ROOM_WIDTH,
       height: ROOM_HEIGHT,
-      expandParent: false
+      expandParent: false,
+      resizeInterval: 50
     },
     callbacks: {
       preBoot: (instance) => instance.registry.set('session', session)

@@ -36,6 +36,8 @@ html, body, #app {
   margin: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
   background: var(--canvas);
 }
@@ -50,6 +52,11 @@ html, body, #app {
   right: 328px;
   bottom: 58px;
   left: 8px;
+  overflow: hidden;
+}
+
+#game-root canvas {
+  display: block;
 }
 
 #ui-root { pointer-events: none; z-index: 2; }
@@ -271,6 +278,10 @@ button.dock-btn {
 
 button.dock-btn svg { display: block; }
 
+button.dock-btn.drawer-toggle {
+  display: none;
+}
+
 .drawer {
   top: 56px;
   right: 8px;
@@ -285,6 +296,19 @@ button.dock-btn svg { display: block; }
   border-radius: 16px;
   box-shadow: 0 0 0 4px var(--gold-deep);
   padding: 10px 10px 12px;
+}
+
+.drawer-head {
+  display: none;
+  justify-content: flex-end;
+  margin: 0 0 4px;
+}
+
+button.drawer-close {
+  display: inline-flex;
+  flex: none;
+  padding: 4px 10px;
+  font-size: 12px;
 }
 
 .drawer-body {
@@ -899,12 +923,21 @@ button.guide-close {
 @media (max-width: 1023px) {
   #game-root {
     top: 52px;
-    right: auto;
+    right: 8px;
     bottom: 80px;
     left: 8px;
   }
 
+  .dock {
+    left: 8px;
+    right: 8px;
+    bottom: 10px;
+    justify-content: center;
+    gap: 6px;
+  }
+
   .drawer {
+    display: none;
     position: fixed;
     top: 52px;
     right: 8px;
@@ -913,6 +946,15 @@ button.guide-close {
     max-width: 280px;
     border-radius: 12px;
     padding: 8px 8px 10px;
+    z-index: 100;
+  }
+
+  .drawer.active {
+    display: flex;
+  }
+
+  .drawer-head {
+    display: flex;
   }
 
   .drawer h2 {
@@ -934,6 +976,10 @@ button.guide-close {
   button.dock-btn {
     width: 40px;
     height: 40px;
+  }
+
+  button.dock-btn.drawer-toggle {
+    display: grid;
   }
 
   .nav {
@@ -1137,8 +1183,6 @@ button.guide-close {
   }
 
   .dock {
-    right: 8px;
-    left: 8px;
     bottom: 8px;
     justify-content: space-around;
     gap: 4px;
@@ -1175,7 +1219,7 @@ button.guide-close {
   #game-root {
     top: 48px;
     left: 4px;
-    right: auto;
+    right: 4px;
     bottom: 100px;
   }
 
@@ -1531,5 +1575,99 @@ button.guide-close {
 
   .menu, .modal {
     padding: 8px;
+  }
+}
+
+/* ===== LANDSCAPE PHONE / SHORT VIEWPORTS ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hud {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 6px;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+
+  .hud::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stat {
+    min-height: 22px;
+    padding: 1px 6px 1px 4px;
+    font-size: 10px;
+  }
+
+  .stat b {
+    font-size: 10px;
+  }
+
+  .stat-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  #game-root {
+    top: 34px;
+    left: 4px;
+    right: 4px;
+    bottom: 48px;
+  }
+
+  .dock {
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+
+  button.dock-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  .drawer,
+  .drawer.active {
+    top: 34px;
+    right: 4px;
+    bottom: 52px;
+    max-width: min(280px, calc(100vw - 8px));
+  }
+
+  .toasts {
+    width: min(220px, 40vw);
+  }
+
+  .guidebar {
+    margin: 2px 0 0 4px;
+  }
+
+  button.guide-reopen {
+    padding: 2px 8px;
+    font-size: 10px;
+  }
+
+  .guide-sheet,
+  .sheet,
+  .founding-card {
+    width: min(520px, calc(100vw - 16px));
+    max-height: calc(100dvh - 16px);
+    max-height: calc(var(--vh, 1vh) * 100 - 16px);
+    overflow: auto;
+    padding: 10px 12px 8px;
+  }
+
+  .guide-title,
+  .pixel-title {
+    font-size: 18px;
+  }
+
+  .guide-card {
+    grid-template-columns: 28px 1fr;
+    padding: 6px;
   }
 }

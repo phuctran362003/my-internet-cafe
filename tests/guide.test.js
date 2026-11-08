@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { tickCustomers } from '../src/systems/customer/CustomerAI.js';
-import { applyCleaner, hireStaff } from '../src/systems/staff/StaffSystem.js';
+import { applyCleaner, hireStaff, settleHourlyWages, tickStaff } from '../src/systems/staff/StaffSystem.js';
 import { migrateSave } from '../src/systems/save/SaveSerializer.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
 
@@ -65,6 +65,31 @@ describe('guide', () => {
     hireStaff(ctx, 'cleaner');
     applyCleaner(ctx.state);
     expect(ctx.state.cafe.computers[0].cleanliness).toBe(58);
+  });
+
+  it('lets hired staff open machines and bills them by the hour', () => {
+    const ctx = bareContext(() => 0.5);
+    const pc = ctx.state.cafe.computers[0];
+    const customer = sampleCustomer({
+      state: 'waiting',
+      waitLeft: 40,
+      targetComputerId: pc.id,
+      sessionMinutes: 0
+    });
+    pc.occupantId = customer.id;
+    pc.status = 'occupied';
+    ctx.state.cafe.customers = [customer];
+    ctx.state.cafe.open = true;
+    hireStaff(ctx, 'cashier');
+    tickStaff(ctx, 3);
+    expect(customer.state).toBe('playing');
+
+    const cashier = ctx.state.cafe.employees.find((employee) => employee.role === 'cashier');
+    cashier.workedMinutes = 125;
+    const before = ctx.state.player.money;
+    settleHourlyWages(ctx);
+    expect(ctx.state.player.money).toBe(before - 3 * 25000);
+    expect(cashier.workedMinutes).toBe(0);
   });
 
   it('fills facilities onto an older save', () => {

@@ -109,6 +109,7 @@ export function mountUi(session, root) {
       paintDrawer(drawer, view, session);
     }
     drawer.hidden = covered;
+    drawer.classList.toggle('active', !covered && view.drawerOpen);
 
     const nextModal = modalSignature(view);
     if (nextModal !== modalKey) {
@@ -162,13 +163,16 @@ function paintGuideBar(node, view, session) {
 
 function dockSignature(view) {
   if (view.screen === 'menu' || view.screen === 'naming') return 'hidden';
-  return [view.userPaused, view.speed, view.open, view.dayEnded, view.music, view.viewScale, view.build].join('|');
+  return [view.userPaused, view.speed, view.open, view.dayEnded, view.music, view.viewScale, view.build, view.drawerOpen].join('|');
 }
 
 function paintDock(node, view, session) {
   node.replaceChildren();
   if (view.screen === 'menu' || view.screen === 'naming') return;
+  const menuToggle = iconButton(view.drawerOpen ? 'Đóng bảng quản lý' : 'Mở bảng quản lý', MENU_ICON, () => session.toggleDrawer(), view.drawerOpen);
+  menuToggle.classList.add('drawer-toggle');
   node.append(
+    menuToggle,
     iconButton(view.userPaused ? 'Tiếp tục' : 'Tạm dừng', view.userPaused ? PLAY_ICON : PAUSE_ICON, () => session.togglePause()),
     iconButton('Tốc độ x1', speedIcon(1), () => session.setSpeed(1), view.speed === 1),
     iconButton('Tốc độ x2', speedIcon(2), () => session.setSpeed(2), view.speed === 2),
@@ -185,6 +189,7 @@ function paintDock(node, view, session) {
   );
 }
 
+const MENU_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const PAUSE_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
 const PLAY_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const DOOR_OPEN_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 20V5h10v15" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 8l6 2v10l-6 2V8z" fill="currentColor"/><circle cx="17.5" cy="13" r="1" fill="#3a2a1c"/></svg>';
@@ -399,6 +404,11 @@ function textField(placeholder, maxLength) {
 
 function paintDrawer(node, view, session) {
   node.replaceChildren();
+  const head = el('div', 'drawer-head');
+  const close = button('Đóng', () => session.closeDrawer());
+  close.classList.add('drawer-close');
+  close.setAttribute('aria-label', 'Đóng bảng quản lý');
+  head.append(close);
   const nav = el('nav', 'nav');
   nav.setAttribute('aria-label', 'Mục quản lý');
   for (const [id, label, icon] of PANELS) {
@@ -423,7 +433,7 @@ function paintDrawer(node, view, session) {
   if (view.panel === 'finance') body.append(financePanel(view, session));
   if (view.panel === 'family') body.append(familyPanel(view, session));
   if (view.panel === 'journal') body.append(journalPanel(view));
-  node.append(nav, body);
+  node.append(head, nav, body);
 }
 
 function navButton(label, svg, onClick, active) {
@@ -513,9 +523,13 @@ function customerPanel(view, session) {
     const request = el('p', 'request', `Muốn thuê ${customer.requestLabel}.`);
     box.append(request);
     box.append(row('Tiền giờ khoảng', customer.quoteLabel));
-    const start = button('Mở máy', () => session.startMachine(customer.id));
-    start.classList.add('btn-go');
-    box.append(start);
+    if (view.staffAssist) {
+      box.append(el('p', 'muted', 'Nhân viên sẽ tự mở máy, không cần bấm chấm than.'));
+    } else {
+      const start = button('Mở máy', () => session.startMachine(customer.id));
+      start.classList.add('btn-go');
+      box.append(start);
+    }
   } else {
     box.append(row('Đã ngồi', `${customer.sessionMinutes} / ${customer.plannedMinutes} phút`));
     box.append(row('Hóa đơn', customer.billLabel));
@@ -542,10 +556,10 @@ function shopPanel(view, session) {
 function staffPanel(view, session) {
   const box = el('div');
   box.append(el('h2', '', 'Nhân viên'));
-  box.append(el('p', 'muted', 'Thuê người thì quán tự chạy khi bạn bận. Lương tính cuối ngày.'));
+  box.append(el('p', 'muted', 'Lương 25.000đ/giờ khi quán mở. Có nhân viên thì tự mở máy cho khách, không cần bấm chấm than.'));
   for (const member of view.staff) {
     const line = el('div', 'block');
-    line.append(row(member.name, formatMoney(member.salary)));
+    line.append(row(member.name, member.wageLabel || formatMoney(member.salary)));
     line.append(el('p', 'muted', member.blurb));
     if (member.hired) line.append(button('Cho nghỉ', () => session.fireStaff(member.role)));
     else line.append(button(`Thuê ${member.name.toLowerCase()}`, () => session.hireStaff(member.role)));

@@ -2,6 +2,7 @@
   "startingMoney": 5000000,
   "rent": 100000,
   "internet": 30000,
+  "wagePerHour": 25000,
   "pricePerKwh": 3500,
   "newComputerCost": 3500000,
   "repairCost": 80000,

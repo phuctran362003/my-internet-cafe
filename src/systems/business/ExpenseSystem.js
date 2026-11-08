@@ -22,6 +22,8 @@ export function applyBusinessExpenses(ctx) {
   if (powerCost > 0) economy.payObligation(powerCost, 'electricity', 'Tiền điện');
 
   for (const employee of state.cafe.employees) {
+    if (employee.wagePerHour) continue;
+    if (!employee.salary) continue;
     economy.payObligation(employee.salary, 'wages', `Lương ${employee.name}`);
   }
 

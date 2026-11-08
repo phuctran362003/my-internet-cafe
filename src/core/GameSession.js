@@ -31,6 +31,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
     assetsReady: false,
     lastError: '',
     guideOpen: false,
+    drawerOpen: false,
     build: false,
     buildType: 'plant',
     music: storedMusic(),
@@ -258,6 +259,13 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     setPanel(panel) {
       ui.panel = panel;
+      ui.drawerOpen = true;
+    },
+    closeDrawer() {
+      ui.drawerOpen = false;
+    },
+    toggleDrawer() {
+      ui.drawerOpen = !ui.drawerOpen;
     },
     startMachine(customerId) {
       const result = openCustomerMachine(ctx, customerId);
@@ -272,6 +280,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
       if (selection?.type === 'counter') ui.panel = 'shop';
       if (selection?.type === 'door') ui.panel = 'overview';
       if (selection?.type === 'room' || selection?.type === 'furniture') ui.panel = 'rooms';
+      if (selection) ui.drawerOpen = true;
     },
     setPrice(tierId, price) {
       const result = setPrice(state, data, tierId, price);
@@ -297,6 +306,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
       if (!lesson) return;
       ui.guideOpen = false;
       ui.panel = lesson.panel;
+      ui.drawerOpen = true;
       ui.lastError = '';
     },
     upgradeFacility(id) {

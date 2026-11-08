@@ -1,4 +1,5 @@
 import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
+import { hasFloorStaff } from '../systems/staff/StaffSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
 import { itemPrice, tierById } from '../systems/business/PricingSystem.js';
 import { stockLimit } from '../systems/inventory/InventorySystem.js';
@@ -108,13 +109,16 @@ export function buildView(session) {
       }))
     },
     guard: state.cafe.employees.find((employee) => employee.role === 'guard') ?? null,
+    staffAssist: hasFloorStaff(state),
     staff: ['cleaner', 'cashier', 'server'].map((role) => {
       const spec = data.staff[role];
       const hired = state.cafe.employees.find((employee) => employee.role === role) ?? null;
+      const wage = spec.wagePerHour ?? data.economy.wagePerHour ?? 25000;
       return {
         role,
         name: spec.name,
-        salary: spec.salary,
+        salary: wage,
+        wageLabel: `${formatMoney(wage)}/giờ`,
         blurb: spec.blurb,
         hired: Boolean(hired)
       };
@@ -155,6 +159,7 @@ export function buildView(session) {
     buildType: ui.buildType || 'plant',
     music: ui.music !== false,
     viewScale: ui.viewScale || 1,
+    drawerOpen: Boolean(ui.drawerOpen),
     bag: { ...(state.cafe.furnitureBag ?? {}) },
     catalog: (data.furniture ?? []).map((item) => ({
       ...item,

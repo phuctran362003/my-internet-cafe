@@ -1,64 +1,12 @@
 /**
- * Mobile-specific UI handling for responsive design
+ * Mobile-specific UI handling for responsive design.
  */
 
 export function initMobileUI() {
-  const drawer = document.querySelector('.drawer');
-  const dock = document.querySelector('.dock');
-  
-  if (!drawer) return;
-
-  // Check if device is mobile (max-width: 480px)
-  const isMobile = window.innerWidth <= 480;
-  
-  if (!isMobile) return;
-
-  // Store original drawer state
-  let drawerWasVisible = false;
-
-  // Handle drawer toggle on mobile
-  // Dock buttons should toggle drawer visibility on mobile
-  if (dock) {
-    dock.addEventListener('click', (e) => {
-      if (e.target.closest('button')) {
-        // Close drawer when clicking dock buttons on mobile
-        closeDrawerOnMobile();
-      }
-    });
-  }
-
-  // Handle viewport changes (orientation change, resize)
+  // After rotate, browsers often settle layout a beat late; nudge a resize.
   window.addEventListener('orientationchange', () => {
-    setTimeout(() => {
-      handleViewportChange();
-    }, 100);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 150);
   });
-
-  window.addEventListener('resize', debounce(() => {
-    handleViewportChange();
-  }, 250));
-
-  function handleViewportChange() {
-    const isNowMobile = window.innerWidth <= 480;
-    
-    if (isNowMobile && drawerWasVisible) {
-      drawer.classList.add('active');
-    } else if (!isNowMobile) {
-      drawer.classList.remove('active');
-      drawerWasVisible = drawer.classList.contains('active');
-    }
-  }
-
-  function closeDrawerOnMobile() {
-    if (isMobileViewport()) {
-      drawer.classList.remove('active');
-      drawerWasVisible = false;
-    }
-  }
-
-  function isMobileViewport() {
-    return window.innerWidth <= 480;
-  }
 }
 
 /**

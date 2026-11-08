@@ -1,0 +1,17 @@
+{
+  "gameMinutesPerRealSecond": 5,
+  "dayStartMinute": 420,
+  "dayEndMinute": 1560,
+  "tilesPerGameMinute": 1.6,
+  "spawnInterval": 8,
+  "maxCustomers": 8,
+  "stepMs": 100,
+  "maxStepsPerFrame": 30,
+  "periods": [
+    { "id": "morning", "label": "Sáng", "start": 420, "end": 600, "spawnChance": 0.45, "light": 0.08 },
+    { "id": "midday", "label": "Trưa", "start": 600, "end": 840, "spawnChance": 0.4, "light": 0.02 },
+    { "id": "afternoon", "label": "Chiều", "start": 840, "end": 1080, "spawnChance": 0.62, "light": 0.05 },
+    { "id": "evening", "label": "Tối", "start": 1080, "end": 1380, "spawnChance": 0.75, "light": 0.22 },
+    { "id": "night", "label": "Đêm", "start": 1380, "end": 1561, "spawnChance": 0.5, "light": 0.4 }
+  ]
+}

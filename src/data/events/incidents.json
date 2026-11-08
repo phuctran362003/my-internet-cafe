@@ -1,0 +1,77 @@
+[
+  {
+    "id": "skip_payment",
+    "category": "security",
+    "priority": "high",
+    "pause": true,
+    "dialog": {
+      "title": "Khách không chịu trả tiền",
+      "description": "{{name}} định rời tiệm khi hóa đơn còn {{bill}}."
+    },
+    "choices": [
+      {
+        "id": "demand_payment",
+        "label": "Yêu cầu thanh toán",
+        "effects": [
+          { "type": "pay_bill_ratio", "ratio": 1 },
+          { "type": "add_reputation", "amount": 1 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      },
+      {
+        "id": "warn",
+        "label": "Cảnh cáo",
+        "effects": [
+          { "type": "pay_bill_ratio", "ratio": 0.5 },
+          { "type": "add_reputation", "amount": -1 },
+          { "type": "damage_computer", "amount": 12 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      },
+      {
+        "id": "call_guard",
+        "label": "Gọi bảo vệ",
+        "requires": "guard",
+        "effects": [
+          { "type": "pay_bill_ratio", "ratio": 0.85 },
+          { "type": "add_reputation", "amount": 2 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      },
+      {
+        "id": "guard_auto",
+        "label": "Bảo vệ xử lý",
+        "hidden": true,
+        "requires": "guard",
+        "effects": [
+          { "type": "pay_bill_ratio", "ratio": 0.8 },
+          { "type": "add_reputation", "amount": 1 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      },
+      {
+        "id": "record",
+        "label": "Ghi nhận vi phạm",
+        "effects": [
+          { "type": "set_flag", "key": "customer_violation", "value": true },
+          { "type": "add_reputation", "amount": -3 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      },
+      {
+        "id": "accept_loss",
+        "label": "Chấp nhận thất thoát",
+        "effects": [
+          { "type": "add_reputation", "amount": -2 },
+          { "type": "resolve_incident" },
+          { "type": "release_customer" }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "tileSize": 32,
+  "rows": [
+    "##W##W##W##W##W##W##W#",
+    "#SSSS#...............#",
+    "#SSSS#...............#",
+    "#SSSS#...............#",
+    "####.#...............#",
+    "#....................#",
+    "#....................#",
+    "#....................#",
+    "D....................#",
+    "#....................#",
+    "#....................#",
+    "#..CCC...............#",
+    "#..CCC...............#",
+    "#TTTT#...............#",
+    "#TTTT#...............#",
+    "######################"
+  ],
+  "door": { "x": 0, "y": 8 },
+  "entrance": { "x": 1, "y": 8 },
+  "exit": { "x": 0, "y": 8 },
+  "computers": [
+    { "id": "pc1", "x": 7, "y": 2, "seatX": 7, "seatY": 3, "tier": "basic", "status": "available" },
+    { "id": "pc2", "x": 9, "y": 2, "seatX": 9, "seatY": 3, "tier": "basic", "status": "available" },
+    { "id": "pc3", "x": 11, "y": 2, "seatX": 11, "seatY": 3, "tier": "basic", "status": "available" },
+    { "id": "pc4", "x": 13, "y": 2, "seatX": 13, "seatY": 3, "tier": "basic", "status": "available" },
+    { "id": "pc5", "x": 15, "y": 2, "seatX": 15, "seatY": 3, "tier": "basic", "status": "available" },
+    { "id": "pc6", "x": 17, "y": 2, "seatX": 17, "seatY": 3, "tier": "basic", "status": "disabled" },
+    { "id": "pc7", "x": 19, "y": 2, "seatX": 19, "seatY": 3, "tier": "basic", "status": "disabled" }
+  ],
+  "props": [
+    { "type": "plant", "x": 18, "y": 10 },
+    { "type": "plant", "x": 6, "y": 10 }
+  ]
+}

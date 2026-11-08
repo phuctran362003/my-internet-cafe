@@ -1,0 +1,11 @@
+{
+  "guard": {
+    "id": "guard-basic",
+    "name": "Bảo vệ",
+    "role": "guard",
+    "level": "basic",
+    "salary": 80000,
+    "reactionMinutes": 12,
+    "post": { "x": 2, "y": 10 }
+  }
+}

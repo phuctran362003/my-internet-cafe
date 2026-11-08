@@ -1,0 +1,82 @@
+[
+  {
+    "id": "child_sick",
+    "category": "family",
+    "trigger": "health_status_changed",
+    "conditions": { "memberId": "child", "status": "sick" },
+    "priority": "urgent",
+    "pause": true,
+    "dialog": {
+      "title": "Con bạn bị ốm",
+      "description": "Minh bị ốm. Gia đình cần thuốc. Nếu trì hoãn, bệnh có thể nặng hơn."
+    },
+    "choices": [
+      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "child" }] },
+      { "id": "delay", "label": "Trì hoãn điều trị", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+    ]
+  },
+  {
+    "id": "wife_sick",
+    "category": "family",
+    "trigger": "health_status_changed",
+    "conditions": { "memberId": "wife", "status": "sick" },
+    "priority": "urgent",
+    "pause": true,
+    "dialog": {
+      "title": "Vợ bạn bị ốm",
+      "description": "Lan bị ốm và cần thuốc. Trì hoãn sẽ khiến bệnh tiến triển."
+    },
+    "choices": [
+      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "wife" }] },
+      { "id": "delay", "label": "Trì hoãn điều trị", "effects": [{ "type": "delay_treatment", "target": "wife" }, { "type": "set_flag", "key": "wife_treatment_delayed", "value": true }] }
+    ]
+  },
+  {
+    "id": "family_food_shortage",
+    "category": "family",
+    "trigger": "resource_shortage",
+    "conditions": { "resource": "food" },
+    "priority": "urgent",
+    "pause": true,
+    "dialog": {
+      "title": "Gia đình thiếu thức ăn",
+      "description": "Không đủ suất ăn cho hôm nay. Các thành viên sẽ đói nếu không mua thêm."
+    },
+    "choices": [
+      { "id": "buy_food", "label": "Mua thức ăn", "effects": [{ "type": "buy_food_pack" }] },
+      { "id": "ignore", "label": "Để sau", "effects": [{ "type": "set_flag", "key": "family_food_shortage", "value": true }] }
+    ]
+  },
+  {
+    "id": "family_no_heat",
+    "category": "family",
+    "trigger": "resource_shortage",
+    "conditions": { "resource": "heat" },
+    "priority": "urgent",
+    "pause": true,
+    "dialog": {
+      "title": "Không đủ tiền sưởi",
+      "description": "Nhà không được sưởi hôm nay. Trả tiền sưởi sẽ làm cả nhà đỡ lạnh."
+    },
+    "choices": [
+      { "id": "pay_heat", "label": "Trả tiền sưởi", "effects": [{ "type": "pay_heat" }] },
+      { "id": "skip", "label": "Chịu lạnh", "effects": [{ "type": "set_flag", "key": "family_heat_skipped", "value": true }] }
+    ]
+  },
+  {
+    "id": "child_very_sick",
+    "category": "family",
+    "trigger": "health_status_changed",
+    "conditions": { "memberId": "child", "status": "very_sick" },
+    "priority": "urgent",
+    "pause": true,
+    "dialog": {
+      "title": "Con bạn bệnh nặng",
+      "description": "Minh bệnh rất nặng. Cần thuốc ngay, nếu không tình trạng sẽ nguy kịch."
+    },
+    "choices": [
+      { "id": "buy_medicine", "label": "Mua thuốc", "effects": [{ "type": "use_medicine", "target": "child" }] },
+      { "id": "delay", "label": "Chưa mua", "effects": [{ "type": "delay_treatment", "target": "child" }, { "type": "set_flag", "key": "child_treatment_delayed", "value": true }] }
+    ]
+  }
+]

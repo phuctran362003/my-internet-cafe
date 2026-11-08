@@ -1,0 +1,6 @@
+.dialog-copy { margin: 8px 0 12px; line-height: 1.45; }
+.ledger { max-height: 160px; overflow: auto; font-size: 12px; }
+.ledger div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.ledger .earn span:last-child { color: var(--screen); }
+.ledger .spend span:last-child { color: var(--hunger); }
+.ledger .alert span:last-child { color: var(--alert); }

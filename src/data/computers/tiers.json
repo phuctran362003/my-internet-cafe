@@ -1,0 +1,57 @@
+[
+  {
+    "id": "basic",
+    "name": "Basic PC",
+    "basePrice": 5000,
+    "cpu": 20,
+    "gpu": 10,
+    "ram": 4,
+    "watts": 180,
+    "upgradeCost": 0,
+    "comfort": 0
+  },
+  {
+    "id": "standard",
+    "name": "Standard PC",
+    "basePrice": 8000,
+    "cpu": 40,
+    "gpu": 25,
+    "ram": 8,
+    "watts": 220,
+    "upgradeCost": 2000000,
+    "comfort": 6
+  },
+  {
+    "id": "gaming",
+    "name": "Gaming PC",
+    "basePrice": 12000,
+    "cpu": 70,
+    "gpu": 75,
+    "ram": 16,
+    "watts": 350,
+    "upgradeCost": 4500000,
+    "comfort": 12
+  },
+  {
+    "id": "highend",
+    "name": "High-end PC",
+    "basePrice": 16000,
+    "cpu": 85,
+    "gpu": 90,
+    "ram": 32,
+    "watts": 420,
+    "upgradeCost": 7000000,
+    "comfort": 16
+  },
+  {
+    "id": "premium",
+    "name": "Premium PC",
+    "basePrice": 20000,
+    "cpu": 95,
+    "gpu": 98,
+    "ram": 32,
+    "watts": 480,
+    "upgradeCost": 10000000,
+    "comfort": 20
+  }
+]

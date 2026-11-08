@@ -1,0 +1,5 @@
+[
+  { "id": "player", "name": "Bạn", "health": 100, "hunger": 0, "cold": 0, "sicknessLevel": 0, "daysVerySick": 0, "treatmentDelayed": false, "status": "healthy" },
+  { "id": "wife", "name": "Lan", "health": 100, "hunger": 0, "cold": 0, "sicknessLevel": 0, "daysVerySick": 0, "treatmentDelayed": false, "status": "healthy" },
+  { "id": "child", "name": "Minh", "health": 100, "hunger": 0, "cold": 0, "sicknessLevel": 0, "daysVerySick": 0, "treatmentDelayed": false, "status": "healthy" }
+]

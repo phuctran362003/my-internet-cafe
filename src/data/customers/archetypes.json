@@ -1,0 +1,77 @@
+{
+  "names": ["An", "Bình", "Chi", "Dũng", "Hà", "Khoa", "Lan", "Minh", "Ngọc", "Phong", "Quân", "Trang", "Việt", "Hùng", "My", "Sơn", "Thảo", "Tuấn"],
+  "archetypes": [
+    {
+      "id": "student",
+      "label": "Học sinh",
+      "preferredTiers": ["basic", "standard"],
+      "priceSensitivity": 0.85,
+      "patience": 25,
+      "session": [40, 90],
+      "wallet": [15000, 60000],
+      "foodChance": 0.22,
+      "skipChance": 0,
+      "spawn": { "morning": 5, "midday": 2, "afternoon": 4, "evening": 2, "night": 1 }
+    },
+    {
+      "id": "gamer",
+      "label": "Game thủ",
+      "preferredTiers": ["gaming", "highend", "premium", "standard"],
+      "priceSensitivity": 0.35,
+      "patience": 18,
+      "session": [50, 120],
+      "wallet": [40000, 180000],
+      "foodChance": 0.4,
+      "skipChance": 0,
+      "spawn": { "morning": 1, "midday": 2, "afternoon": 4, "evening": 6, "night": 5 }
+    },
+    {
+      "id": "office",
+      "label": "Nhân viên văn phòng",
+      "preferredTiers": ["standard", "basic"],
+      "priceSensitivity": 0.4,
+      "patience": 12,
+      "session": [20, 45],
+      "wallet": [20000, 80000],
+      "foodChance": 0.15,
+      "skipChance": 0,
+      "spawn": { "morning": 3, "midday": 4, "afternoon": 2, "evening": 1, "night": 0 }
+    },
+    {
+      "id": "regular",
+      "label": "Khách quen",
+      "preferredTiers": ["standard", "gaming", "basic"],
+      "priceSensitivity": 0.45,
+      "patience": 30,
+      "session": [40, 80],
+      "wallet": [30000, 100000],
+      "foodChance": 0.3,
+      "skipChance": 0,
+      "spawn": { "morning": 2, "midday": 2, "afternoon": 3, "evening": 4, "night": 2 }
+    },
+    {
+      "id": "troublemaker",
+      "label": "Khách gây rối",
+      "preferredTiers": ["basic", "standard"],
+      "priceSensitivity": 0.2,
+      "patience": 10,
+      "session": [30, 70],
+      "wallet": [10000, 40000],
+      "foodChance": 0.1,
+      "skipChance": 0.65,
+      "spawn": { "morning": 0, "midday": 1, "afternoon": 2, "evening": 2, "night": 3 }
+    },
+    {
+      "id": "wealthy",
+      "label": "Khách nhiều tiền",
+      "preferredTiers": ["premium", "highend", "gaming"],
+      "priceSensitivity": 0.15,
+      "patience": 14,
+      "session": [30, 70],
+      "wallet": [80000, 250000],
+      "foodChance": 0.55,
+      "skipChance": 0,
+      "spawn": { "morning": 0, "midday": 1, "afternoon": 1, "evening": 2, "night": 1 }
+    }
+  ]
+}

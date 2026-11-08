@@ -1,0 +1,4 @@
+[
+  { "id": "drink", "name": "Nước ngọt", "cost": 5000, "salePrice": 12000 },
+  { "id": "noodle", "name": "Mì ly", "cost": 8000, "salePrice": 20000 }
+]

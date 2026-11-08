@@ -1,0 +1,14 @@
+{
+  "startingMoney": 5000000,
+  "rent": 100000,
+  "internet": 30000,
+  "pricePerKwh": 3500,
+  "newComputerCost": 3500000,
+  "repairCost": 80000,
+  "cleanCost": 10000,
+  "debtInterest": 0.02,
+  "collapseDebt": 8000000,
+  "priceMin": 2000,
+  "priceMax": 40000,
+  "success": { "day": 12, "money": 8000000, "reputation": 65 }
+}

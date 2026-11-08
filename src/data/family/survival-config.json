@@ -1,0 +1,20 @@
+{
+  "dailyNeeds": {
+    "food": { "consumptionPerMember": 1, "costPerUnit": 25000, "packSize": 3 },
+    "heat": { "dailyCost": 30000 }
+  },
+  "health": {
+    "hungerThreshold": 2,
+    "coldThreshold": 2,
+    "sickThreshold": 3,
+    "verySickLevel": 5,
+    "daysVerySickUntilDeath": 2,
+    "healthLossHunger": 6,
+    "healthLossCold": 6,
+    "healthLossSick": 8,
+    "recoveryPerDay": 5,
+    "medicineRecovery": 25,
+    "medicineSicknessReduction": 2
+  },
+  "medicine": { "costPerUnit": 150000 }
+}

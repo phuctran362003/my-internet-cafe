@@ -11,6 +11,7 @@
     "art": "node scripts/exportArt.mjs"
   },
   "dependencies": {
+    "@emailjs/browser": "^5.0.3",
     "phaser": "3.88.2"
   },
   "devDependencies": {

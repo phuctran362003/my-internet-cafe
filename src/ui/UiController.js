@@ -6,6 +6,7 @@ import { speechAnchor } from './speechAnchor.js';
 import { pruneNotes } from './notes.js';
 import { formatClock, formatMoney, formatSavedAt } from '../utils/format.js';
 import { latestSave, slotLabel } from '../systems/save/SaveSystem.js';
+import { sendFeedback } from './feedbackSend.js';
 
 const PANELS = [
   ['overview', 'Tiệm', 'shop'],
@@ -45,7 +46,8 @@ export function mountUi(session, root) {
   const modal = el('div', 'modal');
   const toasts = el('div', 'toasts');
   const speech = el('div', 'speech-layer');
-  root.append(menu, hud, guidebar, drawer, dock, modal, toasts, speech);
+  const feedback = mountFeedback(session);
+  root.append(menu, hud, guidebar, drawer, dock, modal, toasts, speech, feedback.layer);
   const tickSpeech = () => {
     try {
       syncSpeechLayer(speech, session);
@@ -94,7 +96,7 @@ export function mountUi(session, root) {
     const nextGuide = view.guide.showBar ? `on-${view.family.alert}` : '';
     if (nextGuide !== guideKey) {
       guideKey = nextGuide;
-      paintGuideBar(guidebar, view, session);
+      paintGuideBar(guidebar, view, session, feedback.open);
     }
     const nextDock = dockSignature(view);
     if (nextDock !== dockKey) {
@@ -114,7 +116,7 @@ export function mountUi(session, root) {
     if (nextMenu !== menuKey) {
       menuKey = nextMenu;
       if (view.screen === 'naming') paintNaming(menu, session);
-      else if (view.screen === 'menu') paintMenu(menu, view, session, saves.list, refreshSaves);
+      else if (view.screen === 'menu') paintMenu(menu, view, session, saves.list, refreshSaves, feedback.open);
     }
 
     const nextDrawer = drawerSignature(view);
@@ -125,7 +127,7 @@ export function mountUi(session, root) {
 
     if (nextModal !== modalKey) {
       modalKey = nextModal;
-      paintModal(modal, view, session);
+      paintModal(modal, view, session, feedback.open);
     }
   };
 
@@ -161,14 +163,101 @@ function houseStat(view, session) {
   return node;
 }
 
-function paintGuideBar(node, view, session) {
+function mountFeedback(session) {
+  const layer = el('div', 'feedback');
+  layer.hidden = true;
+  const sheet = el('form', 'sheet feedback-sheet');
+  sheet.append(el('h2', '', 'Góp ý'));
+  sheet.append(el('p', 'muted', 'Gửi thẳng đến anh dev đẹp trai.'));
+  const field = document.createElement('textarea');
+  field.className = 'feedback-text';
+  field.maxLength = 1200;
+  field.required = true;
+  field.placeholder = 'Lỗi bạn gặp, điều chưa hợp, hoặc ý muốn thêm...';
+  field.setAttribute('aria-label', 'Nội dung góp ý');
+  const status = el('p', 'feedback-status');
+  status.setAttribute('role', 'status');
+  status.hidden = true;
+  const actions = el('div', 'actions');
+  const send = el('button', 'btn-go', 'Gửi');
+  send.type = 'submit';
+  const close = button('Đóng', () => {
+    layer.hidden = true;
+  });
+  actions.append(send, close);
+  sheet.append(field, status, actions);
+  const showStatus = (text, kind = '') => {
+    status.hidden = !text;
+    status.textContent = text;
+    status.classList.toggle('bad', kind === 'bad');
+  };
+  sheet.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (send.disabled) return;
+    const message = field.value.trim();
+    if (!message) return;
+    send.disabled = true;
+    showStatus('Đang gửi...');
+    const result = await sendFeedback({ message, ...feedbackContext(session) });
+    send.disabled = false;
+    if (result.ok) {
+      field.value = '';
+      showStatus('Đã gửi. Cảm ơn bạn.');
+      return;
+    }
+    const failure = result.reason === 'config'
+      ? 'Chưa cấu hình gửi góp ý.'
+      : result.reason === 'limit'
+        ? 'Vừa gửi rồi. Đợi một lát rồi gửi tiếp.'
+        : 'Chưa gửi được. Thử lại sau.';
+    showStatus(failure, 'bad');
+  });
+  layer.addEventListener('click', (event) => {
+    if (event.target === layer) layer.hidden = true;
+  });
+  layer.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.stopPropagation();
+    layer.hidden = true;
+  });
+  layer.append(sheet);
+  return {
+    layer,
+    open() {
+      layer.hidden = false;
+      showStatus('');
+      field.focus();
+    }
+  };
+}
+
+function feedbackContext(session) {
+  const screen = session.ui?.screen;
+  if (!session.state || screen === 'menu' || screen === 'naming') return {};
+  return {
+    cafeName: session.state.cafe?.name,
+    playerName: session.state.player?.name,
+    day: session.state.meta?.currentDay
+  };
+}
+
+function feedbackButton(openFeedback, compact = false) {
+  const node = button('Góp ý', () => openFeedback());
+  node.classList.add('feedback-launch');
+  if (compact) node.classList.add('compact');
+  node.title = 'Gửi góp ý cho anh dev đẹp trai';
+  node.setAttribute('aria-label', 'Góp ý cho anh dev đẹp trai');
+  return node;
+}
+
+function paintGuideBar(node, view, session, openFeedback) {
   if (!view.guide.showBar) {
     node.replaceChildren();
     return;
   }
   const open = button('Học lại hướng dẫn', () => session.openGuide());
   open.classList.add('guide-reopen');
-  node.replaceChildren(open, houseStat(view, session));
+  node.replaceChildren(open, houseStat(view, session), feedbackButton(openFeedback, true));
 }
 
 function dockSignature(view) {
@@ -247,7 +336,7 @@ function saveIcon(slot) {
   return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 3h11l3 3v15H5V3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3h8v6H8z" fill="currentColor"/><text x="12" y="19" text-anchor="middle" font-size="8" font-family="Be Vietnam Pro, sans-serif" font-weight="700" fill="currentColor">${slot}</text></svg>`;
 }
 
-function paintMenu(node, view, session, saves, refreshSaves) {
+function paintMenu(node, view, session, saves, refreshSaves, openFeedback) {
   const sheet = el('div', 'sheet');
   sheet.append(el('h1', '', 'Internet Café Tycoon'));
   sheet.append(el('p', 'muted', 'Mở tiệm net, giữ khách vui vẻ, lo luôn cả nhà. Chơi bằng chuột. Nhạc nền bật sau lần bấm đầu tiên.'));
@@ -271,7 +360,9 @@ function paintMenu(node, view, session, saves, refreshSaves) {
     list.append(saveSlotRow(bySlot.get(slot), slot, session, refreshSaves));
   }
   sheet.append(list);
-  sheet.append(button('Làm mới danh sách', refreshSaves));
+  const extra = el('div', 'actions');
+  extra.append(button('Làm mới danh sách', refreshSaves), feedbackButton(openFeedback));
+  sheet.append(extra);
   node.replaceChildren(sheet);
   void view;
 }
@@ -757,10 +848,10 @@ function journalPanel(view) {
   return box;
 }
 
-function paintModal(node, view, session) {
+function paintModal(node, view, session, openFeedback) {
   node.replaceChildren();
   if (view.guide.open) {
-    node.append(guideSheet(view, session));
+    node.append(guideSheet(view, session, openFeedback));
     return;
   }
   if (view.activeEvent && view.screen !== 'menu') {
@@ -832,7 +923,7 @@ function paintModal(node, view, session) {
   }
 }
 
-function guideSheet(view, session) {
+function guideSheet(view, session, openFeedback) {
   const sheet = el('div', 'guide-sheet');
   const title = el('h2', 'guide-title', 'HƯỚNG DẪN');
   title.prepend(el('i', 'pixel-mark'));
@@ -859,6 +950,7 @@ function guideSheet(view, session) {
     list.append(rowCard);
   }
   sheet.append(list);
+  sheet.append(feedbackButton(openFeedback));
   const close = button('Đóng', () => session.closeGuide());
   close.classList.add('btn-go', 'guide-close');
   sheet.append(close);

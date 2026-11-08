@@ -98,11 +98,11 @@ html, body, #app {
   border-top-color: #3a2a1c;
 }
 
-button, label, input, .drawer, .menu, .modal, .guidebar {
+button, label, input, textarea, .drawer, .menu, .modal, .guidebar, .feedback {
   pointer-events: auto;
 }
 
-button, input {
+button, input, textarea {
   font: inherit;
   color: inherit;
 }
@@ -789,6 +789,57 @@ button.guide-reopen {
 
 button.guide-reopen:hover:not(:disabled) { background: #6d3a96; }
 
+button.feedback-launch.compact {
+  --press: #1a4f86;
+  background: #2b6cb0;
+  color: #fff8ea;
+  border-color: #1a4f86;
+  border-radius: 999px;
+}
+
+button.feedback-launch.compact:hover:not(:disabled) { background: #3b82d4; }
+
+.feedback {
+  position: absolute;
+  inset: 0;
+  z-index: 140;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(24, 16, 28, 0.72);
+}
+
+.feedback-sheet {
+  width: min(440px, calc(100% - 32px));
+}
+
+.guide-sheet > button.feedback-launch {
+  margin-top: 10px;
+}
+
+textarea.feedback-text {
+  width: 100%;
+  min-height: 140px;
+  margin-top: 10px;
+  resize: vertical;
+  background: #fffdf8;
+  color: var(--card-ink);
+  border: 2px solid #e39a3a;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.feedback-status {
+  margin: 8px 0 0;
+  color: #1d7a3a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feedback-status.bad { color: #9d2b24; }
+
 .guide-sheet {
   width: min(440px, calc(100% - 32px));
   max-height: calc(100% - 40px);
@@ -1170,7 +1221,8 @@ button.guide-close {
     gap: 6px;
   }
 
-  button.guide-reopen {
+  button.guide-reopen,
+  button.feedback-launch.compact {
     padding: 4px 10px;
     font-size: 11px;
   }
@@ -1562,7 +1614,8 @@ button.guide-close {
     gap: 4px;
   }
 
-  button.guide-reopen {
+  button.guide-reopen,
+  button.feedback-launch.compact {
     padding: 3px 8px;
     font-size: 10px;
   }
@@ -1646,7 +1699,8 @@ button.guide-close {
     margin: 2px 0 0 4px;
   }
 
-  button.guide-reopen {
+  button.guide-reopen,
+  button.feedback-launch.compact {
     padding: 2px 8px;
     font-size: 10px;
   }

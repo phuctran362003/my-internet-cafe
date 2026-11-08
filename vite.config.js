@@ -1,11 +1,9 @@
 import { defineConfig } from 'vite';
 
-// Project site: https://<owner>.github.io/my-internet-cafe/
-// Dev keeps base "./" so local-play.bat can stay on http://localhost:5173/.
-const pagesBase = '/my-internet-cafe/';
-
-export default defineConfig(({ command, isPreview }) => ({
-  base: command === 'build' || isPreview ? pagesBase : './',
+// Relative base so the same dist works on Vercel (site root) and
+// GitHub Pages (https://<owner>.github.io/my-internet-cafe/).
+export default defineConfig({
+  base: './',
   server: {
     port: 5173,
     strictPort: true,
@@ -17,4 +15,4 @@ export default defineConfig(({ command, isPreview }) => ({
     environment: 'node',
     include: ['tests/**/*.test.js']
   }
-}));
+});

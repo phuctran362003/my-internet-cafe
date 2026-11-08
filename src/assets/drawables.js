@@ -40,12 +40,13 @@ export function drawFloor(kind) {
   const buffer = blank(N, N);
   const base = kind === 'alt' ? PALETTE.floorLight.rgb : PALETTE.floor.rgb;
   const grout = PALETTE.floorDark.rgb;
-  const speck = kind === 'alt' ? PALETTE.floor.rgb : PALETTE.floorLight.rgb;
+  const light = kind === 'alt' ? PALETTE.floor.rgb : PALETTE.floorLight.rgb;
   for (let y = 0; y < N; y += 1) {
     for (let x = 0; x < N; x += 1) {
       const edge = x === 0 || y === 0;
-      const shade = !edge && x > 28 && y > 28;
-      setPixel(buffer, x, y, edge ? grout : shade ? speck : base);
+      const bevel = !edge && (x === 1 || y === 1);
+      const shade = !edge && x >= N - 3 && y >= N - 3;
+      setPixel(buffer, x, y, edge ? grout : bevel ? light : shade ? grout : base);
     }
   }
   return buffer;
@@ -53,82 +54,83 @@ export function drawFloor(kind) {
 
 export function drawWall() {
   const buffer = blank(N, N);
-  for (let y = 0; y < 26; y += 1) {
+  for (let y = 0; y < 50; y += 1) {
     for (let x = 0; x < N; x += 1) {
-      const mote = (x * 7 + y * 3) % 23 === 0;
-      setPixel(buffer, x, y, mote ? PALETTE.wallDark.rgb : y < 2 ? PALETTE.wallLight.rgb : PALETTE.wall.rgb);
+      const mote = (x * 5 + y * 3) % 29 === 0;
+      setPixel(buffer, x, y, mote ? PALETTE.wallDark.rgb : y < 3 ? PALETTE.wallLight.rgb : PALETTE.wall.rgb);
     }
   }
-  fillRect(buffer, 0, 26, 32, 6, PALETTE.counter.rgb);
-  fillRect(buffer, 0, 26, 32, 1, PALETTE.counterTop.rgb);
-  fillRect(buffer, 0, 31, 32, 1, PALETTE.desk.rgb);
+  fillRect(buffer, 0, 50, 64, 14, PALETTE.counter.rgb);
+  fillRect(buffer, 0, 50, 64, 2, PALETTE.counterTop.rgb);
+  fillRect(buffer, 0, 56, 64, 1, PALETTE.deskLight.rgb);
+  fillRect(buffer, 0, 62, 64, 2, PALETTE.desk.rgb);
   return buffer;
 }
 
 export function drawDoor(closed) {
   const buffer = drawWall();
-  fillRect(buffer, 4, 1, 24, 30, PALETTE.desk.rgb);
-  fillRect(buffer, 6, 3, 20, 26, closed ? PALETTE.door.rgb : PALETTE.floor.rgb);
+  fillRect(buffer, 8, 2, 48, 60, PALETTE.desk.rgb);
+  fillRect(buffer, 12, 6, 40, 52, closed ? PALETTE.door.rgb : PALETTE.floor.rgb);
   if (closed) {
-    fillRect(buffer, 8, 5, 16, 9, PALETTE.doorLight.rgb);
-    fillRect(buffer, 8, 16, 16, 9, PALETTE.doorLight.rgb);
-    fillRect(buffer, 9, 6, 6, 2, PALETTE.paper.rgb);
-    fillRect(buffer, 9, 17, 6, 2, PALETTE.paper.rgb);
-    fillRect(buffer, 21, 14, 2, 3, PALETTE.coin.rgb);
+    fillRect(buffer, 16, 10, 32, 18, PALETTE.doorLight.rgb);
+    fillRect(buffer, 16, 32, 32, 18, PALETTE.doorLight.rgb);
+    fillRect(buffer, 18, 12, 12, 4, PALETTE.paper.rgb);
+    fillRect(buffer, 18, 34, 12, 4, PALETTE.paper.rgb);
+    fillRect(buffer, 42, 28, 4, 6, PALETTE.coin.rgb);
   } else {
-    fillRect(buffer, 6, 3, 5, 26, PALETTE.door.rgb);
-    fillRect(buffer, 7, 5, 3, 8, PALETTE.doorLight.rgb);
-    fillRect(buffer, 7, 16, 3, 8, PALETTE.doorLight.rgb);
-    fillRect(buffer, 9, 14, 2, 3, PALETTE.coin.rgb);
-    fillRect(buffer, 14, 8, 8, 1, PALETTE.floorDark.rgb);
-    fillRect(buffer, 14, 20, 8, 1, PALETTE.floorDark.rgb);
+    fillRect(buffer, 12, 6, 10, 52, PALETTE.door.rgb);
+    fillRect(buffer, 14, 10, 6, 16, PALETTE.doorLight.rgb);
+    fillRect(buffer, 14, 32, 6, 16, PALETTE.doorLight.rgb);
+    fillRect(buffer, 18, 28, 4, 6, PALETTE.coin.rgb);
+    fillRect(buffer, 28, 16, 16, 2, PALETTE.floorDark.rgb);
+    fillRect(buffer, 28, 40, 16, 2, PALETTE.floorDark.rgb);
   }
   return buffer;
 }
 
 export function drawWindow() {
   const buffer = drawWall();
-  fillRect(buffer, 3, 3, 26, 20, PALETTE.desk.rgb);
-  fillRect(buffer, 5, 5, 10, 7, PALETTE.window.rgb);
-  fillRect(buffer, 17, 5, 10, 7, PALETTE.window.rgb);
-  fillRect(buffer, 5, 14, 10, 7, PALETTE.window.rgb);
-  fillRect(buffer, 17, 14, 10, 7, PALETTE.window.rgb);
-  fillRect(buffer, 6, 6, 3, 2, PALETTE.white.rgb);
-  fillRect(buffer, 18, 6, 3, 2, PALETTE.white.rgb);
-  fillRect(buffer, 14, 5, 2, 16, PALETTE.windowDark.rgb);
-  fillRect(buffer, 5, 12, 22, 2, PALETTE.windowDark.rgb);
+  fillRect(buffer, 6, 6, 52, 40, PALETTE.desk.rgb);
+  fillRect(buffer, 10, 10, 20, 14, PALETTE.window.rgb);
+  fillRect(buffer, 34, 10, 20, 14, PALETTE.window.rgb);
+  fillRect(buffer, 10, 28, 20, 14, PALETTE.window.rgb);
+  fillRect(buffer, 34, 28, 20, 14, PALETTE.window.rgb);
+  fillRect(buffer, 12, 12, 6, 4, PALETTE.white.rgb);
+  fillRect(buffer, 36, 12, 6, 4, PALETTE.white.rgb);
+  fillRect(buffer, 28, 10, 4, 32, PALETTE.windowDark.rgb);
+  fillRect(buffer, 10, 24, 44, 4, PALETTE.windowDark.rgb);
   return buffer;
 }
 
 export function drawCounter() {
   const buffer = blank(N, N);
-  fillRect(buffer, 0, 0, 32, 8, PALETTE.counterTop.rgb);
-  fillRect(buffer, 0, 0, 32, 1, PALETTE.paper.rgb);
-  fillRect(buffer, 0, 6, 32, 2, PALETTE.counter.rgb);
-  fillRect(buffer, 0, 8, 32, 21, PALETTE.counter.rgb);
-  fillRect(buffer, 2, 11, 13, 14, PALETTE.desk.rgb);
-  fillRect(buffer, 17, 11, 13, 14, PALETTE.desk.rgb);
-  fillRect(buffer, 2, 11, 13, 2, PALETTE.deskLight.rgb);
-  fillRect(buffer, 17, 11, 13, 2, PALETTE.deskLight.rgb);
-  fillRect(buffer, 4, 16, 9, 1, PALETTE.counter.rgb);
-  fillRect(buffer, 19, 16, 9, 1, PALETTE.counter.rgb);
-  fillRect(buffer, 12, 18, 2, 4, PALETTE.coin.rgb);
-  fillRect(buffer, 18, 18, 2, 4, PALETTE.coin.rgb);
-  fillRect(buffer, 0, 29, 32, 3, PALETTE.desk.rgb);
+  fillRect(buffer, 0, 0, 64, 16, PALETTE.counterTop.rgb);
+  fillRect(buffer, 0, 0, 64, 2, PALETTE.paper.rgb);
+  fillRect(buffer, 0, 12, 64, 4, PALETTE.counter.rgb);
+  fillRect(buffer, 0, 16, 64, 42, PALETTE.counter.rgb);
+  fillRect(buffer, 4, 22, 26, 28, PALETTE.desk.rgb);
+  fillRect(buffer, 34, 22, 26, 28, PALETTE.desk.rgb);
+  fillRect(buffer, 4, 22, 26, 4, PALETTE.deskLight.rgb);
+  fillRect(buffer, 34, 22, 26, 4, PALETTE.deskLight.rgb);
+  fillRect(buffer, 8, 32, 18, 2, PALETTE.counter.rgb);
+  fillRect(buffer, 38, 32, 18, 2, PALETTE.counter.rgb);
+  fillRect(buffer, 24, 36, 4, 8, PALETTE.coin.rgb);
+  fillRect(buffer, 36, 36, 4, 8, PALETTE.coin.rgb);
+  fillRect(buffer, 0, 58, 64, 6, PALETTE.desk.rgb);
   return buffer;
 }
 
 export function drawStorage() {
   const buffer = drawFloor('base');
-  fillRect(buffer, 4, 5, 24, 22, PALETTE.desk.rgb);
-  fillRect(buffer, 4, 5, 24, 3, PALETTE.deskLight.rgb);
-  fillRect(buffer, 6, 11, 20, 1, PALETTE.counter.rgb);
-  fillRect(buffer, 6, 17, 20, 1, PALETTE.counter.rgb);
-  fillRect(buffer, 15, 8, 1, 16, PALETTE.counter.rgb);
-  setPixel(buffer, 7, 7, PALETTE.coin.rgb);
-  setPixel(buffer, 24, 7, PALETTE.coin.rgb);
-  setPixel(buffer, 7, 23, PALETTE.coin.rgb);
-  setPixel(buffer, 24, 23, PALETTE.coin.rgb);
+  fillRect(buffer, 8, 10, 48, 44, PALETTE.desk.rgb);
+  fillRect(buffer, 8, 10, 48, 6, PALETTE.deskLight.rgb);
+  fillRect(buffer, 12, 22, 40, 2, PALETTE.counter.rgb);
+  fillRect(buffer, 12, 34, 40, 2, PALETTE.counter.rgb);
+  fillRect(buffer, 30, 16, 2, 32, PALETTE.counter.rgb);
+  fillRect(buffer, 14, 14, 3, 3, PALETTE.coin.rgb);
+  fillRect(buffer, 47, 14, 3, 3, PALETTE.coin.rgb);
+  fillRect(buffer, 14, 46, 3, 3, PALETTE.coin.rgb);
+  fillRect(buffer, 47, 46, 3, 3, PALETTE.coin.rgb);
   return buffer;
 }
 
@@ -147,10 +149,10 @@ export function drawToilet() {
 
 export function drawRug() {
   const buffer = drawFloor('base');
-  fillRect(buffer, 3, 3, 26, 26, PALETTE.rug.rgb);
-  fillRect(buffer, 6, 6, 20, 20, PALETTE.shirtRed.rgb);
-  fillRect(buffer, 8, 8, 16, 16, PALETTE.rug.rgb);
-  fillRect(buffer, 14, 14, 4, 4, PALETTE.coin.rgb);
+  fillRect(buffer, 6, 6, 52, 52, PALETTE.rug.rgb);
+  fillRect(buffer, 12, 12, 40, 40, PALETTE.shirtRed.rgb);
+  fillRect(buffer, 16, 16, 32, 32, PALETTE.rug.rgb);
+  fillRect(buffer, 28, 28, 8, 8, PALETTE.coin.rgb);
   return buffer;
 }
 
@@ -166,59 +168,61 @@ export function drawCharacterFrame(pose, variant) {
   const stepping = pose === 'downWalk' || pose === 'upWalk';
   const sitting = pose === 'sit';
 
-  ellipse(buffer, 16, 29, 7, 2, PALETTE.floorDark.rgb);
+  ellipse(buffer, 32, 58, 14, 4, PALETTE.floorDark.rgb);
 
   if (sitting) {
-    fillRect(buffer, 10, 18, 5, 7, pants);
-    fillRect(buffer, 17, 18, 5, 7, pants);
-    fillRect(buffer, 10, 24, 5, 2, shoe);
-    fillRect(buffer, 17, 24, 5, 2, shoe);
-    ellipse(buffer, 16, 16, 7, 6, shirt);
-    fillRect(buffer, 11, 16, 2, 4, shirt);
-    fillRect(buffer, 19, 16, 2, 4, shirt);
-    paintHead(buffer, { hair, skin, shade, back: true });
+    fillRect(buffer, 20, 40, 10, 14, pants);
+    fillRect(buffer, 34, 40, 10, 14, pants);
+    fillRect(buffer, 20, 52, 10, 4, shoe);
+    fillRect(buffer, 34, 52, 10, 4, shoe);
+    ellipse(buffer, 32, 36, 16, 12, shirt);
+    fillRect(buffer, 20, 34, 5, 8, shirt);
+    fillRect(buffer, 39, 34, 5, 8, shirt);
+    paintHead(buffer, { hair, skin, shade, back: true, dy: 8 });
     outline(buffer);
     return buffer;
   }
 
-  const left = stepping ? 9 : 12;
-  const right = stepping ? 19 : 17;
-  fillRect(buffer, left, 18, 4, 8, pants);
-  fillRect(buffer, right, 18, 4, 8, pants);
-  fillRect(buffer, left, 25, 4, 3, shoe);
-  fillRect(buffer, right, 25, 4, 3, shoe);
-  setPixel(buffer, left + 1, 25, PALETTE.floorLight.rgb);
-  setPixel(buffer, right + 1, 25, PALETTE.floorLight.rgb);
+  const left = stepping ? 18 : 22;
+  const right = stepping ? 38 : 34;
+  fillRect(buffer, left, 38, 8, 16, pants);
+  fillRect(buffer, right, 38, 8, 16, pants);
+  fillRect(buffer, left, 52, 8, 6, shoe);
+  fillRect(buffer, right, 52, 8, 6, shoe);
+  fillRect(buffer, left + 1, 52, 6, 2, PALETTE.floorLight.rgb);
+  fillRect(buffer, right + 1, 52, 6, 2, PALETTE.floorLight.rgb);
 
-  ellipse(buffer, 16, 17, 7, 6, shirt);
-  fillRect(buffer, 13, 13, 6, 2, shade);
-  if (!back) fillRect(buffer, 13, 15, 6, 1, PALETTE.white.rgb);
-  fillRect(buffer, 10, 18, 2, 4, shirt);
-  fillRect(buffer, 20, 18, 2, 4, shirt);
+  ellipse(buffer, 32, 36, 14, 12, shirt);
+  fillRect(buffer, 26, 28, 12, 4, shade);
+  if (!back) fillRect(buffer, 26, 32, 12, 3, PALETTE.white.rgb);
+  fillRect(buffer, 18, 34, 5, 10, shirt);
+  fillRect(buffer, 41, 34, 5, 10, shirt);
 
-  paintHead(buffer, { hair, skin, shade, back });
+  paintHead(buffer, { hair, skin, shade, back, dy: 0 });
   outline(buffer);
   return buffer;
 }
 
-function paintHead(buffer, { hair, skin, shade, back }) {
-  ellipse(buffer, 16, 9, 7, 6, hair);
-  fillRect(buffer, 13, 4, 3, 1, PALETTE.paper.rgb);
-  setPixel(buffer, 17, 4, PALETTE.white.rgb);
+function paintHead(buffer, { hair, skin, shade, back, dy }) {
+  const y = (value) => value + dy;
+  ellipse(buffer, 32, y(18), 15, 13, hair);
+  fillRect(buffer, 26, y(8), 8, 3, PALETTE.paper.rgb);
+  setPixel(buffer, 36, y(9), PALETTE.white.rgb);
   if (back) {
-    ellipse(buffer, 16, 10, 6, 5, hair);
-    fillRect(buffer, 14, 14, 4, 2, shade);
+    ellipse(buffer, 32, y(20), 13, 11, hair);
+    fillRect(buffer, 26, y(30), 12, 4, shade);
     return;
   }
-  ellipse(buffer, 16, 10, 5, 5, skin);
-  fillRect(buffer, 11, 7, 10, 2, hair);
-  setPixel(buffer, 13, 10, PALETTE.eye.rgb);
-  setPixel(buffer, 18, 10, PALETTE.eye.rgb);
-  setPixel(buffer, 14, 10, PALETTE.white.rgb);
-  setPixel(buffer, 19, 10, PALETTE.white.rgb);
-  setPixel(buffer, 16, 12, shade);
-  setPixel(buffer, 12, 12, shade);
-  setPixel(buffer, 19, 12, shade);
+  ellipse(buffer, 32, y(22), 11, 11, skin);
+  fillRect(buffer, 22, y(14), 20, 6, hair);
+  fillRect(buffer, 24, y(20), 4, 4, PALETTE.eye.rgb);
+  fillRect(buffer, 36, y(20), 4, 4, PALETTE.eye.rgb);
+  fillRect(buffer, 25, y(21), 2, 2, PALETTE.white.rgb);
+  fillRect(buffer, 37, y(21), 2, 2, PALETTE.white.rgb);
+  fillRect(buffer, 31, y(26), 2, 2, shade);
+  fillRect(buffer, 29, y(29), 6, 2, shade);
+  setPixel(buffer, 22, y(24), shade);
+  setPixel(buffer, 41, y(24), shade);
 }
 
 const TIER_LED = {
@@ -239,41 +243,43 @@ export function drawComputer(tierScreen, state) {
   const ledName = state === 'broken' ? 'alert' : state === 'maintenance' ? 'hunger' : TIER_LED[tierScreen] || 'shirtGreen';
   const led = PALETTE[ledName].rgb;
 
-  fillRect(buffer, 3, 0, 26, 18, PALETTE.bezel.rgb);
-  fillRect(buffer, 5, 2, 22, 13, screen);
-  fillRect(buffer, 6, 3, 7, 2, PALETTE.white.rgb);
+  fillRect(buffer, 6, 0, 52, 36, PALETTE.bezel.rgb);
+  fillRect(buffer, 6, 0, 52, 2, PALETTE.panelLight.rgb);
+  fillRect(buffer, 10, 4, 44, 26, screen);
+  fillRect(buffer, 12, 6, 14, 4, PALETTE.white.rgb);
   if (state === 'available' || state === 'occupied') {
-    fillRect(buffer, 6, 7, 14, 1, PALETTE.paper.rgb);
-    fillRect(buffer, 6, 9, 18, 1, PALETTE.paper.rgb);
-    fillRect(buffer, 6, 11, 10, 1, PALETTE.paper.rgb);
+    fillRect(buffer, 12, 12, 28, 3, PALETTE.paper.rgb);
+    fillRect(buffer, 12, 17, 36, 2, PALETTE.paper.rgb);
+    fillRect(buffer, 12, 21, 22, 2, PALETTE.paper.rgb);
   }
   if (state === 'occupied') {
-    fillRect(buffer, 5, 13, 22, 2, PALETTE.panel.rgb);
-    setPixel(buffer, 7, 13, PALETTE.shirtGreen.rgb);
+    fillRect(buffer, 10, 26, 44, 4, PALETTE.panel.rgb);
+    fillRect(buffer, 13, 27, 3, 2, PALETTE.shirtGreen.rgb);
+    fillRect(buffer, 40, 7, 8, 6, PALETTE.white.rgb);
   }
   if (state === 'broken') {
-    for (let i = 0; i < 8; i += 1) setPixel(buffer, 8 + i, 4 + i, INK);
-    setPixel(buffer, 20, 6, INK);
-    setPixel(buffer, 21, 7, INK);
-    setPixel(buffer, 18, 10, INK);
+    for (let i = 0; i < 16; i += 1) setPixel(buffer, 16 + i, 8 + i, INK);
+    fillRect(buffer, 36, 12, 2, 8, INK);
+    fillRect(buffer, 34, 20, 8, 2, INK);
   }
   if (state === 'maintenance') {
-    fillRect(buffer, 14, 5, 2, 7, INK);
-    fillRect(buffer, 11, 8, 8, 2, INK);
+    fillRect(buffer, 30, 10, 4, 14, INK);
+    fillRect(buffer, 24, 16, 16, 4, INK);
   }
-  setPixel(buffer, 15, 16, led);
-  setPixel(buffer, 16, 16, led);
-  fillRect(buffer, 13, 18, 6, 2, PALETTE.bezel.rgb);
+  fillRect(buffer, 30, 32, 4, 2, led);
+  fillRect(buffer, 28, 36, 8, 4, PALETTE.bezel.rgb);
+  fillRect(buffer, 22, 40, 20, 3, PALETTE.shirtGray.rgb);
 
-  fillRect(buffer, 1, 20, 30, 12, PALETTE.desk.rgb);
-  fillRect(buffer, 1, 20, 30, 1, PALETTE.deskLight.rgb);
-  fillRect(buffer, 1, 29, 30, 3, PALETTE.counter.rgb);
-  fillRect(buffer, 4, 22, 18, 6, PALETTE.shirtGray.rgb);
-  fillRect(buffer, 5, 23, 16, 1, PALETTE.bezel.rgb);
-  fillRect(buffer, 5, 25, 16, 1, PALETTE.bezel.rgb);
-  for (let key = 0; key < 8; key += 1) setPixel(buffer, 5 + key * 2, 24, PALETTE.panel.rgb);
-  fillRect(buffer, 24, 22, 4, 5, PALETTE.white.rgb);
-  fillRect(buffer, 25, 23, 2, 2, PALETTE.shirtGray.rgb);
+  fillRect(buffer, 2, 42, 60, 22, PALETTE.desk.rgb);
+  fillRect(buffer, 2, 42, 60, 2, PALETTE.deskLight.rgb);
+  fillRect(buffer, 2, 58, 60, 6, PALETTE.counter.rgb);
+  fillRect(buffer, 8, 46, 36, 10, PALETTE.shirtGray.rgb);
+  fillRect(buffer, 10, 48, 32, 2, PALETTE.bezel.rgb);
+  fillRect(buffer, 10, 52, 32, 2, PALETTE.bezel.rgb);
+  for (let key = 0; key < 8; key += 1) fillRect(buffer, 10 + key * 4, 48, 2, 2, PALETTE.panel.rgb);
+  for (let key = 0; key < 8; key += 1) fillRect(buffer, 10 + key * 4, 52, 2, 2, PALETTE.panel.rgb);
+  fillRect(buffer, 48, 46, 8, 10, PALETTE.white.rgb);
+  fillRect(buffer, 50, 48, 4, 4, PALETTE.shirtGray.rgb);
   outline(buffer);
   return buffer;
 }
@@ -283,34 +289,35 @@ export function drawChair(clothKey = 'shirtRed', shadeKey = 'rug') {
   const cloth = PALETTE[clothKey].rgb;
   const shade = PALETTE[shadeKey].rgb;
   const post = PALETTE.bezel.rgb;
-  fillRect(buffer, 7, 1, 18, 11, cloth);
-  fillRect(buffer, 7, 1, 18, 2, shade);
-  fillRect(buffer, 7, 1, 2, 11, shade);
-  fillRect(buffer, 23, 1, 2, 11, shade);
-  if (clothKey !== 'white') fillRect(buffer, 10, 4, 6, 2, PALETTE.white.rgb);
-  else fillRect(buffer, 10, 4, 6, 2, PALETTE.paper.rgb);
-  fillRect(buffer, 6, 12, 3, 4, post);
-  fillRect(buffer, 23, 12, 3, 4, post);
-  fillRect(buffer, 5, 15, 22, 8, cloth);
-  fillRect(buffer, 5, 21, 22, 2, shade);
-  fillRect(buffer, 7, 23, 3, 5, post);
-  fillRect(buffer, 22, 23, 3, 5, post);
-  fillRect(buffer, 6, 27, 5, 2, PALETTE.shirtGray.rgb);
-  fillRect(buffer, 21, 27, 5, 2, PALETTE.shirtGray.rgb);
+  fillRect(buffer, 14, 2, 36, 22, cloth);
+  fillRect(buffer, 14, 2, 36, 4, shade);
+  fillRect(buffer, 14, 2, 4, 22, shade);
+  fillRect(buffer, 46, 2, 4, 22, shade);
+  if (clothKey !== 'white') fillRect(buffer, 20, 8, 12, 4, PALETTE.white.rgb);
+  else fillRect(buffer, 20, 8, 12, 4, PALETTE.paper.rgb);
+  fillRect(buffer, 18, 20, 28, 2, shade);
+  fillRect(buffer, 12, 24, 6, 8, post);
+  fillRect(buffer, 46, 24, 6, 8, post);
+  fillRect(buffer, 10, 30, 44, 16, cloth);
+  fillRect(buffer, 10, 42, 44, 4, shade);
+  fillRect(buffer, 14, 46, 6, 10, post);
+  fillRect(buffer, 44, 46, 6, 10, post);
+  fillRect(buffer, 12, 54, 10, 4, PALETTE.shirtGray.rgb);
+  fillRect(buffer, 42, 54, 10, 4, PALETTE.shirtGray.rgb);
   outline(buffer);
   return buffer;
 }
 
 export function drawPlant() {
   const buffer = blank(N, N);
-  ellipse(buffer, 16, 12, 8, 7, PALETTE.leaf.rgb);
-  ellipse(buffer, 12, 11, 4, 4, PALETTE.leafDark.rgb);
-  ellipse(buffer, 20, 13, 3, 3, PALETTE.leafDark.rgb);
-  setPixel(buffer, 14, 8, PALETTE.shirtGreen.rgb);
-  setPixel(buffer, 18, 7, PALETTE.paper.rgb);
-  fillRect(buffer, 13, 18, 6, 7, PALETTE.pot.rgb);
-  fillRect(buffer, 12, 18, 8, 2, PALETTE.shirtRed.rgb);
-  fillRect(buffer, 14, 22, 4, 1, PALETTE.floorDark.rgb);
+  ellipse(buffer, 32, 24, 16, 14, PALETTE.leaf.rgb);
+  ellipse(buffer, 24, 22, 8, 8, PALETTE.leafDark.rgb);
+  ellipse(buffer, 40, 26, 6, 6, PALETTE.leafDark.rgb);
+  fillRect(buffer, 28, 14, 4, 3, PALETTE.shirtGreen.rgb);
+  fillRect(buffer, 36, 12, 3, 3, PALETTE.paper.rgb);
+  fillRect(buffer, 26, 36, 12, 14, PALETTE.pot.rgb);
+  fillRect(buffer, 24, 36, 16, 4, PALETTE.shirtRed.rgb);
+  fillRect(buffer, 28, 44, 8, 2, PALETTE.floorDark.rgb);
   outline(buffer);
   return buffer;
 }
@@ -322,25 +329,25 @@ export function drawCounterProp() {
 export function drawItem(kind) {
   const buffer = blank(N, N);
   if (kind === 'drink') {
-    fillRect(buffer, 12, 6, 8, 3, PALETTE.drink.rgb);
-    fillRect(buffer, 13, 9, 6, 14, PALETTE.drink.rgb);
-    fillRect(buffer, 14, 11, 4, 4, PALETTE.white.rgb);
-    fillRect(buffer, 12, 22, 8, 3, PALETTE.windowDark.rgb);
+    fillRect(buffer, 24, 12, 16, 6, PALETTE.drink.rgb);
+    fillRect(buffer, 26, 18, 12, 28, PALETTE.drink.rgb);
+    fillRect(buffer, 28, 22, 8, 8, PALETTE.white.rgb);
+    fillRect(buffer, 24, 44, 16, 6, PALETTE.windowDark.rgb);
   } else if (kind === 'noodle') {
-    ellipse(buffer, 16, 16, 9, 7, PALETTE.noodle.rgb);
-    ellipse(buffer, 16, 15, 7, 4, PALETTE.paper.rgb);
-    fillRect(buffer, 12, 14, 8, 1, PALETTE.shirtRed.rgb);
-    fillRect(buffer, 20, 8, 2, 6, PALETTE.deskLight.rgb);
+    ellipse(buffer, 32, 32, 18, 14, PALETTE.noodle.rgb);
+    ellipse(buffer, 32, 30, 14, 8, PALETTE.paper.rgb);
+    fillRect(buffer, 24, 28, 16, 2, PALETTE.shirtRed.rgb);
+    fillRect(buffer, 40, 16, 4, 12, PALETTE.deskLight.rgb);
   } else if (kind === 'medicine') {
-    fillRect(buffer, 8, 10, 16, 12, PALETTE.medicine.rgb);
-    fillRect(buffer, 8, 10, 16, 3, PALETTE.alert.rgb);
-    fillRect(buffer, 14, 15, 4, 5, PALETTE.medicineMark.rgb);
-    fillRect(buffer, 12, 17, 8, 1, PALETTE.medicineMark.rgb);
+    fillRect(buffer, 16, 20, 32, 24, PALETTE.medicine.rgb);
+    fillRect(buffer, 16, 20, 32, 6, PALETTE.alert.rgb);
+    fillRect(buffer, 28, 30, 8, 10, PALETTE.medicineMark.rgb);
+    fillRect(buffer, 24, 34, 16, 2, PALETTE.medicineMark.rgb);
   } else {
-    fillRect(buffer, 7, 9, 18, 14, PALETTE.foodPack.rgb);
-    fillRect(buffer, 9, 12, 14, 6, PALETTE.paper.rgb);
-    fillRect(buffer, 11, 14, 6, 2, PALETTE.shirtRed.rgb);
-    fillRect(buffer, 10, 20, 12, 1, PALETTE.desk.rgb);
+    fillRect(buffer, 14, 18, 36, 28, PALETTE.foodPack.rgb);
+    fillRect(buffer, 18, 24, 28, 12, PALETTE.paper.rgb);
+    fillRect(buffer, 22, 28, 12, 4, PALETTE.shirtRed.rgb);
+    fillRect(buffer, 20, 40, 24, 2, PALETTE.desk.rgb);
   }
   outline(buffer);
   return buffer;
@@ -349,20 +356,20 @@ export function drawItem(kind) {
 export function drawEffect(kind) {
   const buffer = blank(N, N);
   if (kind === 'alert') {
-    for (let y = 6; y < 22; y += 1) {
-      const half = Math.floor((y - 6) * 0.7);
-      fillRect(buffer, 16 - half, y, half * 2, 1, PALETTE.alert.rgb);
+    for (let y = 12; y < 44; y += 1) {
+      const half = Math.floor((y - 12) * 0.7);
+      fillRect(buffer, 32 - half, y, half * 2, 1, PALETTE.alert.rgb);
     }
-    fillRect(buffer, 15, 10, 2, 6, PALETTE.white.rgb);
-    fillRect(buffer, 15, 18, 2, 2, PALETTE.white.rgb);
+    fillRect(buffer, 30, 20, 4, 12, PALETTE.white.rgb);
+    fillRect(buffer, 30, 36, 4, 4, PALETTE.white.rgb);
   } else if (kind === 'coin') {
-    ellipse(buffer, 16, 16, 8, 8, PALETTE.coin.rgb);
-    ellipse(buffer, 16, 16, 5, 5, PALETTE.paper.rgb);
-    fillRect(buffer, 15, 12, 2, 8, PALETTE.coin.rgb);
+    ellipse(buffer, 32, 32, 16, 16, PALETTE.coin.rgb);
+    ellipse(buffer, 32, 32, 10, 10, PALETTE.paper.rgb);
+    fillRect(buffer, 30, 24, 4, 16, PALETTE.coin.rgb);
   } else {
-    ellipse(buffer, 16, 18, 8, 5, PALETTE.noodle.rgb);
-    ellipse(buffer, 16, 16, 6, 3, PALETTE.paper.rgb);
-    fillRect(buffer, 18, 8, 2, 6, PALETTE.desk.rgb);
+    ellipse(buffer, 32, 36, 16, 10, PALETTE.noodle.rgb);
+    ellipse(buffer, 32, 32, 12, 6, PALETTE.paper.rgb);
+    fillRect(buffer, 36, 16, 4, 12, PALETTE.desk.rgb);
   }
   outline(buffer);
   return buffer;
@@ -372,20 +379,19 @@ export function drawPortrait(kind) {
   const buffer = blank(N, N);
   const hair = kind === 'child' ? PALETTE.hairBrown.rgb : kind === 'wife' ? PALETTE.hairPink.rgb : PALETTE.hairBlack.rgb;
   const shirt = kind === 'wife' ? PALETTE.shirtRed.rgb : kind === 'child' ? PALETTE.shirtGreen.rgb : PALETTE.shirtBlue.rgb;
-  fillRect(buffer, 6, 22, 20, 10, shirt);
-  fillRect(buffer, 12, 20, 8, 3, PALETTE.white.rgb);
-  ellipse(buffer, 16, 14, 9, 9, hair);
-  ellipse(buffer, 16, 15, 7, 7, PALETTE.skin.rgb);
-  fillRect(buffer, 9, 10, 14, 3, hair);
-  setPixel(buffer, 14, 8, PALETTE.paper.rgb);
-  setPixel(buffer, 13, 15, PALETTE.eye.rgb);
-  setPixel(buffer, 18, 15, PALETTE.eye.rgb);
-  setPixel(buffer, 14, 14, PALETTE.white.rgb);
-  setPixel(buffer, 19, 14, PALETTE.white.rgb);
-  setPixel(buffer, 16, 18, PALETTE.skinShadow.rgb);
-  setPixel(buffer, 15, 19, PALETTE.shirtRed.rgb);
-  setPixel(buffer, 17, 19, PALETTE.shirtRed.rgb);
-  if (kind === 'child') fillRect(buffer, 22, 12, 3, 3, PALETTE.shirtGreen.rgb);
+  fillRect(buffer, 12, 44, 40, 20, shirt);
+  fillRect(buffer, 24, 40, 16, 6, PALETTE.white.rgb);
+  ellipse(buffer, 32, 28, 18, 18, hair);
+  ellipse(buffer, 32, 30, 14, 14, PALETTE.skin.rgb);
+  fillRect(buffer, 18, 20, 28, 6, hair);
+  fillRect(buffer, 28, 16, 6, 3, PALETTE.paper.rgb);
+  fillRect(buffer, 26, 30, 4, 4, PALETTE.eye.rgb);
+  fillRect(buffer, 36, 30, 4, 4, PALETTE.eye.rgb);
+  fillRect(buffer, 27, 31, 2, 2, PALETTE.white.rgb);
+  fillRect(buffer, 37, 31, 2, 2, PALETTE.white.rgb);
+  fillRect(buffer, 31, 36, 2, 2, PALETTE.skinShadow.rgb);
+  fillRect(buffer, 29, 38, 6, 2, PALETTE.shirtRed.rgb);
+  if (kind === 'child') fillRect(buffer, 44, 24, 6, 6, PALETTE.shirtGreen.rgb);
   outline(buffer);
   return buffer;
 }

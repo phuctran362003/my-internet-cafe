@@ -34,14 +34,24 @@ export function createGameSession({ data, storage, seed = 1 }) {
   ctx.events = createEventSystem(ctx);
   ctx.simulation = createSimulation(ctx);
   ctx.saveSystem = createSaveSystem({ state, storage, bus });
+  let saveQueue = Promise.resolve();
 
   bus.on(GameEvents.PAYMENT_RECEIVED, (tx) => {
     if (tx?.amount) pushNote(ui, `+${formatMoney(tx.amount)} ${tx.description}`, 'earn');
   });
   bus.on(GameEvents.INCIDENT_CREATED, () => pushNote(ui, 'Có khách không chịu trả tiền', 'alert'));
   bus.on(GameEvents.FAMILY_EVENT_TRIGGERED, () => pushNote(ui, 'Gia đình cần một quyết định', 'family'));
-  bus.on(GameEvents.SAVE_COMPLETED, () => pushNote(ui, 'Đã lưu game', 'save'));
+  bus.on(GameEvents.SAVE_COMPLETED, (payload) => {
+    if (payload?.quiet) return;
+    pushNote(ui, payload?.slot === 0 ? 'Đã tự lưu' : 'Đã lưu game', 'save');
+  });
   bus.on(GameEvents.COMPUTER_BROKEN, (payload) => pushNote(ui, `${payload?.id || 'Máy'} hỏng`, 'alert'));
+  bus.on(GameEvents.DAY_ENDED, () => queueSave(0));
+
+  function queueSave(slot, options) {
+    saveQueue = saveQueue.then(() => ctx.saveSystem.save(slot, options)).catch(() => ({ ok: false }));
+    return saveQueue;
+  }
 
   return {
     state,
@@ -86,12 +96,17 @@ export function createGameSession({ data, storage, seed = 1 }) {
       ui.guideOpen = true;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'new' });
       bus.emit(GameEvents.DAY_STARTED, { day: 1 });
+      queueSave(0, { quiet: true });
       return { ok: true };
     },
     async save(slot = 0) {
-      return ctx.saveSystem.save(slot);
+      return queueSave(slot);
+    },
+    flushSaves() {
+      return saveQueue;
     },
     async load(slot) {
+      await saveQueue;
       const result = await ctx.saveSystem.load(slot);
       if (!result.ok) {
         ui.lastError = 'Không tải được bản lưu';

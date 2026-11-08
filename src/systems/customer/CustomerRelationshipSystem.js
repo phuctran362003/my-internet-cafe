@@ -1,5 +1,11 @@
+export function relationshipKey(customer) {
+  return String(customer.name || '').trim().toLowerCase();
+}
+
 export function recordVisit(state, customer) {
-  const current = state.cafe.relationships[customer.id] ?? {
+  const key = relationshipKey(customer);
+  if (!key) return;
+  const current = state.cafe.relationships[key] ?? {
     name: customer.name,
     archetype: customer.archetype,
     visits: 0,
@@ -8,8 +14,10 @@ export function recordVisit(state, customer) {
   };
   current.visits += 1;
   current.spent += customer.billPaid || 0;
-  if (customer.archetype === 'regular') current.loyalty += 1;
-  state.cafe.relationships[customer.id] = current;
+  current.archetype = customer.archetype;
+  if (customer.satisfaction >= 60) current.loyalty += 1;
+  else current.loyalty = Math.max(0, current.loyalty - 1);
+  state.cafe.relationships[key] = current;
   const ids = Object.keys(state.cafe.relationships);
   while (ids.length > 40) {
     delete state.cafe.relationships[ids.shift()];

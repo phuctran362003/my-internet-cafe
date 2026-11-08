@@ -147,7 +147,7 @@ Các loại tile:
 - Decorative Objects.
 - Lighting.
 
-Kích thước tile đề xuất: 16x16 hoặc 32x32 pixel.
+Kích thước tile: 64x64 pixel.
 
 ## 3.4. Environment
 

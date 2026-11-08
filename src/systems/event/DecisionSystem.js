@@ -21,6 +21,8 @@ export function decide(ctx, choiceId, instanceId) {
   ctx.state.narrative.eventHistory.push({
     id: current.id,
     choiceId,
+    choiceLabel: choice.label,
+    title: current.title,
     day: ctx.state.meta.currentDay,
     memberId: current.context?.memberId ?? null
   });

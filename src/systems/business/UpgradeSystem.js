@@ -46,15 +46,16 @@ export function buyComputerSlot(ctx) {
   return { ok: true, id: slot.id };
 }
 
-export function applyComputerWear(state) {
+export function applyComputerWear(state, bus) {
   for (const pc of state.cafe.computers) {
     if (pc.status === 'disabled') continue;
     const hours = pc.dailyMinutes / 60;
     pc.condition = Math.max(0, pc.condition - (1 + hours * 0.35));
     pc.cleanliness = Math.max(0, pc.cleanliness - 4);
-    if (pc.condition <= 15) {
+    if (pc.condition <= 15 && pc.status !== 'broken') {
       pc.status = 'broken';
       pc.occupantId = null;
+      bus?.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
     }
   }
 }

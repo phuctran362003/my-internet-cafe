@@ -68,7 +68,7 @@ export function finishDay(ctx) {
   applyBusinessExpenses(ctx);
   const family = settleFamilyDay(ctx);
   evaluateFamilyEvents(ctx, family.before);
-  applyComputerWear(state);
+  applyComputerWear(state, ctx.bus);
   applyCleaner(state);
   ctx.ui.guideOpen = false;
   for (const pc of state.cafe.computers) pc.dailyMinutes = 0;

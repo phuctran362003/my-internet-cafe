@@ -17,13 +17,13 @@ Không dùng emoji, hình vuông đơn sắc, hay khối ngẫu nhiên làm hìn
 
 | Thông số | Giá trị |
 |---|---|
-| Design pixel | 32×32 native |
+| Design pixel | 64×64 native |
 | Scale hiển thị | ×1, camera zoom số nguyên |
-| Tile hiển thị | 32×32 |
-| Nhân vật | 32×32, một ô, top-down, có tóc, mắt, cổ áo, giày |
-| Máy tính | 32×32, viền màn hình, phản chiếu, phím |
-| Portrait UI | 32×32 |
-| Icon / item / effect | 32×32 trong sheet, nội dung nằm giữa |
+| Tile hiển thị | 64×64 |
+| Nhân vật | 64×64, một ô, top-down, có tóc, mắt, cổ áo, giày |
+| Máy tính | 64×64, viền màn hình, phản chiếu, phím |
+| Portrait UI | 64×64 |
+| Icon / item / effect | 64×64 trong sheet, nội dung nằm giữa |
 | Outline | 1 design-pixel trên sprite, màu `ink` `#1b1420`. Tile sàn và tường không viền để ghép liền |
 | Zoom camera | số nguyên 1, 2, 3 |
 | Filter | NEAREST, `pixelArt: true`, `roundPixels: true` |
@@ -33,7 +33,7 @@ Không scale lẻ. Không xoay sprite ngoài các hướng đã vẽ.
 ## 3. Góc nhìn và tỷ lệ
 
 - Camera top-down, hơi nhìn thấy mặt bàn và đỉnh đầu.
-- Nhân vật cao khoảng 26 design-pixel trong ô 32, chân chạm đáy ô.
+- Nhân vật cao khoảng 52 design-pixel trong ô 64, chân chạm đáy ô.
 - Đầu lớn hơn người thật một chút để đọc được mắt và tóc.
 - Bốn hướng: xuống, trái, phải, lên. Trái là gương của hướng xuống; phải là gương của trái.
 - Ngồi: một frame, khuất chân, có ghế.

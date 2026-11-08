@@ -29,7 +29,8 @@ export function mountUi(session, root) {
   let drawerKey = '';
   let modalKey = '';
   let menuKey = '';
-  let guideKey = '';
+    let guideKey = '';
+  let listedMenu = false;
   const saves = { list: [] };
 
   const refreshSaves = async () => {
@@ -40,7 +41,7 @@ export function mountUi(session, root) {
   const paint = () => {
     const view = buildView(session);
     paintHud(hud, view);
-    const nextGuide = view.guide.showBar ? 'on' : '';
+    const nextGuide = view.guide.showBar ? `on-${view.family.alert}` : '';
     if (nextGuide !== guideKey) {
       guideKey = nextGuide;
       paintGuideBar(guidebar, view, session);
@@ -48,8 +49,13 @@ export function mountUi(session, root) {
     guidebar.hidden = !view.guide.showBar;
     paintDock(dock, view, session);
     paintToasts(toasts, view);
+    if (view.screen === 'menu' && !listedMenu) {
+      listedMenu = true;
+      refreshSaves();
+    }
+    if (view.screen !== 'menu') listedMenu = false;
     const nextMenu = view.screen === 'menu'
-      ? `menu-${saves.list.length}`
+      ? `menu-${saves.list.length}-${saves.list.map((record) => record.savedAt).join()}`
       : view.screen === 'naming'
         ? 'naming'
         : '';
@@ -98,6 +104,14 @@ function paintHud(node, view) {
   );
 }
 
+function houseStat(view, session) {
+  const node = el('button', `stat tone-${view.family.alert ? 'alert' : 'good'}`);
+  node.type = 'button';
+  node.append(el('span', '', 'Nhà'), el('b', '', view.family.alert ? 'Cần lo' : 'Ổn'));
+  node.addEventListener('click', () => session.setPanel('family'));
+  return node;
+}
+
 function paintGuideBar(node, view, session) {
   if (!view.guide.showBar) {
     node.replaceChildren();
@@ -105,7 +119,7 @@ function paintGuideBar(node, view, session) {
   }
   const open = button('Học lại hướng dẫn', () => session.openGuide());
   open.classList.add('guide-reopen');
-  node.replaceChildren(open);
+  node.replaceChildren(open, houseStat(view, session));
 }
 
 function paintDock(node, view, session) {
@@ -332,6 +346,7 @@ function customerPanel(view) {
   box.append(row('Loại', customer.label));
   box.append(row('Việc đang làm', customer.state));
   box.append(row('Hài lòng', `${customer.satisfaction}`));
+  if (customer.visits) box.append(row('Lần ghé', String(customer.visits)));
   box.append(row('Đã ngồi', `${customer.sessionMinutes} / ${customer.plannedMinutes} phút`));
   box.append(row('Hóa đơn', customer.billLabel));
   if (customer.state === 'incident') box.append(el('p', 'muted', 'Khách này đang có sự cố. Chọn cách xử lý trong hộp thoại.'));
@@ -481,7 +496,10 @@ function journalPanel(view) {
   box.append(el('h2', '', 'Nhật ký'));
   if (!view.journal.length) box.append(el('p', 'muted', 'Chưa có quyết định nào.'));
   for (const entry of view.journal) {
-    box.append(row(`Ngày ${entry.day}`, `${entry.id} · ${entry.choiceId}`));
+    const line = el('div', 'block');
+    line.append(row(`Ngày ${entry.day}`, entry.title || entry.id));
+    line.append(el('p', 'muted', entry.choiceLabel || entry.choiceId));
+    box.append(line);
   }
   return box;
 }
@@ -593,9 +611,10 @@ function drawerSignature(view) {
     stock: view.stock,
     prices: view.prices,
     itemPrices: view.items.map((item) => item.salePrice).join(','),
-    family: [view.family.food, view.family.medicine, view.family.heatPaid, view.family.autoPayFood, view.family.autoPayHeat, view.family.members.map((m) => m.status).join()],
+    family: [view.family.food, view.family.medicine, view.family.heatPaid, view.family.autoPayFood, view.family.autoPayHeat, view.family.alert, view.family.members.map((m) => m.status).join()],
     portraits: Object.keys(view.portraits).length,
     debt: view.debt > 0,
+    journal: view.journal.map((entry) => entry.choiceId).join(),
     error: view.lastError
   });
 }

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { bareContext, testSession } from './helpers.js';
+import { bareContext, playUntilDayEnd, testSession } from './helpers.js';
+import { applyComputerWear } from '../src/systems/business/UpgradeSystem.js';
+import { GameEvents } from '../src/core/EventBus.js';
 import { migrateSave, validateSave } from '../src/systems/save/SaveSerializer.js';
 
 describe('events and save', () => {
@@ -58,5 +60,28 @@ describe('events and save', () => {
     expect(legacy.meta.version).toBe(1);
     expect(validateSave(legacy).ok).toBe(true);
     expect(validateSave({ meta: {} }).ok).toBe(false);
+  });
+
+  it('writes the automatic slot when a day ends and reports a broken computer', async () => {
+    const session = testSession(6);
+    session.newGame(6);
+    session.closeGuide();
+    playUntilDayEnd(session);
+    await session.flushSaves();
+    const saves = await session.listSaves();
+    const auto = saves.find((record) => record.slot === 0);
+    expect(auto?.summary.day).toBe(1);
+    expect(auto?.summary.cafeName).toBe('Tiệm Net Bình Dân');
+
+    const ctx = bareContext();
+    const broken = [];
+    ctx.bus.on(GameEvents.COMPUTER_BROKEN, (payload) => broken.push(payload.id));
+    ctx.state.cafe.computers[0].condition = 16;
+    ctx.state.cafe.computers[0].dailyMinutes = 600;
+    applyComputerWear(ctx.state, ctx.bus);
+    expect(ctx.state.cafe.computers[0].status).toBe('broken');
+    expect(broken).toEqual(['pc1']);
+    applyComputerWear(ctx.state, ctx.bus);
+    expect(broken).toEqual(['pc1']);
   });
 });

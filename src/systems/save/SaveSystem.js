@@ -3,7 +3,7 @@ import { migrateSave, SAVE_VERSION, serializeState, validateSave } from './SaveS
 
 export function createSaveSystem({ state, storage, bus }) {
   return {
-    async save(slot = 0) {
+    async save(slot = 0, options = {}) {
       const data = serializeState(state);
       const record = {
         slot,
@@ -21,7 +21,7 @@ export function createSaveSystem({ state, storage, bus }) {
       };
       await storage.putSave(record);
       await storage.putMeta({ id: 'lastSlot', slot });
-      bus.emit(GameEvents.SAVE_COMPLETED, { slot });
+      bus.emit(GameEvents.SAVE_COMPLETED, { slot, quiet: Boolean(options.quiet) });
       return { ok: true, slot };
     },
     async load(slot) {

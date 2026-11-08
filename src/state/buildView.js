@@ -1,3 +1,4 @@
+import { relationshipKey } from '../systems/customer/CustomerRelationshipSystem.js';
 import { guideView } from '../systems/guide/GuideSystem.js';
 import { itemPrice, tierById } from '../systems/business/PricingSystem.js';
 import { visibleChoices } from '../systems/event/EventSystem.js';
@@ -80,7 +81,8 @@ export function buildView(session) {
       billLabel: formatMoney(customer.bill || 0),
       money: customer.money,
       sessionMinutes: Math.floor(customer.sessionMinutes),
-      plannedMinutes: customer.plannedMinutes
+      plannedMinutes: customer.plannedMinutes,
+      visits: state.cafe.relationships[relationshipKey(customer)]?.visits ?? 0
     })),
     family: {
       autoPayFood: state.family.autoPayFood,
@@ -88,6 +90,9 @@ export function buildView(session) {
       food: state.family.resources.food,
       medicine: state.family.resources.medicine,
       heatPaid: state.family.heatPaid,
+      alert: state.family.members.some((member) => member.status !== 'healthy')
+        || state.family.shortage.food
+        || state.family.shortage.heat,
       members: state.family.members.map((member) => ({
         ...member,
         statusLabel: STATUS_LABEL[member.status] ?? member.status

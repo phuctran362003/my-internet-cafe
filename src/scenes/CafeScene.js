@@ -20,7 +20,7 @@ export class CafeScene extends Phaser.Scene {
     this.light = this.add.rectangle(this.mapWidth / 2, this.mapHeight / 2, this.mapWidth, this.mapHeight, 0x0b1020, 0);
     this.light.setDepth(80);
     this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
-    this.cameras.main.setZoom(2);
+    this.cameras.main.setZoom(1);
     const lookY = Math.min(this.mapHeight / 2, this.cameras.main.displayHeight / 2);
     this.cameras.main.centerOn(this.mapWidth / 2, lookY);
     this.cameras.main.roundPixels = true;
@@ -63,12 +63,12 @@ export class CafeScene extends Phaser.Scene {
     this.computerSprites = new Map();
     const chairFrames = [0, 3, 4, 5];
     this.session.state.cafe.computers.forEach((pc, index) => {
-      const sprite = this.add.sprite(pc.x * TILE_SIZE + 16, pc.y * TILE_SIZE + 16, 'computers', 0);
+      const sprite = this.add.sprite(pc.x * TILE_SIZE + TILE_SIZE / 2, pc.y * TILE_SIZE + TILE_SIZE / 2, 'computers', 0);
       sprite.setDepth(10 + pc.y);
       this.computerSprites.set(pc.id, sprite);
       const chair = this.add.sprite(
-        pc.seatX * TILE_SIZE + 16,
-        pc.seatY * TILE_SIZE + 12,
+        pc.seatX * TILE_SIZE + TILE_SIZE / 2,
+        pc.seatY * TILE_SIZE + TILE_SIZE / 2 - 8,
         'furniture',
         chairFrames[index % chairFrames.length]
       );
@@ -79,7 +79,7 @@ export class CafeScene extends Phaser.Scene {
   buildProps() {
     for (const prop of this.session.data.map.props) {
       const frame = prop.type === 'plant' ? 1 : 0;
-      const sprite = this.add.sprite(prop.x * TILE_SIZE + 16, prop.y * TILE_SIZE + 16, 'furniture', frame);
+      const sprite = this.add.sprite(prop.x * TILE_SIZE + TILE_SIZE / 2, prop.y * TILE_SIZE + TILE_SIZE / 2, 'furniture', frame);
       sprite.setDepth(12 + prop.y);
     }
   }
@@ -120,8 +120,8 @@ export class CafeScene extends Phaser.Scene {
         this.customerSprites.set(customer.id, sprite);
       }
       sprite.setFrame(characterFrame(customer, this.time.now));
-      sprite.x = customer.x * TILE_SIZE + 16;
-      sprite.y = customer.y * TILE_SIZE + 16;
+      sprite.x = customer.x * TILE_SIZE + TILE_SIZE / 2;
+      sprite.y = customer.y * TILE_SIZE + TILE_SIZE / 2;
       sprite.setDepth(40 + sprite.y);
       this.syncMarker(customer, sprite);
     }
@@ -129,8 +129,8 @@ export class CafeScene extends Phaser.Scene {
     if (guard) {
       this.guardSprite.setVisible(true);
       this.guardSprite.setFrame(characterFrame({ archetype: 'guard', facing: 'down', state: 'searching' }, 0));
-      this.guardSprite.x = guard.post.x * TILE_SIZE + 16;
-      this.guardSprite.y = guard.post.y * TILE_SIZE + 16;
+      this.guardSprite.x = guard.post.x * TILE_SIZE + TILE_SIZE / 2;
+      this.guardSprite.y = guard.post.y * TILE_SIZE + TILE_SIZE / 2;
     } else {
       this.guardSprite.setVisible(false);
     }
@@ -149,8 +149,8 @@ export class CafeScene extends Phaser.Scene {
         this.staffSprites.set(employee.role, sprite);
       }
       sprite.setFrame(characterFrame({ archetype: employee.look || 'office', facing: 'down', state: 'searching' }, 0));
-      sprite.x = employee.post.x * TILE_SIZE + 16;
-      sprite.y = employee.post.y * TILE_SIZE + 16;
+      sprite.x = employee.post.x * TILE_SIZE + TILE_SIZE / 2;
+      sprite.y = employee.post.y * TILE_SIZE + TILE_SIZE / 2;
     }
     const covered = this.session.ui.screen === 'menu' || this.session.ui.screen === 'naming';
     const periodLight = covered ? 0.45 : getLight(this.session);
@@ -171,7 +171,7 @@ export class CafeScene extends Phaser.Scene {
     }
     marker.setVisible(true);
     marker.x = sprite.x;
-    marker.y = sprite.y - 22;
+    marker.y = sprite.y - TILE_SIZE * 0.7;
   }
 
   drawSelection() {
@@ -223,9 +223,9 @@ export class CafeScene extends Phaser.Scene {
 
 function nearestCustomer(customers, x, y) {
   let best = null;
-  let bestDist = 22;
+  let bestDist = TILE_SIZE * 0.7;
   for (const customer of customers) {
-    const dist = Math.hypot(customer.x * TILE_SIZE + 16 - x, customer.y * TILE_SIZE + 16 - y);
+    const dist = Math.hypot(customer.x * TILE_SIZE + TILE_SIZE / 2 - x, customer.y * TILE_SIZE + TILE_SIZE / 2 - y);
     if (dist < bestDist) {
       best = customer;
       bestDist = dist;

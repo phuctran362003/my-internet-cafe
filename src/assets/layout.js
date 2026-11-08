@@ -1,8 +1,8 @@
 /** Shared frame layout for placeholders and future final spritesheets. */
 
-export const DESIGN_PIXEL = 32;
+export const DESIGN_PIXEL = 64;
 export const DISPLAY_SCALE = 1;
-export const TILE_SIZE = 32;
+export const TILE_SIZE = 64;
 
 export const TILE_ORDER = [
   'floor',

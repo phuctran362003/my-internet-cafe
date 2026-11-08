@@ -33,7 +33,7 @@ Kết thúc gia đình khi người chơi mất, hoặc cả vợ và con đều
 
 ## Asset
 
-Một style id `cafe-pixel-v1`. Pixel thiết kế 16×16, vẽ lên 32×32 bằng nearest neighbor. Mọi màu lấy từ `palette.js`. Gameplay chỉ biết texture key và chỉ số frame trong `layout.js`. Placeholder được vẽ lúc preload. Khi có PNG, đổi `mode` của entry trong `AssetRegistry` sang `file`.
+Một style id `cafe-pixel-v1`. Pixel thiết kế 64×64. Mọi màu lấy từ `palette.js`. Gameplay chỉ biết texture key và chỉ số frame trong `layout.js`. Placeholder được vẽ lúc preload. Khi có PNG, đổi `mode` của entry trong `AssetRegistry` sang `file`.
 
 ## Lưu
 

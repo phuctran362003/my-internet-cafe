@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { shouldSkipPayment } from '../src/systems/customer/CustomerAI.js';
+import { recordVisit } from '../src/systems/customer/CustomerRelationshipSystem.js';
 import { bareContext, sampleCustomer, testSession } from './helpers.js';
 import { beginPayment } from '../src/systems/customer/CustomerAI.js';
 
@@ -24,6 +25,14 @@ describe('customers', () => {
     expect(ctx.events.choose('accept_loss', event.instanceId).ok).toBe(true);
     expect(ctx.events.choose('accept_loss', event.instanceId).ok).toBe(false);
     expect(ctx.state.player.money).toBe(5000000);
+  });
+
+  it('remembers a customer by name across visits', () => {
+    const ctx = bareContext();
+    recordVisit(ctx.state, sampleCustomer({ id: 'a', name: 'An', billPaid: 10000, satisfaction: 80 }));
+    recordVisit(ctx.state, sampleCustomer({ id: 'b', name: 'An', billPaid: 5000, satisfaction: 80 }));
+    expect(ctx.state.cafe.relationships.an.visits).toBe(2);
+    expect(ctx.state.cafe.relationships.an.spent).toBe(15000);
   });
 
   it('never double-books a computer', () => {

@@ -1,3 +1,4 @@
+import { GameEvents } from '../../core/EventBus.js';
 import { addReputation } from '../economy/EconomySystem.js';
 import { treatMember } from '../family/FamilyHealth.js';
 import { buyFoodPack, payHeatNow } from '../family/FamilySurvival.js';
@@ -128,7 +129,10 @@ const HANDLERS = {
   damage_computer: (effect, ctx) => {
     const pc = computerOf(ctx);
     pc.condition = Math.max(0, pc.condition - effect.amount);
-    if (pc.condition <= 20) pc.status = 'broken';
+    if (pc.condition <= 20 && pc.status !== 'broken' && pc.status !== 'disabled') {
+      pc.status = 'broken';
+      ctx.bus.emit(GameEvents.COMPUTER_BROKEN, { id: pc.id });
+    }
   },
   resolve_incident: (_effect, ctx) => {
     const incident = ctx.state.cafe.incidents.find((item) => item.instanceId === ctx.event.instanceId);

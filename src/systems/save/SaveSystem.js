@@ -13,7 +13,9 @@ export function createSaveSystem({ state, storage, bus }) {
           day: state.meta.currentDay,
           money: state.player.money,
           reputation: state.cafe.reputation,
-          label: slot === 0 ? 'Tự động' : `Ô ${slot}`
+          label: slot === 0 ? 'Tự động' : `Ô ${slot}`,
+          cafeName: state.cafe.name,
+          playerName: state.player.name
         },
         data
       };

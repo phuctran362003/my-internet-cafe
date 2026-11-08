@@ -9,6 +9,8 @@ import familyEvents from './family/family-events.json';
 import incidents from './events/incidents.json';
 import staff from './employees/staff.json';
 import items from './items/items.json';
+import facilities from './facilities/facilities.json';
+import guide from './guide/lessons.json';
 
 export function loadGameData() {
   return {
@@ -22,6 +24,8 @@ export function loadGameData() {
     familyEvents,
     incidents,
     staff,
-    items
+    items,
+    facilities,
+    guide
   };
 }

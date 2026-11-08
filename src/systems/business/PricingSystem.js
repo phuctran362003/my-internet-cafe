@@ -19,3 +19,19 @@ export function setPrice(state, data, tierId, price) {
 export function priceOf(state, tierId) {
   return state.cafe.prices[tierId];
 }
+
+export function itemPrice(state, item) {
+  return state.cafe.itemPrices?.[item.id] ?? item.salePrice;
+}
+
+export function setItemPrice(state, data, itemId, price) {
+  const item = data.items.find((entry) => entry.id === itemId);
+  if (!item) return { ok: false, reason: 'item' };
+  const value = Math.round(Number(price));
+  const min = item.cost;
+  const max = item.cost * 5;
+  if (value < min || value > max) return { ok: false, reason: 'range' };
+  state.cafe.itemPrices = state.cafe.itemPrices ?? {};
+  state.cafe.itemPrices[itemId] = value;
+  return { ok: true, price: value };
+}

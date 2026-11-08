@@ -6,8 +6,10 @@ import { createInitialState } from '../state/createInitialState.js';
 import { createEconomySystem } from '../systems/economy/EconomySystem.js';
 import { createEventSystem } from '../systems/event/EventSystem.js';
 import { createSimulation, continueNextDay, requestEndDay } from '../systems/simulation/SimulationSystem.js';
-import { setPrice } from '../systems/business/PricingSystem.js';
+import { setItemPrice, setPrice } from '../systems/business/PricingSystem.js';
+import { upgradeFacility } from '../systems/business/FacilitySystem.js';
 import { buyComputerSlot, cleanComputer, repairComputer, upgradeComputer } from '../systems/business/UpgradeSystem.js';
+import { fireStaff, hireStaff } from '../systems/staff/StaffSystem.js';
 import { buyCafeItem } from '../systems/inventory/InventorySystem.js';
 import { buyFoodPack, buyMedicine } from '../systems/family/FamilySurvival.js';
 import { fireGuard, hireGuard } from '../systems/security/SecuritySystem.js';
@@ -23,7 +25,8 @@ export function createGameSession({ data, storage, seed = 1 }) {
     notes: [],
     portraits: {},
     assetsReady: false,
-    lastError: ''
+    lastError: '',
+    guideOpen: false
   };
   const rng = createRng(() => state.meta.rng, (value) => { state.meta.rng = value; });
   const ctx = { state, data, bus, ui, rng, storage };
@@ -46,18 +49,44 @@ export function createGameSession({ data, storage, seed = 1 }) {
     ui,
     data,
     update(delta) {
+      state.meta.pauseReasons.guide = Boolean(ui.guideOpen && ui.screen === 'playing');
       ctx.simulation.update(delta);
     },
     newGame(nextSeed = Date.now()) {
+      this.foundCafe({ playerName: 'Bạn', cafeName: 'Tiệm Net Bình Dân' }, nextSeed);
+    },
+    openFounding() {
+      ui.screen = 'naming';
+      ui.lastError = '';
+    },
+    cancelFounding() {
+      ui.screen = 'menu';
+      ui.lastError = '';
+    },
+    foundCafe({ playerName, cafeName } = {}, nextSeed = Date.now()) {
+      const player = cleanName(playerName);
+      const cafe = cleanName(cafeName);
+      if (player.length < 2 || player.length > 16) {
+        return { ok: false, message: 'Tên người chơi từ 2 đến 16 ký tự.' };
+      }
+      if (cafe.length < 2 || cafe.length > 22) {
+        return { ok: false, message: 'Tên tiệm từ 2 đến 22 ký tự.' };
+      }
       copyInto(state, createInitialState(data, nextSeed));
+      state.player.name = player;
+      state.cafe.name = cafe;
+      const owner = state.family.members.find((member) => member.id === 'player');
+      if (owner) owner.name = player;
       state.meta.started = true;
       ui.screen = 'playing';
       ui.panel = 'overview';
       ui.selection = null;
       ui.notes = [];
       ui.lastError = '';
+      ui.guideOpen = true;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'new' });
       bus.emit(GameEvents.DAY_STARTED, { day: 1 });
+      return { ok: true };
     },
     async save(slot = 0) {
       return ctx.saveSystem.save(slot);
@@ -75,6 +104,7 @@ export function createGameSession({ data, storage, seed = 1 }) {
       ctx.events.syncPause();
       ui.screen = state.meta.ending ? 'ending' : state.meta.dayEnded ? 'report' : 'playing';
       ui.panel = 'overview';
+      ui.guideOpen = false;
       bus.emit(GameEvents.SESSION_RESET, { mode: 'load' });
       return { ok: true };
     },
@@ -114,9 +144,38 @@ export function createGameSession({ data, storage, seed = 1 }) {
     },
     setPrice(tierId, price) {
       const result = setPrice(state, data, tierId, price);
-      if (!result.ok) ui.lastError = 'Giá nằm ngoài biên cho phép';
+      if (!result.ok) ui.lastError = 'Giá giờ chơi từ 2.000đ đến 40.000đ';
       else ui.lastError = '';
       return result;
+    },
+    setItemPrice(itemId, price) {
+      const result = setItemPrice(state, data, itemId, price);
+      if (!result.ok) ui.lastError = 'Giá món phải từ giá nhập đến gấp 5 lần';
+      else ui.lastError = '';
+      return result;
+    },
+    openGuide() {
+      if (ui.screen !== 'playing') return;
+      ui.guideOpen = true;
+    },
+    closeGuide() {
+      ui.guideOpen = false;
+    },
+    followLesson(id) {
+      const lesson = data.guide.find((item) => item.id === id);
+      if (!lesson) return;
+      ui.guideOpen = false;
+      ui.panel = lesson.panel;
+      ui.lastError = '';
+    },
+    upgradeFacility(id) {
+      return toastResult(ui, upgradeFacility(ctx, id), 'Không nâng cấp được');
+    },
+    hireStaff(role) {
+      return toastResult(ui, hireStaff(ctx, role), 'Đã thuê người này');
+    },
+    fireStaff(role) {
+      return fireStaff(ctx, role);
     },
     upgrade(id) {
       return toastResult(ui, upgradeComputer(ctx, id), 'Không nâng cấp được');
@@ -159,6 +218,10 @@ export function createGameSession({ data, storage, seed = 1 }) {
       return result;
     }
   };
+}
+
+function cleanName(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ');
 }
 
 function pushNote(ui, text, kind = 'info') {

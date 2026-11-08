@@ -15,12 +15,14 @@ export class CafeScene extends Phaser.Scene {
     this.buildMap();
     this.buildProps();
     this.guardSprite = this.add.sprite(0, 0, 'characters', 0).setVisible(false).setDepth(20);
+    this.staffSprites = new Map();
     this.selection = this.add.graphics().setDepth(30);
     this.light = this.add.rectangle(this.mapWidth / 2, this.mapHeight / 2, this.mapWidth, this.mapHeight, 0x0b1020, 0);
     this.light.setDepth(80);
     this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
     this.cameras.main.setZoom(2);
-    this.cameras.main.centerOn(this.mapWidth / 2, this.mapHeight / 2);
+    const lookY = Math.min(this.mapHeight / 2, this.cameras.main.displayHeight / 2);
+    this.cameras.main.centerOn(this.mapWidth / 2, lookY);
     this.cameras.main.roundPixels = true;
     this.drag = null;
     this.input.on('pointerdown', (pointer) => {
@@ -59,13 +61,19 @@ export class CafeScene extends Phaser.Scene {
     this.mapWidth = map.rows[0].length * TILE_SIZE;
     this.mapHeight = map.rows.length * TILE_SIZE;
     this.computerSprites = new Map();
-    for (const pc of this.session.state.cafe.computers) {
+    const chairFrames = [0, 3, 4, 5];
+    this.session.state.cafe.computers.forEach((pc, index) => {
       const sprite = this.add.sprite(pc.x * TILE_SIZE + 16, pc.y * TILE_SIZE + 16, 'computers', 0);
       sprite.setDepth(10 + pc.y);
       this.computerSprites.set(pc.id, sprite);
-      const chair = this.add.sprite(pc.seatX * TILE_SIZE + 16, pc.seatY * TILE_SIZE + 22, 'furniture', 0);
+      const chair = this.add.sprite(
+        pc.seatX * TILE_SIZE + 16,
+        pc.seatY * TILE_SIZE + 12,
+        'furniture',
+        chairFrames[index % chairFrames.length]
+      );
       chair.setDepth(9 + pc.seatY);
-    }
+    });
   }
 
   buildProps() {
@@ -126,7 +134,26 @@ export class CafeScene extends Phaser.Scene {
     } else {
       this.guardSprite.setVisible(false);
     }
-    const periodLight = this.session.ui.screen === 'menu' ? 0.35 : getLight(this.session);
+    const floorStaff = state.cafe.employees.filter((employee) => employee.role !== 'guard' && employee.post);
+    const roles = new Set(floorStaff.map((employee) => employee.role));
+    for (const [role, sprite] of this.staffSprites) {
+      if (!roles.has(role)) {
+        sprite.destroy();
+        this.staffSprites.delete(role);
+      }
+    }
+    for (const employee of floorStaff) {
+      let sprite = this.staffSprites.get(employee.role);
+      if (!sprite) {
+        sprite = this.add.sprite(0, 0, 'characters', 0).setDepth(20);
+        this.staffSprites.set(employee.role, sprite);
+      }
+      sprite.setFrame(characterFrame({ archetype: employee.look || 'office', facing: 'down', state: 'searching' }, 0));
+      sprite.x = employee.post.x * TILE_SIZE + 16;
+      sprite.y = employee.post.y * TILE_SIZE + 16;
+    }
+    const covered = this.session.ui.screen === 'menu' || this.session.ui.screen === 'naming';
+    const periodLight = covered ? 0.45 : getLight(this.session);
     this.light.setAlpha(periodLight);
     this.drawSelection();
   }

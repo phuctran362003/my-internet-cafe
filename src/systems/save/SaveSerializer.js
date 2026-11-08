@@ -9,7 +9,8 @@ export function migrateSave(data) {
   copy.meta = copy.meta ?? {};
   if (!copy.meta.version) copy.meta.version = 1;
   copy.meta.version = SAVE_VERSION;
-  copy.meta.pauseReasons = copy.meta.pauseReasons ?? { user: false, event: false };
+  copy.meta.pauseReasons = copy.meta.pauseReasons ?? { user: false, event: false, guide: false };
+  copy.meta.pauseReasons.guide = false;
   copy.family = copy.family ?? {};
   copy.family.shortage = copy.family.shortage ?? { food: false, heat: false };
   copy.family.resources = copy.family.resources ?? { food: 0, medicine: 0 };
@@ -20,6 +21,12 @@ export function migrateSave(data) {
   copy.narrative.completedEvents = copy.narrative.completedEvents ?? [];
   copy.economy = copy.economy ?? {};
   copy.economy.transactions = copy.economy.transactions ?? [];
+  copy.cafe = copy.cafe ?? {};
+  copy.cafe.facilities = { cooling: 1, network: 1, power: 1, ...(copy.cafe.facilities ?? {}) };
+  copy.cafe.guide = copy.cafe.guide ?? { met: {} };
+  copy.cafe.guide.met = copy.cafe.guide.met ?? {};
+  copy.cafe.itemPrices = copy.cafe.itemPrices ?? {};
+  copy.cafe.employees = copy.cafe.employees ?? [];
   return copy;
 }
 

@@ -1,6 +1,7 @@
 import { GameEvents } from '../../core/EventBus.js';
 import { getPeriod } from '../simulation/TimeSystem.js';
 import { priceOf, tierById } from '../business/PricingSystem.js';
+import { markMet } from '../guide/GuideSystem.js';
 import { pick, rangeInt } from '../../utils/RandomUtils.js';
 
 export function tickSpawn(ctx, minutes) {
@@ -40,7 +41,9 @@ function walksAway(ctx, archetype) {
   const tier = tierById(ctx.data, tierId);
   const price = priceOf(ctx.state, tierId);
   const ratio = price / tier.basePrice;
-  return ratio > 1 && ctx.rng() < (ratio - 1) * archetype.priceSensitivity;
+  const rejected = ratio > 1 && ctx.rng() < (ratio - 1) * archetype.priceSensitivity;
+  if (rejected) markMet(ctx, 'price');
+  return rejected;
 }
 
 function entranceBusy(ctx) {

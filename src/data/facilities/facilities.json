@@ -1,0 +1,17 @@
+{
+  "cooling": [
+    { "level": 1, "name": "Quạt trần", "seats": 3, "dailyKwh": 1, "cost": 0 },
+    { "level": 2, "name": "Máy lạnh cửa sổ", "seats": 6, "dailyKwh": 8, "cost": 480000 },
+    { "level": 3, "name": "Máy lạnh cả quán", "seats": 12, "dailyKwh": 14, "cost": 1400000 }
+  ],
+  "network": [
+    { "level": 1, "name": "Wifi nhà", "quality": 64, "billMultiplier": 1, "cost": 0 },
+    { "level": 2, "name": "Gói 100Mbps", "quality": 86, "billMultiplier": 1.8, "cost": 350000 },
+    { "level": 3, "name": "Gói 500Mbps và router", "quality": 98, "billMultiplier": 2.6, "cost": 900000 }
+  ],
+  "power": [
+    { "level": 1, "name": "Aptomat cũ", "watts": 1100, "cost": 0 },
+    { "level": 2, "name": "Aptomat 30A", "watts": 2800, "cost": 420000 },
+    { "level": 3, "name": "Tủ điện riêng", "watts": 6000, "cost": 1100000 }
+  ]
+}

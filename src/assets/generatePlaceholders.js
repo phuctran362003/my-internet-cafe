@@ -79,7 +79,14 @@ export function generateAllAssets() {
     COMPUTER_STATES.length
   );
   const furniture = sheet(
-    [drawChair(), drawPlant(), drawCounterProp()],
+    [
+      drawChair('shirtRed', 'rug'),
+      drawPlant(),
+      drawCounterProp(),
+      drawChair('white', 'shirtGray'),
+      drawChair('pantsNavy', 'panel'),
+      drawChair('shirtGray', 'bezel')
+    ],
     FURNITURE_FRAMES.length
   );
   const items = sheet(ITEM_FRAMES.map((kind) => drawItem(kind)), ITEM_FRAMES.length);

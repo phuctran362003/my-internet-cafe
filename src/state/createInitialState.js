@@ -10,7 +10,7 @@ export function createInitialState(data, seed = 1) {
       dayEnded: false,
       pendingDayEnd: false,
       settling: false,
-      pauseReasons: { user: false, event: false },
+      pauseReasons: { user: false, event: false, guide: false },
       speed: 1,
       seed: hashSeed(seed),
       rng: hashSeed(seed),
@@ -28,8 +28,11 @@ export function createInitialState(data, seed = 1) {
       name: 'Tiệm Net Bình Dân',
       open: true,
       reputation: 50,
-      internet: 80,
+      internet: 64,
       prices: Object.fromEntries(data.tiers.map((tier) => [tier.id, tier.basePrice])),
+      itemPrices: Object.fromEntries(data.items.map((item) => [item.id, item.salePrice])),
+      facilities: { cooling: 1, network: 1, power: 1 },
+      guide: { met: {} },
       computers: data.map.computers.map((pc) => ({
         id: pc.id,
         tier: pc.tier,
@@ -80,5 +83,5 @@ export function createInitialState(data, seed = 1) {
 export function isSimulationPaused(state) {
   if (!state.meta.started || state.meta.dayEnded) return true;
   const reasons = state.meta.pauseReasons;
-  return Boolean(reasons.user || reasons.event);
+  return Boolean(reasons.user || reasons.event || reasons.guide);
 }

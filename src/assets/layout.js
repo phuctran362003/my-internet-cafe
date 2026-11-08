@@ -50,7 +50,7 @@ export const SCREEN_BY_TIER = {
   premium: 'screenPremium'
 };
 
-export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp'];
+export const FURNITURE_FRAMES = ['chair', 'plant', 'counterProp', 'chairWhite', 'chairNavy', 'chairGray'];
 export const ITEM_FRAMES = ['drink', 'noodle', 'medicine', 'foodPack'];
 export const EFFECT_FRAMES = ['alert', 'coin', 'meal'];
 export const PORTRAIT_IDS = ['player', 'wife', 'child'];

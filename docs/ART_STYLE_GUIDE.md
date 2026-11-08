@@ -47,8 +47,8 @@ Chỉ dùng màu trong `PALETTE`. Không nội suy màu mới.
 | Viền / chữ | ink | `#1b1420` |
 | Nền canvas | canvas | `#141820` |
 | UI panel | panel / panelLight / paper | `#2a3142` / `#3b4458` / `#f3e6c8` |
-| Sàn gỗ | floor / floorDark / floorLight | `#c4a574` / `#a68456` / `#dec093` |
-| Tường | wall / wallDark / wallLight | `#4d596b` / `#2e3644` / `#6d7b90` |
+| Sàn gạch | floor / floorDark / floorLight | `#d4cfc5` / `#b7b2a8` / `#e7e2d8` |
+| Tường | wall / wallDark / wallLight | `#efe6d4` / `#c9b89a` / `#f7f2e6` |
 | Cửa | door / doorLight | `#7a4e2d` / `#a56b3d` |
 | Da | skin / skinShadow | `#f0c29a` / `#d39a72` |
 | Áo | shirtBlue, shirtGreen, shirtRed, shirtPurple, shirtGold, shirtGray | xem `palette.js` |

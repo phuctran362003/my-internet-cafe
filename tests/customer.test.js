@@ -29,6 +29,7 @@ describe('customers', () => {
   it('never double-books a computer', () => {
     const session = testSession(8);
     session.newGame(8);
+    session.closeGuide();
     for (const pc of session.state.cafe.computers) {
       if (pc.id !== 'pc1') pc.status = 'disabled';
     }

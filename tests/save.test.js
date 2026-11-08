@@ -23,6 +23,23 @@ describe('events and save', () => {
     expect(ctx.state.narrative.queue).toHaveLength(1);
   });
 
+  it('names the owner before the cafe opens', () => {
+    const session = testSession(3);
+    session.openFounding();
+    expect(session.ui.screen).toBe('naming');
+    expect(session.state.meta.started).toBe(false);
+    session.cancelFounding();
+    expect(session.ui.screen).toBe('menu');
+    session.openFounding();
+    expect(session.foundCafe({ playerName: ' ', cafeName: 'A' }).ok).toBe(false);
+    expect(session.foundCafe({ playerName: 'Minh Trí', cafeName: 'NET LAG ÍT' }, 9).ok).toBe(true);
+    expect(session.state.player.name).toBe('Minh Trí');
+    expect(session.state.cafe.name).toBe('NET LAG ÍT');
+    expect(session.state.family.members.find((member) => member.id === 'player').name).toBe('Minh Trí');
+    expect(session.ui.screen).toBe('playing');
+    expect(session.state.meta.started).toBe(true);
+  });
+
   it('saves and loads family, ledger, and version', async () => {
     const session = testSession(3);
     session.newGame(3);

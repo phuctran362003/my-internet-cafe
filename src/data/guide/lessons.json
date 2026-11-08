@@ -1,0 +1,56 @@
+[
+  {
+    "id": "staff",
+    "icon": "🧹",
+    "title": "Làm một mình mệt quá",
+    "body": "Thuê lao công, thu ngân hay phục vụ để quán tự chạy khi bạn bận. Mỗi người có lương cuối ngày.",
+    "action": "Thuê nhân viên",
+    "panel": "staff",
+    "toast": "Quán đông mà chỉ có một mình. Thuê thêm người cho đỡ mệt."
+  },
+  {
+    "id": "price",
+    "icon": "💰",
+    "title": "Chỉnh giá cho hợp lý",
+    "body": "Giá giờ chơi và đồ ăn thức uống đặt được. Giá cao lãi nhiều nhưng khách ít; giá thấp đông khách nhưng lãi mỏng.",
+    "action": "Chỉnh giá",
+    "panel": "finance",
+    "toast": "Khách quay lưng vì giá. Chỉnh lại cho vừa túi."
+  },
+  {
+    "id": "cooling",
+    "icon": "🌡️",
+    "title": "Quán đang nóng!",
+    "body": "Nóng quá khách khó chịu, ít chơi lâu và dễ về. Làm mát là hết.",
+    "action": "Nâng cấp máy lạnh",
+    "panel": "facility",
+    "toast": "Quán đang nóng. Khách ngồi không lâu đâu."
+  },
+  {
+    "id": "network",
+    "icon": "📶",
+    "title": "Mạng đang lag!",
+    "body": "Ping cao làm game giật, khách chơi mạng thì bỏ ngay. Nâng gói mạng và router cho mượt.",
+    "action": "Nâng cấp mạng",
+    "panel": "facility",
+    "toast": "Mạng giật. Game thủ không ngồi lâu."
+  },
+  {
+    "id": "computers",
+    "icon": "🖥️",
+    "title": "Khách chê máy yếu",
+    "body": "Game nặng cần máy mạnh. Nâng linh kiện cho máy cũ, hoặc mua máy xịn hơn.",
+    "action": "Nâng cấp máy",
+    "panel": "computer",
+    "toast": "Khách chê máy không kéo nổi game."
+  },
+  {
+    "id": "power",
+    "icon": "⚡",
+    "title": "Điện sắp quá tải",
+    "body": "Máy bật nhiều hơn aptomat chịu nổi. Quá tải là khách bỏ máy giữa chừng. Nâng tủ điện trước khi mua thêm máy.",
+    "action": "Nâng cấp điện",
+    "panel": "facility",
+    "toast": "Điện sắp quá tải. Nâng tủ điện kẻo quán sập nguồn."
+  }
+]

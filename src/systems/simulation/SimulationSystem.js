@@ -3,6 +3,7 @@ import { isSimulationPaused } from '../../state/createInitialState.js';
 import { applyBusinessExpenses } from '../business/ExpenseSystem.js';
 import { priceOf } from '../business/PricingSystem.js';
 import { applyComputerWear } from '../business/UpgradeSystem.js';
+import { applyCleaner } from '../staff/StaffSystem.js';
 import { tickCustomers } from '../customer/CustomerAI.js';
 import { tickSpawn } from '../customer/CustomerSpawnSystem.js';
 import { evaluateFamilyEvents } from '../event/EventSystem.js';
@@ -21,7 +22,7 @@ export function createSimulation(ctx) {
         return;
       }
       if (isSimulationPaused(state)) {
-        if (state.meta.pauseReasons.event && !state.meta.pauseReasons.user) {
+        if (state.meta.pauseReasons.event && !state.meta.pauseReasons.user && !state.meta.pauseReasons.guide) {
           const minutes = (deltaMs / 1000) * ctx.data.simulation.gameMinutesPerRealSecond * state.meta.speed;
           tickSecurity(ctx, minutes);
         }
@@ -68,6 +69,8 @@ export function finishDay(ctx) {
   const family = settleFamilyDay(ctx);
   evaluateFamilyEvents(ctx, family.before);
   applyComputerWear(state);
+  applyCleaner(state);
+  ctx.ui.guideOpen = false;
   for (const pc of state.cafe.computers) pc.dailyMinutes = 0;
   checkEndings(ctx);
   state.meta.dayEnded = true;

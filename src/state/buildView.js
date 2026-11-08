@@ -1,7 +1,8 @@
+import { guideView } from '../systems/guide/GuideSystem.js';
+import { itemPrice, tierById } from '../systems/business/PricingSystem.js';
 import { visibleChoices } from '../systems/event/EventSystem.js';
 import { dailyReport } from '../systems/economy/EconomySystem.js';
 import { getPeriod } from '../systems/simulation/TimeSystem.js';
-import { tierById } from '../systems/business/PricingSystem.js';
 import { formatClock, formatDate, formatMoney } from '../utils/format.js';
 import { isSimulationPaused } from './createInitialState.js';
 
@@ -36,6 +37,8 @@ export function buildView(session) {
   });
   const active = state.narrative.queue.find((event) => !event.resolved) ?? null;
   const report = dailyReport(state);
+  const guide = guideView(state, data);
+  const playing = ui.screen === 'playing' && !active;
   return {
     screen: ui.screen,
     panel: ui.panel,
@@ -53,6 +56,8 @@ export function buildView(session) {
     clock: formatClock(state.meta.currentTime),
     period: period.label,
     light: period.light,
+    playerName: state.player.name,
+    cafeName: state.cafe.name,
     money: formatMoney(state.player.money),
     debt: state.economy.debt,
     debtLabel: formatMoney(state.economy.debt),
@@ -61,6 +66,9 @@ export function buildView(session) {
     freeComputers: computers.filter((pc) => pc.status === 'available' && !pc.occupantId).length,
     activeComputers: computers.filter((pc) => pc.status !== 'disabled').length,
     incidents: state.cafe.incidents.filter((incident) => !incident.resolved).length,
+    mood: guide.hot ? 'Nóng' : 'Mát',
+    networkLabel: String(guide.network),
+    networkLag: guide.lag,
     computers,
     customers: customers.map((customer) => ({
       id: customer.id,
@@ -86,8 +94,40 @@ export function buildView(session) {
       }))
     },
     guard: state.cafe.employees.find((employee) => employee.role === 'guard') ?? null,
+    staff: ['cleaner', 'cashier', 'server'].map((role) => {
+      const spec = data.staff[role];
+      const hired = state.cafe.employees.find((employee) => employee.role === role) ?? null;
+      return {
+        role,
+        name: spec.name,
+        salary: spec.salary,
+        blurb: spec.blurb,
+        hired: Boolean(hired)
+      };
+    }),
+    facilities: ['cooling', 'network', 'power'].map((id) => {
+      const level = state.cafe.facilities?.[id] ?? 1;
+      const track = data.facilities[id];
+      const current = track.find((entry) => entry.level === level) ?? track[0];
+      const next = track.find((entry) => entry.level === level + 1) ?? null;
+      return {
+        id,
+        level,
+        name: current.name,
+        detail: facilityDetail(id, current),
+        nextName: next?.name ?? '',
+        nextCost: next ? formatMoney(next.cost) : '',
+        nextDetail: next ? facilityDetail(id, next) : ''
+      };
+    }),
+    guide: {
+      open: Boolean(ui.guideOpen) && playing,
+      showBar: playing && !ui.guideOpen,
+      progress: guide.progress,
+      cards: guide.cards
+    },
     stock: { ...state.cafe.inventory },
-    items: data.items,
+    items: data.items.map((item) => ({ ...item, salePrice: itemPrice(state, item) })),
     prices: { ...state.cafe.prices },
     tiers: data.tiers.map((tier) => ({ id: tier.id, name: tier.name, basePrice: tier.basePrice, upgradeCost: tier.upgradeCost })),
     activeEvent: active ? {
@@ -111,4 +151,10 @@ export function buildView(session) {
     newComputerCost: formatMoney(data.economy.newComputerCost),
     nextSlot: state.cafe.computers.some((pc) => pc.status === 'disabled')
   };
+}
+
+function facilityDetail(id, spec) {
+  if (id === 'cooling') return `Mát cho ${spec.seats} máy đang ngồi`;
+  if (id === 'network') return `Chất lượng ${spec.quality}`;
+  return `Chịu ${spec.watts}W`;
 }

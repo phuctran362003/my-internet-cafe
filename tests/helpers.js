@@ -58,6 +58,7 @@ export function sampleCustomer(over = {}) {
 }
 
 export function playUntilDayEnd(session) {
+  session.closeGuide();
   for (let i = 0; i < 900 && !session.state.meta.dayEnded; i += 1) {
     const event = session.state.narrative.queue.find((item) => !item.resolved);
     if (event) {

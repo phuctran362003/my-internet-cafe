@@ -45,6 +45,19 @@ export function createSaveSystem({ state, storage, bus }) {
       const meta = await storage.getMeta('lastSlot');
       if (meta?.slot != null) return meta.slot;
       return latestSave(await this.list())?.slot ?? null;
+    },
+    async delete(slot) {
+      const existing = await storage.getSave(slot);
+      if (!existing) return { ok: false, reason: 'missing' };
+      await storage.deleteSave(slot);
+      try {
+        const meta = await storage.getMeta('lastSlot');
+        if (meta?.slot === slot) await storage.putMeta({ id: 'lastSlot', slot: null });
+      } catch {
+        /* save already removed; metadata cleanup is optional */
+      }
+      bus.emit(GameEvents.SAVE_DELETED, { slot });
+      return { ok: true, slot };
     }
   };
 }

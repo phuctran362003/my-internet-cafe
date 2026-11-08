@@ -17,6 +17,7 @@ export const GameEvents = {
   DAY_ENDED: 'day:ended',
   MONEY_CHANGED: 'economy:money:changed',
   SAVE_COMPLETED: 'save:completed',
+  SAVE_DELETED: 'save:deleted',
   SESSION_RESET: 'session:reset',
   NOTICE: 'ui:notice',
   AUDIO_CHANGED: 'audio:changed',

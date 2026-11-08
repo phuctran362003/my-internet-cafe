@@ -66,6 +66,17 @@ describe('events and save', () => {
     expect(validateSave({ meta: {} }).ok).toBe(false);
   });
 
+  it('deletes a save slot and clears it from the list', async () => {
+    const session = testSession(5);
+    session.newGame(5);
+    await session.save(2);
+    expect((await session.listSaves()).some((record) => record.slot === 2)).toBe(true);
+    const removed = await session.deleteSave(2);
+    expect(removed.ok).toBe(true);
+    expect((await session.listSaves()).some((record) => record.slot === 2)).toBe(false);
+    expect((await session.deleteSave(2)).ok).toBe(false);
+  });
+
   it('keeps manual slots as full state snapshots and prefers the newest for continue', async () => {
     const session = testSession(4);
     session.newGame(4);

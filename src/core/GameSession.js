@@ -154,6 +154,16 @@ export function createGameSession({ data, storage, seed = 1 }) {
     async listSaves() {
       return ctx.saveSystem.list();
     },
+    async deleteSave(slot) {
+      await saveQueue;
+      const result = await ctx.saveSystem.delete(slot);
+      if (!result.ok) {
+        pushNote(ui, 'Không xóa được bản lưu', 'alert');
+        return result;
+      }
+      pushNote(ui, slot === 0 ? 'Đã xóa bản tự lưu' : `Đã xóa ô ${slot}`, 'save');
+      return result;
+    },
     async latestSaveSlot() {
       const records = await ctx.saveSystem.list();
       const metaSlot = await ctx.saveSystem.lastSlot();

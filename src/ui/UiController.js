@@ -247,7 +247,7 @@ function paintMenu(node, view, session, saves, refreshSaves) {
   list.append(el('div', 'muted', 'Ô lưu state'));
   const bySlot = new Map(saves.map((record) => [record.slot, record]));
   for (const slot of SAVE_SLOTS) {
-    list.append(saveSlotRow(bySlot.get(slot), slot, session));
+    list.append(saveSlotRow(bySlot.get(slot), slot, session, refreshSaves));
   }
   sheet.append(list);
   sheet.append(button('Làm mới danh sách', refreshSaves));
@@ -257,16 +257,20 @@ function paintMenu(node, view, session, saves, refreshSaves) {
 
 const SAVE_SLOTS = [0, 1, 2, 3];
 
-function saveSlotRow(record, slot, session) {
+function saveSlotRow(record, slot, session, refreshSaves) {
   const row = el('div', `save-slot${record ? '' : ' empty'}`);
   const meta = el('div', 'save-slot-meta');
+  const actions = el('div', 'save-slot-actions');
   meta.append(el('strong', 'save-slot-title', slotLabel(slot)));
   if (!record) {
     meta.append(el('span', 'save-slot-sub muted', 'Trống'));
     row.append(meta);
     const load = button('Tải', () => {});
     load.disabled = true;
-    row.append(load);
+    const remove = button('Xóa', () => {});
+    remove.disabled = true;
+    actions.append(load, remove);
+    row.append(actions);
     return row;
   }
   const cafeName = record.summary?.cafeName || 'Tiệm';
@@ -279,7 +283,16 @@ function saveSlotRow(record, slot, session) {
   meta.append(el('span', 'save-slot-sub muted', `Ngày ${day}${clock}${money ? ` · ${money}` : ''}`));
   if (when) meta.append(el('span', 'save-slot-time', `Lưu lúc ${when}`));
   row.append(meta);
-  row.append(button('Tải', async () => { await session.load(record.slot); }));
+  actions.append(button('Tải', async () => { await session.load(record.slot); }));
+  const remove = button('Xóa', async () => {
+    const label = slotLabel(record.slot);
+    if (!window.confirm(`Xóa ${label}? Không lấy lại được.`)) return;
+    const result = await session.deleteSave(record.slot);
+    if (result.ok) await refreshSaves();
+  });
+  remove.classList.add('btn-danger');
+  actions.append(remove);
+  row.append(actions);
   return row;
 }
 

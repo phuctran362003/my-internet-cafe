@@ -481,6 +481,23 @@ button.nav-item.has-alert::after {
   background: color-mix(in srgb, var(--card) 88%, #000 12%);
 }
 
+.save-slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+button.btn-danger {
+  background: color-mix(in srgb, var(--alert) 18%, var(--paper));
+  color: #9d2b24;
+  border-color: color-mix(in srgb, var(--alert) 55%, #000 20%);
+}
+
+button.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--alert) 28%, var(--paper));
+}
+
 .save-slot.empty {
   opacity: 0.7;
 }
